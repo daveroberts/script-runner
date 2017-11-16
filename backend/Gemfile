@@ -1,0 +1,11 @@
+source 'https://rubygems.org' do
+  gem 'sinatra' # DSL web framework
+  #gem 'sinatra-contrib' # used for sinatra/json, but didn't set the encoding
+  group :production do
+    gem 'puma' # production web server
+  end
+  group :development do
+    gem 'rerun' # Restart app server when files change
+    gem 'pry' # Set breakpoints in Ruby code; Ruby console
+  end
+end

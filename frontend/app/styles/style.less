@@ -1,0 +1,40 @@
+@cerulean: #4484ce;
+@aluminium: #d9d9d9;
+@light: #f9cf00;
+@tangerine: #f19f4d;
+
+@background: @cerulean;
+@color: white;
+@normal-color: #333;
+@light-background: @aluminium;
+@bright: @light;
+@highlight: @tangerine;
+
+body{ color: @normal-color; font-family: sans; font-size: 1em; }
+a:visited{ color: darken(@background, 10%) }
+h1{ font-size: 1.8em; color: darken(@background, 20%); margin-top: 0.5em; margin-bottom: 0.5em; }
+h2{ font-size: 1.4em; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
+input{ border: 1px solid #999; height: 1.7em; min-width: 30em; }
+
+.nav-bar{ background-color: @background; color: @color; line-height: 2em; margin-bottom: 0.5em; }
+.nav-item{ color: @color !important; text-decoration: none; display: inline-block; padding: 0 1em; border-right: 0.15em solid white; }
+.nav-item:focus{ outline: none; }
+a.nav-item:hover{ background-color: darken(@background, 10%); }
+.nav-item-right{ float: right; border-right: none; border-left: 0.15em solid white; }
+
+.btn{ color: @background !important; padding: 0.15em; border-radius: 0.3em; font-size: 1.1em; -webkit-appearance: none; -moz-appearance: none; border: 0.1em solid @background; }
+.btn:hover{ background-color: @background; color: @color !important; }
+.btn[type=submit]:focus{ outline: none; }
+.btn[type=submit]::-moz-focus-inner{ border: 0; }
+.btn[type=submit]:hover{ cursor: pointer; }
+.btn-icon{ display: inline-block; width: 1.1em; height: 1.1em; text-align: center; line-height: 1.1em; }
+
+.form > table > tbody > tr > th { padding: 0.4em; text-align: right; }
+.form > table > tbody > tr > th > label { font-size: 1.1em; }
+
+.table{ border: 0.3em solid @background; }
+.table > thead { background-color: @background; color: @color; font-size: 1.1em; }
+.table th { padding: 0.4em; text-align: left; }
+.table td { padding: 0.1em; }
+.table > tbody > tr { border-bottom: 0.10em solid #ccc; }
+.table > tbody > tr:hover { background-color: lighten(@background, 40%); }

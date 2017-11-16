@@ -3,9 +3,9 @@ require 'json'
 
 class App < Sinatra::Application
 
-  before '/users/?*' do
-    halt 401, {'Content-Type'=> 'text/plain'}, "Unauthorized" if !session[:user]
-  end
+  #before '/users/?*' do
+  #  halt 401, {'Content-Type'=> 'text/plain'}, "Unauthorized" if !session[:user]
+  #end
 
   users = [
     {id: 1, name: "Dave", age: 34},
@@ -29,12 +29,12 @@ class App < Sinatra::Application
   end
 
   post "/users/?" do
-    if !@request_json
+    user = JSON.parse(request.body.read, symbolize_names: true)
+    if !user
       response.status = 422
       body "Invalid JSON"
       return
     end
-    user = @request_json
     max_id = 0
     users.each do |u|
       max_id = u[:id] if u[:id] > max_id

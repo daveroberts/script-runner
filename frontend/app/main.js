@@ -8,9 +8,11 @@ Vue.use(VueRouter)
 import App from './components/App.vue'
 import Users from './components/Users.vue'
 import Info from './components/Info.vue'
+import Script from './scripts/Script.vue'
 const routes = [
   { path: '/users', component: Users },
   { path: '/info', component: Info },
+  { path: '/scripts', component: Script },
 ]
 const router = new VueRouter({routes})
 

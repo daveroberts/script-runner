@@ -45,20 +45,49 @@
 <script>
 import state from '../state/state.js'
 export default {
+  data: function(){
+    return {
+      state: state,
+      new_user: {name: '', age: ''}
+    }
+  },
   computed: {
     users(){ return state.users }
   },
   created: function(){
-  },
-  data: function(){
-    return {
-      new_user: {name: '', age: ''}
-    }
+    fetch(`/api/users/`).then(res => {
+      if (res.ok){ return res.json() }
+    }).then(users => {
+      state.users = users
+    }).catch(err => {
+      console.log(err)
+    })
   },
   methods: {
     "remove": function(user){
+      var id = user.id
+      fetch(`/api/users/${id}`, {
+        method: "DELETE"
+      }).then(res => {
+        var idx = state.users.findIndex( u => u.id==id )
+        state.users.splice(idx, 1)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     "create_user": function(){
+      var self = this
+      fetch(`/api/users`, {
+        method: 'POST',
+        body: JSON.stringify(this.new_user)
+      }).then(res => {
+        if (res.ok){ return res.json() }
+      }).then(user => {
+        state.users.push(user)
+        self.new_user =  {name: '', age: ''}
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

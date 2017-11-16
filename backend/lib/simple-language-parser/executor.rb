@@ -195,7 +195,7 @@ module SimpleLanguage
         return obj
       else
         puts command
-        raise Exception, "unhandled command type: #{command[:type]}"
+        raise UnknownCommand, "Unknown command type: #{command[:type]}"
       end
     end
 

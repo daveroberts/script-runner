@@ -1,8 +1,10 @@
 <template>
   <div>
     <h1>Script Runner</h1>
+    <div v-if="error">{{ error }}</div>
     <textarea v-model="state.scripts.current"></textarea>
     <button class="btn" @click="run()">Do it</button>
+    <div v-if="output">{{ output }}</div>
     <pre>{{ state.scripts }}</pre>
   </div>
 </template>
@@ -15,6 +17,18 @@ export default {
     }
   },
   computed: {
+    error: function(){
+      if (state.scripts.history.length == 0){ return null }
+      const mrh = state.scripts.history[state.scripts.history.length - 1]
+      if (mrh.status != 'error'){ return null }
+      return mrh.error
+    },
+    output: function(){
+      if (state.scripts.history.length == 0){ return null }
+      const mrh = state.scripts.history[state.scripts.history.length - 1]
+      if (mrh.status != 'ok'){ return null }
+      return mrh.output
+    }
   },
   created: function(){
   },
@@ -24,11 +38,9 @@ export default {
         method: 'POST',
         body: state.scripts.current
       }).then(res => {
-        console.log(res)
-        if (res.ok){ return res.json() }
+        return res.json()
       }).then(output => {
         state.scripts.history.push(output)
-        console.log(output)
       }).catch(err => {
         console.log(err)
       })

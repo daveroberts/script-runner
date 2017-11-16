@@ -4,6 +4,8 @@ import './styles/style.less'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
+import VueCodeMirror from 'vue-codemirror'
+Vue.use(VueCodeMirror)
 
 import App from './components/App.vue'
 import Users from './components/Users.vue'

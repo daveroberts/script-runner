@@ -17,12 +17,13 @@
     "webpack-dev-server": "^2.9.4"
   },
   "scripts": {
-    "start": "webpack-dev-server --open --hot",
+    "start": "webpack-dev-server --open --hot --port 8090",
     "prebuild": "rm -rf ../backend/dist/",
     "build": "NODE_ENV=production webpack && cp -r static/* ../backend/dist/"
   },
   "dependencies": {
     "vue": "^2.5.3",
+    "vue-codemirror": "^3.1.8",
     "vue-router": "^3.0.1"
   }
 }

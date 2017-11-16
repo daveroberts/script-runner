@@ -54,7 +54,7 @@ module.exports = {
     contentBase: "./static", /* Dev server will serve files from this dir */
     proxy: {
       '/api': {
-        target: 'http://localhost:9292',
+        target: 'http://localhost:9299',
         secure: false
       }
     }

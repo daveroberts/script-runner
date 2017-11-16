@@ -15,6 +15,7 @@
       <pre class="output json" v-html="prettyJson"></pre>
     </div>
     <h2>History</h2>
+    <!-- TODO -->
     <pre>{{ state.scripts }}</pre>
   </div>
 </template>

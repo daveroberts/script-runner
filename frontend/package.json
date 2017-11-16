@@ -22,9 +22,7 @@
     "build": "NODE_ENV=production webpack && cp -r static/* ../backend/dist/"
   },
   "dependencies": {
-    "axios": "^0.16.2",
     "vue": "^2.3.4",
-    "vue-router": "^2.7.0",
-    "vuex": "^2.3.1"
+    "vue-router": "^2.7.0"
   }
 }

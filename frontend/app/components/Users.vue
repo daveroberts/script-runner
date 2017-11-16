@@ -43,19 +43,12 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import state from '../state/state.js'
 export default {
   computed: {
-    users(){ return this.$store.state.users }
+    users(){ return state.users }
   },
   created: function(){
-    var self = this
-    if (self.$store.state.users){ return }
-    axios.get('/api/users').then(function(res){
-      self.$store.commit('setUsers', res.data)
-    }).catch(function(err){
-      console.log(err)
-    })
   },
   data: function(){
     return {
@@ -64,23 +57,8 @@ export default {
   },
   methods: {
     "remove": function(user){
-      var self = this
-      axios.delete(`/api/users/${user.id}`).then(function(res){
-        self.$store.commit('removeUser', user.id)
-      }).catch(function(err){
-        console.log(err)
-      })
     },
     "create_user": function(){
-      var self = this
-      axios.post(`/api/users`, self.new_user).then(function(res){
-        var user = res.data
-        self.$store.commit('addUser', user)
-        self.new_user = {name: '', age: ''}
-        self.$refs.username.focus()
-      }).catch(function(err){
-        console.log(err)
-      })
     }
   }
 }

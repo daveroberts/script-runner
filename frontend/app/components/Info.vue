@@ -2,24 +2,23 @@
   <div>
     <div>Info: {{message}}</div>
     <div>Count: {{count}} <button @click="increment">+</button><button @click="decrement">-</button></div>
-    <div>History: {{ recentHistory }}</div>
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import state from '../state/state.js'
 export default {
   data: function(){
     return {
+      state: state,
       message: 'Hello 世界!'
     }
   },
-  computed: mapGetters([
-    'count',
-    'recentHistory'
-  ]),
-  methods: mapActions([
-    'increment',
-    'decrement'
-  ])
+  computed: {
+    count: function(){ return state.count }
+  },
+  methods: {
+    increment: function(){ state.count = state.count + 1 },
+    decrement: function(){ state.count = state.count - 1 }
+  }
 }
 </script>

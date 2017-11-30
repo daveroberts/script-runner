@@ -1,14 +1,8 @@
 class DataMapper
-  @tables = Hash.new
-  def self.register(table_name, config)
-    @tables[table_name] = config
-  end
-
-  def self.all(table_name, conditions)
+  def self.all(sql)
     stmt = nil
     results = nil
     array = nil
-    sql = "SELECT #{@tables[table_name][:columns].map{|col|"`#{col}` as #{col}"}.join(",")} FROM #{table_name}"
     variables = []
     DB.use do |db|
       stmt = db.prepare(sql)

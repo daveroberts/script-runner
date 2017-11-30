@@ -49,7 +49,7 @@ module DBMigrations
         INDEX `id_index` (`id`),
         UNIQUE KEY `name` (`name`),
         INDEX `name_index` (`name`),
-        INDEX `info_index` (`into_type`,`info_id`),
+        INDEX `info_type_id_index` (`info_type`,`info_id`),
         INDEX `active_index` (`active`),
         INDEX `created_at_index` (`created_at`)
       )"

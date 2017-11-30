@@ -1,0 +1,1 @@
+cmd=$(bundle exec ruby app/database/dbconsole.rb) && eval $cmd

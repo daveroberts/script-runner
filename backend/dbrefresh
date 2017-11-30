@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require './app/database/dbmigrate.rb'
+if ENV['APP_ENV'] != 'test' && ENV['APP_ENV'] != 'development'
+  msg = 'Can only drop a development or test database'
+  $stderr.puts msg
+  exit(-1)
+end
+puts "WARNING: This will erase all data from the database!"
+puts "Are you sure? (y/n)"
+exit(0) unless gets.chomp == 'y'
+puts "Really? (y/n)"
+exit(0) unless gets.chomp == 'y'
+DBMigrate.refresh

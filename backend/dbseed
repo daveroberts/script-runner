@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require './app/database/dbseed.rb'
+DBSeed.seed

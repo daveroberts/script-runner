@@ -1,0 +1,9 @@
+# You only need to define configuration params where there is no default, or where you wish to override the default.  See the CONFIG.md in the docs/ directory for details.
+
+[database]
+  host = "localhost"
+  database = "script_runner"
+  username = "script_runner"
+  password = "script_runner"
+  connection_limit = 1
+  ssl_pem = false

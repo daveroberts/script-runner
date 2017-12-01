@@ -1,7 +1,18 @@
 <template>
   <div>
     <h1>Saved Scripts</h1>
-    {{ scripts }}
+    {{scripts}}
+    <div class="script" v-for="script in scripts">
+      <div><span class="key">Name:</span> {{script.name}}</div>
+      <div><span class="key">Description:</span> {{script.description}}</div>
+      <div><span class="key">Active:</span> {{script.active}}</div>
+      <div><span class="key">Created:</span> {{script.created_at}}</div>
+      <div><span class="key">Triggers:</span></div>
+      <div v-for="trigger in script.triggers">
+        {{trigger}}
+      </div>
+      <div class="code">{{script.script}}</div>
+    </div>
   </div>
 </template>
 <script>
@@ -28,5 +39,9 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="less" scoped>
+@import '../styles/variables.less';
+.script{ border: 1px solid @background; margin: 1em; padding: 1em; line-height: 1.3em; }
+.key{ font-weight: bold; }
+.code{ white-space: pre; font-family: monospace; border: 1px solid #777; margin: 1em; padding: 1em; }
 </style>

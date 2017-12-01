@@ -7,14 +7,12 @@ Vue.use(VueRouter)
 import VueCodeMirror from 'vue-codemirror'
 Vue.use(VueCodeMirror)
 
-import App from './components/App.vue'
-import Users from './components/Users.vue'
-import Info from './components/Info.vue'
-import Script from './scripts/Script.vue'
+import App from './App.vue'
+import Adhoc from './scripts/Adhoc.vue'
+import SavedScripts from './scripts/SavedScripts.vue'
 const routes = [
-  { path: '/users', component: Users },
-  { path: '/info', component: Info },
-  { path: '/scripts', component: Script },
+  { path: '/scripts', component: SavedScripts },
+  { path: '/adhoc', component: Adhoc },
 ]
 const router = new VueRouter({routes})
 

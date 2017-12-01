@@ -3,6 +3,7 @@ class QueueRunner
     triggers = QueueTrigger.all
     items = QueueItem.new_items
     items.each do |item|
+      next if triggers.has_key? item[:queue_name]
       result = QueueItem.process(item[:id])
       next if result == 0
       triggers[item[:queue_name]].each do |trigger|

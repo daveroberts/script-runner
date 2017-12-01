@@ -4,7 +4,8 @@ const initial_state = {
   scripts: {
     current: "",
     history: [
-    ]
+    ],
+    saved: null
   }
 }
 

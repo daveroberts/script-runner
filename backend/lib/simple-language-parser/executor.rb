@@ -244,7 +244,7 @@ module SimpleLanguage
       when "random"
         a = exec_cmd(args[0], variables)
         b = exec_cmd(args[1], variables)
-        return Random.rand(a..b+1)
+        return Random.rand(a..b)
       when "arg"
         return @arg
       else

@@ -8,7 +8,7 @@ class DBSeed
   @scripts = [
     { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', script: "2+2" },
     { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', script: "number = random(1,10)\nqueue('numbers', number)" },
-    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', script: "number = arg()\nprint(number)" },
+    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', script: "number = arg()\nsave('numbers',number)" },
   ]
   @triggers = [
     { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[1][:id], name: "Ingest every minute", info_type: "cron", info_id: "141bd623-37a9-41be-901f-d25c9528e991" },

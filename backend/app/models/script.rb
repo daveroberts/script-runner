@@ -16,9 +16,14 @@ SELECT
   t.id as trigger_id,
   t.name as trigger_name,
   t.active as trigger_active,
-  t.created_at as trigger_created_at
+  t.created_at as trigger_created_at,
+  t.info_type as trigger_type,
+  ct.every as trigger_every,
+  qt.queue_name as trigger_queue_name
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id "
+  LEFT JOIN triggers t on s.id=t.script_id
+  LEFT JOIN cron_triggers ct ON t.info_id=ct.id AND t.info_type='cron'
+  LEFT JOIN queue_triggers qt ON t.info_id=qt.id AND t.info_type='queue' "
     stmt = nil
     results = nil
     scripts = []
@@ -47,8 +52,11 @@ FROM scripts s
               id: row[:trigger_id],
               name: row[:trigger_name],
               active: row[:trigger_active],
-              created_at: row[:trigger_created_at]
+              created_at: row[:trigger_created_at],
+              type: row[:trigger_type]
             }
+            trigger[:every] = row[:trigger_every] if trigger[:type] == 'cron'
+            trigger[:queue_name] = row[:trigger_queue_name] if trigger[:type] == 'queue'
             script[:triggers].push(trigger)
           end
         end

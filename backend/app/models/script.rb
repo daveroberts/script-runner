@@ -57,12 +57,15 @@ FROM scripts s
     return scripts
   end
 
-  def self.pull_trigger(trigger_id, script_id, script)
+  def self.pull_trigger(trigger_id, script_id, script, arg = nil)
+    puts "running script"
     executor = SimpleLanguage::Executor.new
+    q = DataQueue.new
+    executor.register("queue", q, :queue)
     output = nil
     error = nil
     begin
-      output = executor.run(script)
+      output = executor.run(script, arg)
     rescue SimpleLanguage::NullPointer => e
       error = "#{e.class.to_s} #{e.to_s}"
     end

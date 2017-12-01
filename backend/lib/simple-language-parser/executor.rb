@@ -30,7 +30,8 @@ module SimpleLanguage
       }
     end
 
-    def run(script)
+    def run(script, arg = nil)
+      @arg = arg
       tokens = SimpleLanguage::Tokenizer.new.tokenize(script)
       program = SimpleLanguage::Parser.new.parse(tokens)
       run_block(program, {})
@@ -200,7 +201,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','len','random']
+      system_cmds = ['print','join','push','map','len','random', 'arg']
       return system_cmds.include? fun
     end
 
@@ -244,6 +245,8 @@ module SimpleLanguage
         a = exec_cmd(args[0], variables)
         b = exec_cmd(args[1], variables)
         return Random.rand(a..b+1)
+      when "arg"
+        return @arg
       else
         raise Exception, "system call '#{fun}' not implemented"
       end

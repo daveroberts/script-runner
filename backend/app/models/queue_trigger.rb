@@ -20,10 +20,9 @@ FROM queue_triggers qt
 WHERE
   t.active = true AND s.active = true
 GROUP BY t.id"
-puts sql
     stmt = nil
     results = nil
-    triggers = []
+    queues = {}
     DB.use do |db|
       stmt = db.prepare(sql)
       results = stmt.execute()
@@ -38,9 +37,10 @@ puts sql
           script: row[:script_script],
           last_run: row[:last_run]
         }
-        triggers.push(trigger)
+        queues[trigger[:queue_name]] = [] if !queues.has_key? trigger[:queue_name]
+        queues[trigger[:queue_name]].push(trigger)
       end
     end
-    return triggers
+    return queues
   end
 end

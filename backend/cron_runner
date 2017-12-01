@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require_relative 'app/app.rb'
+
+puts "Starting cron runner"
+while true
+  CronRunner.run
+  sleep 10
+end

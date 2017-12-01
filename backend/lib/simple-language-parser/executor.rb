@@ -200,7 +200,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','len']
+      system_cmds = ['print','join','push','map','len','random']
       return system_cmds.include? fun
     end
 
@@ -240,6 +240,10 @@ module SimpleLanguage
         collection = exec_cmd(args[0], variables)
         item = exec_cmd(args[1], variables)
         collection.push item
+      when "random"
+        a = exec_cmd(args[0], variables)
+        b = exec_cmd(args[1], variables)
+        return Random.rand(a..b+1)
       else
         raise Exception, "system call '#{fun}' not implemented"
       end

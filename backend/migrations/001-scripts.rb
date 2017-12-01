@@ -24,16 +24,17 @@ module DBMigrations
       sql = "CREATE TABLE `script_runs` (
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
-        `name` VARCHAR(255) NOT NULL,
+        `script_id` VARCHAR(255),
         `trigger_id` VARCHAR(255),
-        `description` VARCHAR(255),
         `script` TEXT,
         `output` TEXT,
+        `error` TEXT,
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
-        UNIQUE KEY `name` (`name`),
-        INDEX `name_index` (`name`)
+        INDEX `trigger_id_index` (`trigger_id`),
+        INDEX `script_id_index` (`script_id`),
+        INDEX `run_at_index` (`run_at`)
       )"
       db.query(sql)
       sql = "CREATE TABLE `triggers` (

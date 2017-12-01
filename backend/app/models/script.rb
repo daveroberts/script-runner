@@ -1,4 +1,5 @@
 require './app/database/database.rb'
+require 'securerandom'
 
 # manages scripts in database
 class Script
@@ -54,5 +55,26 @@ FROM scripts s
       end
     end
     return scripts
+  end
+
+  def self.pull_trigger(trigger_id, script_id, script)
+    executor = SimpleLanguage::Executor.new
+    output = nil
+    error = nil
+    begin
+      output = executor.run(script)
+    rescue SimpleLanguage::NullPointer => e
+      error = "#{e.class.to_s} #{e.to_s}"
+    end
+    script_run = {
+      id: SecureRandom.uuid,
+      script_id: script_id,
+      trigger_id: trigger_id,
+      script: script,
+      output: output,
+      error: error,
+      run_at: Time.now
+    }
+    DataMapper.insert("script_runs", script_run)
   end
 end

@@ -9,8 +9,8 @@ class DBSeed
     { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', script: "2+2" }
   ]
   @triggers = [
-    { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[0], name: "Trigger 1", info_type: "dummy", info_id: "dummy" },
-    { id: 'a4fb5301-f4d7-46c8-86c3-fd991f91915c', script_id: @scripts[0], name: "Trigger 2", info_type: "dummy", info_id: "dummy" }
+    { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[0][:id], name: "Trigger 1", info_type: "dummy", info_id: "dummy" },
+    { id: 'a4fb5301-f4d7-46c8-86c3-fd991f91915c', script_id: @scripts[0][:id], name: "Trigger 2", info_type: "dummy", info_id: "dummy" }
   ]
   def self.seed
     puts 'Seeding database'

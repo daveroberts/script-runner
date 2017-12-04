@@ -39,6 +39,20 @@ class DataMapper
         self.process_row(obj[name], row, rel[name])
       end
     end
+    if conf.has_key? :has_one
+      conf[:has_one].each do |rel|
+        name = rel.keys.first
+        arr = nil
+        if obj.has_key?(name) && obj[name]
+          arr = [obj[name]]
+        else
+          arr = []
+          obj[name] = nil
+        end
+        self.process_row(arr, row, rel[name])
+        obj[name] = arr[0] if arr.length > 0
+      end
+    end
     array.push(obj) if any && brand_new
   end
 

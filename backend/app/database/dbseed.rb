@@ -6,9 +6,9 @@ require './app/lib/data_mapper.rb'
 # Adds a demo data set to the database
 class DBSeed
   @scripts = [
-    { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', script: "2+2" },
-    { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', script: "number = random(1,10)\nqueue('numbers', number)" },
-    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', script: "number = arg()\nsave('numbers',number)" },
+    { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', code: "2+2" },
+    { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', code: "number = random(1,10)\nqueue('numbers', number)" },
+    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', code: "number = arg()\nsave('numbers',number)" },
   ]
   @triggers = [
     { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[1][:id], name: "Ingest every minute", info_type: "cron", info_id: "141bd623-37a9-41be-901f-d25c9528e991" },
@@ -21,8 +21,8 @@ class DBSeed
     { id: @triggers[1][:info_id], queue_name: "numbers" }
   ]
   @script_runs = [
-    { id: '27ca4650-6c6d-4a23-a588-c34d8b5377bc', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], script:"dummy", output: "dummy", run_at: DateTime.new(1982, 7, 15)},
-    { id: 'd19c8caa-ec49-4cc1-824b-2bb2f78c61f9', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], script:"dummy", output: "dummy", run_at: DateTime.new(1776, 7, 4)},
+    { id: '27ca4650-6c6d-4a23-a588-c34d8b5377bc', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:"dummy", output: "dummy", run_at: DateTime.new(1982, 7, 15)},
+    { id: 'd19c8caa-ec49-4cc1-824b-2bb2f78c61f9', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:"dummy", output: "dummy", run_at: DateTime.new(1776, 7, 4)},
   ]
   def self.seed
     puts 'Seeding database'
@@ -31,7 +31,7 @@ class DBSeed
         id: script[:id],
         name: script[:name],
         description: "Sample description",
-        script: script[:script],
+        code: script[:code],
         active: true,
         created_at: DateTime.now
       }
@@ -43,7 +43,7 @@ class DBSeed
         id: run[:id],
         script_id: run[:script_id],
         trigger_id: run[:trigger_id],
-        script: run[:script],
+        code: run[:code],
         output: run[:output],
         run_at: run[:run_at]
       }

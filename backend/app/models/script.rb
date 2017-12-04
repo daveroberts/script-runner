@@ -7,62 +7,29 @@ class Script
   def self.all
     sql = "
 SELECT
-  s.id as script_id,
-  s.name as script_name,
-  s.description as script_description,
-  s.script as script_script,
-  s.active as script_active,
-  s.created_at as script_created_at,
-  t.id as trigger_id,
-  t.name as trigger_name,
-  t.active as trigger_active,
-  t.created_at as trigger_created_at,
-  t.info_type as trigger_type,
-  ct.every as trigger_every,
-  qt.queue_name as trigger_queue_name
+  s.id as s_id,
+  s.name as s_name,
+  s.code as s_code,
+  sr.id as sr_id,
+  sr.code as sr_code,
+  sr.run_at as sr_time_run,
+  t.id as t_id,
+  t.name as t_name,
+  ct.every as t_every,
+  qt.queue_name as t_queue_name
 FROM scripts s
+  LEFT JOIN script_runs sr on s.id=sr.script_id
   LEFT JOIN triggers t on s.id=t.script_id
-  LEFT JOIN cron_triggers ct ON t.info_id=ct.id AND t.info_type='cron'
-  LEFT JOIN queue_triggers qt ON t.info_id=qt.id AND t.info_type='queue' "
-    stmt = nil
-    results = nil
-    scripts = []
-    variables = []
-    DB.use do |db|
-      stmt = db.prepare(sql)
-      results = stmt.execute(*variables)
-      results.each do |row|
-        script = scripts.detect{|s|s[:id]==row[:script_id]}
-        if !script
-          script = {
-            id: row[:script_id],
-            name: row[:script_name],
-            description: row[:script_description],
-            script: row[:script_script],
-            active: row[:script_active],
-            created_at: row[:script_created_at],
-            triggers: []
-          }
-          scripts.push(script)
-        end
-        if row[:trigger_id]
-          trigger = script[:triggers].detect{|t|t[:id]==row[:trigger_id]}
-          if !trigger
-            trigger = {
-              id: row[:trigger_id],
-              name: row[:trigger_name],
-              active: row[:trigger_active],
-              created_at: row[:trigger_created_at],
-              type: row[:trigger_type]
-            }
-            trigger[:every] = row[:trigger_every] if trigger[:type] == 'cron'
-            trigger[:queue_name] = row[:trigger_queue_name] if trigger[:type] == 'queue'
-            script[:triggers].push(trigger)
-          end
-        end
-      end
-    end
-    return scripts
+  LEFT JOIN cron_triggers ct on t.info_type='cron' AND t.info_id=ct.id
+  LEFT JOIN queue_triggers qt on t.info_type='queue' AND t.info_id=qt.id
+    "
+    DataMapper.select(sql, {
+      prefix: 's',
+      has_many: [
+        { script_runs: { prefix: 'sr' } },
+        { triggers:    { prefix: 't'  } }
+      ]
+    })
   end
 
   def self.run_ad_hoc(script, arg = nil)

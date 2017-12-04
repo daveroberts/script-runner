@@ -7,16 +7,8 @@ class Script
   def self.all
     sql = "
 SELECT
-  s.id as s_id,
-  s.name as s_name,
-  s.code as s_code,
-  sr.id as sr_id,
-  sr.code as sr_code,
-  sr.run_at as sr_time_run,
-  t.id as t_id,
-  t.name as t_name,
-  ct.every as t_every,
-  qt.queue_name as t_queue_name
+  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
+  t.id as t_id, t.name as t_name, ct.every as t_every, qt.queue_name as t_queue_name
 FROM scripts s
   LEFT JOIN script_runs sr on s.id=sr.script_id
   LEFT JOIN triggers t on s.id=t.script_id
@@ -26,10 +18,29 @@ FROM scripts s
     DataMapper.select(sql, {
       prefix: 's',
       has_many: [
-        { script_runs: { prefix: 'sr' } },
-        { triggers:    { prefix: 't'  } }
+        { triggers: { prefix: 't' } }
       ]
     })
+  end
+
+  def self.for_queue(name)
+    sql = "
+SELECT
+  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
+  t.id as t_id, t.name as t_name, qt.queue_name as t_queue_name
+FROM scripts s
+  LEFT JOIN script_runs sr on s.id=sr.script_id
+  LEFT JOIN triggers t on s.id=t.script_id
+  LEFT JOIN queue_triggers qt on t.info_type='queue' AND t.info_id=qt.id
+WHERE
+  qt.queue_name = ?
+    "
+    DataMapper.select(sql, {
+      prefix: 's',
+      has_many: [
+        { triggers: { prefix: 't'  } }
+      ]
+    }, name)
   end
 
   def self.run_ad_hoc(script, arg = nil)

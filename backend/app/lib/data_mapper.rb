@@ -9,7 +9,7 @@ class DataMapper
     end
   end
 
-  def self.select(sql, conf, variables = [])
+  def self.select(sql, conf={}, variables = [])
     DB.use do |db|
       stmt = db.prepare(sql)
       results = stmt.execute(*variables)

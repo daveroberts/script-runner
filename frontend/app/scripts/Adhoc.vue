@@ -10,7 +10,7 @@
     </div>
     <div v-if="output">
       <h2>Script Run</h2>
-      <pre>{{ most_recent.script }}</pre>
+      <pre>{{ most_recent.code }}</pre>
       <h2>Output</h2>
       <pre class="output json" v-html="prettyJson"></pre>
     </div>

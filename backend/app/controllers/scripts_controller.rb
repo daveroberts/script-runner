@@ -11,11 +11,11 @@ class App < Sinatra::Application
   end
 
   post "/run/?" do
-    script = request.body.read
-    output = Script.run_adhoc(script)
+    code = request.body.read
+    output = Script.run_code(code)
     return {
       status: "ok",
-      script: script,
+      code: code,
       output: output
     }.to_json
   end

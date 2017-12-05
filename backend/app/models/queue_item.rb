@@ -5,11 +5,13 @@ require 'securerandom'
 class QueueItem
 
   def self.new_items
+    return "todo"
     sql = "
 SELECT
   qi.id,
   qi.queue_name,
   qi.state,
+  qi.item_key,
   qi.item,
   qi.created_at
 FROM queue_items qi

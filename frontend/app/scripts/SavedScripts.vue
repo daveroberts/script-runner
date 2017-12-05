@@ -1,21 +1,31 @@
 <template>
   <div>
     <h1>Saved Scripts</h1>
-    <div class="script" v-for="script in scripts">
-      <a href="#" :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">
-        <div><span class="key">Name:</span> {{script.name}}</div>
-        <div><span class="key">Description:</span> {{script.description}}</div>
-        <div><span class="key">Active:</span> {{script.active}}</div>
-        <div><span class="key">Created:</span> {{script.created_at}}</div>
-        <div><span class="key">Triggers:</span></div>
-        <div v-for="trigger in script.triggers">
-          {{trigger.name}}
-          {{trigger.every}}
-          {{trigger.queue_name}}
-        </div>
-        <div class="code">{{script.code}}</div>
-      </a>
-    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Last Run</th>
+          <th>Active</th>
+          <th>Created</th>
+          <th>Triggered by</th>
+        </tr>
+      </thead>
+      <tbody class="script" v-for="script in scripts">
+        <td><a href="#" :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
+        <td>{{script.description}}</td>
+        <td>last run</td>
+        <td>{{script.active}}</td>
+        <td>{{script.created_at}}</td>
+        <td>
+          <div v-for="trigger in script.triggers">
+            <span v-if="trigger.type == 'CRON'">CRON {{trigger.every}}</span>
+            <span v-if="trigger.type == 'QUEUE'">QUEUE {{trigger.queue_name}}</span>
+          </div>
+        </td>
+      </tbody>
+    </table>
   </div>
 </template>
 <script>
@@ -51,5 +61,4 @@ export default {
 @import '../styles/variables.less';
 .script{ border: 1px solid @background; margin: 1em; padding: 1em; line-height: 1.3em; }
 .key{ font-weight: bold; }
-.code{ white-space: pre; font-family: monospace; border: 1px solid #777; margin: 1em; padding: 1em; }
 </style>

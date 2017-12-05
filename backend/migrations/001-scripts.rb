@@ -41,35 +41,17 @@ module DBMigrations
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255) NOT NULL,
-        `name` VARCHAR(255) NOT NULL,
-        `info_type` VARCHAR(255) NOT NULL,
-        `info_id` VARCHAR(255) NOT NULL,
+        `type` VARCHAR(255) NOT NULL,
         `active` BOOLEAN NOT NULL,
+        `every` INTEGER,
+        `queue_name` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
-        UNIQUE KEY `name` (`name`),
-        INDEX `name_index` (`name`),
-        INDEX `info_type_id_index` (`info_type`,`info_id`),
+        INDEX `type_index` (`type`),
         INDEX `active_index` (`active`),
+        INDEX `queue_name_index` (`queue_name`),
         INDEX `created_at_index` (`created_at`)
-      )"
-      db.query(sql)
-      sql = "CREATE TABLE `cron_triggers` (
-        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        `id` VARCHAR(255) NOT NULL,
-        `every` INTEGER NOT NULL,
-        UNIQUE KEY `id` (`id`),
-        INDEX `id_index` (`id`)
-      )"
-      db.query(sql)
-      sql = "CREATE TABLE `queue_triggers` (
-        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        `id` VARCHAR(255) NOT NULL,
-        `queue_name` VARCHAR(255) NOT NULL,
-        UNIQUE KEY `id` (`id`),
-        INDEX `id_index` (`id`),
-        INDEX `queue_name_index` (`queue_name`)
       )"
       db.query(sql)
       sql = "CREATE TABLE `queue_items` (
@@ -77,11 +59,13 @@ module DBMigrations
         `id` VARCHAR(255) NOT NULL,
         `queue_name` VARCHAR(255) NOT NULL,
         `state` VARCHAR(255) NOT NULL,
+        `item_key` VARCHAR(255) NOT NULL,
         `item` TEXT NOT NULL,
         `created_at` DATETIME NOT NULL,
-        UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
         INDEX `queue_name_index` (`queue_name`),
+        INDEX `item_key_index` (`item_key`, `queue_name`),
+        UNIQUE KEY `item_key` (`item_key`, `queue_name`),
         INDEX `queue_name_state_index` (`queue_name`, `state`),
         INDEX `queue_name_created_at_index` (`queue_name`, `created_at`)
       )"

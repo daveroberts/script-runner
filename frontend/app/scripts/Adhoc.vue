@@ -3,7 +3,7 @@
     <h1>Script Runner</h1>
     <div v-if="error">{{ error }}</div>
     <div class="code_editor">
-      <codemirror v-model="state.scripts.current" :options="editorOptions"></codemirror>
+      <codemirror v-model="state.adhoc.code" :options="editorOptions"></codemirror>
     </div>
     <div style="margin: 1em 0;">
       <button class="btn" @click="run()">Do it</button>
@@ -16,7 +16,6 @@
     </div>
     <h2>History</h2>
     <!-- TODO -->
-    <pre>{{ state.scripts }}</pre>
   </div>
 </template>
 <script>
@@ -35,8 +34,8 @@ export default {
   },
   computed: {
     most_recent: function(){
-      if (state.scripts.history.length == 0){ return null }
-      return state.scripts.history[state.scripts.history.length - 1]
+      if (state.adhoc.history.length == 0){ return null }
+      return state.adhoc.history[state.adhoc.history.length - 1]
     },
     error: function(){
       if (!this.most_recent){ return null }
@@ -75,11 +74,11 @@ export default {
     "run": function(){
       fetch(`/api/run`, {
         method: 'POST',
-        body: state.scripts.current
+        body: state.adhoc.code
       }).then(res => {
         return res.json()
       }).then(output => {
-        state.scripts.history.push(output)
+        state.adhoc.history.push(output)
       }).catch(err => {
         console.log(err)
       })

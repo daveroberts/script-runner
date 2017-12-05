@@ -1,12 +1,14 @@
 const initial_state = {
-  count: 0,
-  users: null,
-  scripts: {
-    current: "",
+  current: {
+    script: null,
+    runs: null
+  },
+  adhoc: {
+    code: "",
     history: [
-    ],
-    saved: null
-  }
+    ]
+  },
+  list: null
 }
 
 export default initial_state

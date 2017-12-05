@@ -1,5 +1,4 @@
 require "sinatra"
-require "./lib/simple-language-parser/executor.rb"
 
 # scripts_controller.rb
 class App < Sinatra::Application
@@ -7,9 +6,13 @@ class App < Sinatra::Application
     return Script.all.to_json
   end
 
+  get "/scripts/:id/?" do
+    return Script.find(params[:id]).to_json
+  end
+
   post "/run/?" do
     script = request.body.read
-    output = Script.run_ad_hoc(script)
+    output = Script.run_adhoc(script)
     return {
       status: "ok",
       script: script,

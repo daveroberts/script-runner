@@ -10,7 +10,6 @@ SELECT
   s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
   t.id as t_id, t.name as t_name, ct.every as t_every, qt.queue_name as t_queue_name
 FROM scripts s
-  LEFT JOIN script_runs sr on s.id=sr.script_id
   LEFT JOIN triggers t on s.id=t.script_id
   LEFT JOIN cron_triggers ct on t.info_type='cron' AND t.info_id=ct.id
   LEFT JOIN queue_triggers qt on t.info_type='queue' AND t.info_id=qt.id
@@ -43,7 +42,26 @@ WHERE
     }, name)
   end
 
-  def self.run_ad_hoc(script, arg = nil)
+  def self.find(id)
+    sql = "
+SELECT
+  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
+  t.id as t_id, t.name as t_name, ct.every as t_every, qt.queue_name as t_queue_name
+FROM scripts s
+  LEFT JOIN triggers t on s.id=t.script_id
+  LEFT JOIN cron_triggers ct on t.info_type='cron' AND t.info_id=ct.id
+  LEFT JOIN queue_triggers qt on t.info_type='queue' AND t.info_id=qt.id
+WHERE s.id = ?
+    "
+    DataMapper.select(sql, {
+      prefix: 's',
+      has_many: [
+        { triggers: { prefix: 't' } }
+      ]
+    }, id).first
+  end
+
+  def self.run_adhoc(script, arg = nil)
     executor = SimpleLanguage::Executor.new
     q = DataQueue.new
     executor.register("queue", q, :queue)
@@ -63,7 +81,7 @@ WHERE
       id: SecureRandom.uuid,
       script_id: nil,
       trigger_id: nil,
-      script: script,
+      code: script,
       output: output,
       error: error,
       run_at: Time.now

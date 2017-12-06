@@ -74,12 +74,25 @@
               <th></th>
               <td>
                 <button type="submit" class="btn btn-main" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
-                <button type="button" class="btn" @click="cancel()"> <i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+                <button v-if="script.id" type="button" class="btn" @click="cancel()"> <i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
               </td>
             </tr>
           </tbody>
         </table>
       </form>
+      <h2>Run now</h2>
+      <div class="fancy_checkbox">
+        <input id="input_send" type="checkbox" v-model="state.current.input.send" />
+        <label for="input_send"></label>
+      </div>
+      <label for="input_send">Send Input</label>
+      <div v-if="state.current.input.send" class="code_editor">
+        <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
+      </div>
+      <div style="margin: 1em 0;">
+        <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
+      </div>
+      <pre>{{state.current.runs}}</pre>
       <div v-if="!editing">
         <h2>Last 10 Runs</h2>
         <table class="table">
@@ -123,7 +136,8 @@ export default {
     runs(){ return state.current.runs },
   },
   created: function(){
-    if (!state.current.script || state.current.script.id != this.$route.params.id) {
+    if (this.$route.params.id == 'new'){ this.editing = true }
+    if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
       fetch(`/api/scripts/${this.$route.params.id}`).then((res)=>{
         if (res.ok){ return res.json() }
@@ -170,6 +184,19 @@ export default {
     remove_trigger(trigger){
       var idx = state.current.script.triggers.indexOf(trigger)
       if (idx > -1){ state.current.script.triggers.splice(idx, 1) }
+    },
+    run(){
+      fetch(`/api/run`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(state.current)
+      }).then(res => {
+        return res.json()
+      }).then(output => {
+        state.current.runs.push(output)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

@@ -5,17 +5,20 @@ const initial_state = {
     {id: 6, msg: 'danger', show: true, type: 'danger'},*/
   ],
   current: {
-    script: null,
-    runs: null
-  },
-  adhoc: {
+    script: {
+      id: null,
+      name: "",
+      description: "",
+      code: "",
+      active: true,
+      created_at: null,
+      triggers: []
+    },
+    runs: null,
     input: {
       send: false,
       payload: ""
-    },
-    code: "",
-    history: [
-    ]
+    }
   },
   list: null,
   blank: {

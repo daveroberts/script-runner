@@ -1,5 +1,6 @@
 <template>
   <div>
+    <a class="btn" href="/#/scripts/new" @click="new_script()"><i class="fa fa-file-text-o"></i> New Script</a>
     <h1>Saved Scripts</h1>
     <table class="table">
       <thead>
@@ -53,6 +54,9 @@ export default {
     select(script){
       state.current = JSON.parse(JSON.stringify(initial.current))
       state.current.script = script
+    },
+    new_script(){
+      state.current = JSON.parse(JSON.stringify(initial.current))
     }
   }
 }

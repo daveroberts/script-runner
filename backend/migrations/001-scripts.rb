@@ -26,6 +26,7 @@ module DBMigrations
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255),
         `trigger_id` VARCHAR(255),
+        `input` TEXT,
         `code` TEXT,
         `output` TEXT,
         `error` TEXT,

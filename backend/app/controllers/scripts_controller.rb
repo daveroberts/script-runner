@@ -26,10 +26,10 @@ class App < Sinatra::Application
     script = JSON.parse(request.body.read, symbolize_names: true)
     arg = nil
     arg = JSON.parse(script[:input][:payload]) if script[:input][:send]
-    output = Script.run_code(script[:code], arg)
+    output = Script.run_code(script[:script][:code], arg)
     return {
       status: "ok",
-      code: script[:code],
+      code: script[:script][:code],
       output: output
     }.to_json
   end

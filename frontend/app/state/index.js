@@ -14,4 +14,5 @@ export const flash = (msg) => {
   }, 3500 )
 }
 
+export const new_script = () => JSON.parse(JSON.stringify(initial.blank.script))
 export const new_trigger = () => JSON.parse(JSON.stringify(initial.blank.trigger))

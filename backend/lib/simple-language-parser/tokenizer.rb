@@ -19,6 +19,7 @@ module SimpleLanguage
       { type: :elsif, regex: /^elsif/ },
       { type: :else, regex: /^else/ },
       { type: :foreach, regex: /^foreach/ },
+      { type: :word, regex: /^input/ }, # Special case
       { type: :in, regex: /^in/ },
       { type: :loop, regex: /^loop/ },
       { type: :while, regex: /^while/ },

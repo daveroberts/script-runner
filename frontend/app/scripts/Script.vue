@@ -1,5 +1,6 @@
 <template>
   <div>
+    <queue-browser queue_name="testing"></queue-browser>
     <div v-if="script">
       <h1 v-if="script.name">{{script.name}}</h1>
       <h1 v-else>Code</h1>
@@ -111,6 +112,7 @@
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import QueueBrowser from '../queues/Browser.vue'
 export default {
   data: function(){
     return {
@@ -125,6 +127,7 @@ export default {
       }
     }
   },
+  components: { QueueBrowser },
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs }

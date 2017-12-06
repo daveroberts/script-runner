@@ -21,6 +21,13 @@ class DBSeed
     { id: '6684f5e4-518a-4b08-855a-dcc24327a60b', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], code:@scripts[2][:code], output: "", run_at: DateTime.new(2017, 12, 4)},
     { id: '0e2336da-4e49-4233-a491-70ea8b77e7a2', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], code:@scripts[2][:code], output: "", run_at: DateTime.new(2017, 12, 5)},
   ]
+  @queue_items = [
+    { id: 'b57bf943-072c-47eb-88db-e3c55fc32190', queue_name: 'numbers', state: 'NEW', item_key: '58c6fe21-cb16-4847-b3dd-171c5d6888e0', item: '4' },
+    { id: 'e8fb67c4-99fd-43f3-8552-f2cd13b740f8', queue_name: 'numbers', state: 'NEW', item_key: 'd18f2231-cea2-4e92-b7a3-3c0603e16c8e', item: '8' },
+    { id: 'b7151457-4f3d-4fed-a0ef-b7f5d9f631d8', queue_name: 'numbers', state: 'NEW', item_key: '4b5ca664-43c0-48f2-a7e2-e590533876f9', item: '15' },
+    { id: '35081bef-384b-4c63-8f1c-99644b8664e9', queue_name: 'numbers', state: 'NEW', item_key: '6132c06b-7b4f-4ff4-90d0-8a75781c9b48', item: '16' },
+    { id: '8afec2ab-cb78-41c2-aa56-b307057d4e94', queue_name: 'numbers', state: 'PROCESSED', item_key: '7627c311-ec03-4d63-9c79-e0bddb97cd63', item: '23' },
+  ]
   def self.seed
     puts 'Seeding database'
     @scripts.each do |script|
@@ -60,6 +67,18 @@ class DBSeed
       DataMapper.insert("triggers", values)
     end
     puts "Added #{@triggers.count} triggers"
+    @queue_items.each do |qi|
+      values = {
+        id: qi[:id],
+        queue_name: qi[:queue_name],
+        state: qi[:state],
+        item_key: qi[:item_key],
+        item: qi[:item],
+        created_at: DateTime.now
+      }
+      DataMapper.insert("queue_items", values)
+    end
+    puts "Added #{@queue_items.count} queue_items"
     puts 'Done seeding DB'
   end
 end

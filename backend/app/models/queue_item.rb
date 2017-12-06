@@ -4,30 +4,22 @@ require 'securerandom'
 # manages scripts in database
 class QueueItem
 
+  @columns = [:id, :queue_name, :state, :script_run_id, :item_key, :item, :created_at]
+
   def self.new_items
-    return "todo"
-    sql = "
-SELECT
-  qi.id,
-  qi.queue_name,
-  qi.state,
-  qi.item_key,
-  qi.item,
-  qi.created_at
-FROM queue_items qi
-WHERE qi.state = 'NEW'
-ORDER BY qi.created_at ASC"
-    stmt = nil
-    results = nil
-    items = []
-    DB.use do |db|
-      stmt = db.prepare(sql)
-      results = stmt.execute()
-      results.each do |row|
-        items.push(row)
-      end
-    end
-    return items
+    sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
+           FROM queue_items qi
+           WHERE qi.state = 'NEW'
+           ORDER BY qi.created_at ASC"
+    DataMapper.select(sql, { prefix: 'qi' })
+  end
+
+  def self.by_queue_name(name)
+    sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
+           FROM queue_items qi
+           WHERE qi.queue_name = ?
+           ORDER BY qi.created_at ASC"
+    DataMapper.select(sql, { prefix: 'qi' }, [name])
   end
 
   def self.process(id)

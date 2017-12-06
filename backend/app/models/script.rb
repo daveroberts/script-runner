@@ -1,6 +1,13 @@
 require 'securerandom'
 require './lib/simple-language-parser/executor.rb'
 
+class InvalidScript < StandardError
+  attr_reader :error
+  def initialize(error)
+    @error = error
+  end
+end
+
 # manages scripts in database
 class Script
 
@@ -54,6 +61,71 @@ WHERE s.id = ?
         { triggers: { prefix: 't' } }
       ]
     }, id).first
+  end
+
+  def self.save(script)
+    validation_errors = self.validation_errors(script)
+    raise InvalidScript, validation_errors if validation_errors
+    self.update(script) if script[:id]
+    self.insert(script) if !script[:id]
+    return script
+  end
+
+  def self.validation_errors(script)
+    field_errors = {}
+    field_errors[:name] = "Name cannot be blank" if script[:name].blank?
+    return {
+      error_type: 'validation',
+      message: 'Could not save the script.  There was a validation error.',
+      field_errors: field_errors
+    } if field_errors.any?
+    return nil
+  end
+
+  def self.script_to_fields(script)
+    return {
+      id:          script[:id],
+      name:        script[:name],
+      description: script[:description],
+      code:        script[:code],
+      active:      script[:active],
+      created_at:  script[:created_at]
+    }
+  end
+
+  def self.update(script)
+    fields = script_to_fields script
+    DataMapper.update('scripts', fields)
+    self.save_triggers(script)
+    return script
+  end
+
+  def self.insert(script)
+    script[:id] = SecureRandom.uuid unless script[:id]
+    script[:created_at] = Time.now unless script[:created_at]
+    fields = script_to_fields script
+    DataMapper.insert('scripts', fields)
+    self.save_triggers(script)
+    return script
+  end
+
+  def self.save_triggers(script)
+    script[:triggers].each do |trigger|
+      trigger[:script_id] = script[:id]
+      trigger[:created_at] = Time.now unless trigger[:created_at]
+      if trigger[:id]
+        DataMapper.update("triggers", trigger)
+      else
+        trigger[:id] = SecureRandom.uuid unless trigger[:id]
+        DataMapper.insert("triggers", trigger)
+      end
+    end
+    # delete doomed triggers
+    sql = "DELETE FROM triggers WHERE script_id=? and id NOT IN (#{script[:triggers].map{|t|"'#{t[:id]}'"}.join(',')})"
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      stmt.execute(script[:id])
+    end
   end
 
   def self.run_code(code, arg = nil, script_id=nil, trigger_id=nil)

@@ -2,53 +2,65 @@
   <div>
     <div v-if="script">
       <h1>{{script.name}}</h1>
-      <button @click="toggle_edit()">flipmode</button>
-      <form>
-        <table class="table">
+      <button type="button" v-if="!editing" class="btn" @click="edit()"><i class="fa fa-pencil"></i> Edit</button>
+      <form @submit.prevent="save()">
+        <table>
           <tbody>
-            <tr>
-              <th>Name</th>
+            <tr class="form_row">
+              <th class="form_label">Name</th>
               <td>
                 <input v-if="editing" type="text" v-model="script.name" />
                 <span v-else>{{script.name}}</span>
               </td>
             </tr>
-            <tr>
-              <th>Description</th>
+            <tr class="form_row">
+              <th class="form_label">Description</th>
               <td>
                 <input v-if="editing" type="text" v-model="script.description" />
                 <span v-else>{{script.description}}</span>
               </td>
             </tr>
           </tbody>
-          <tbody v-for="trigger in script.triggers">
-            <tr>
-              <th>Type</th>
+          <tbody class="form_section" v-for="(trigger, index) in script.triggers">
+            <tr class="form_row" v-if="script.triggers.length > 1">
+              <th colspan="2" style="text-align: left;">Trigger #{{index+1}}</th>
+            </tr>
+            <tr class="form_row">
+              <th class="form_label">Type</th>
               <td>
-                <select v-if="editing" v-model="trigger.type">
-                  <option v-for="type in trigger_types" v-bind:value="type">{{type}}</option>
-                </select>
+                <span v-if="editing">
+                  <select v-model="trigger.type">
+                    <option v-for="type in trigger_types" v-bind:value="type">{{type}}</option>
+                  </select>
+                  <button type="button" class="btn btn-small btn-danger" @click="remove_trigger(trigger)"><i class="fa fa-minus-circle" aria-hidden="true"></i> remove</button>
+                </span>
                 <span v-else>{{trigger.type}}</span>
               </td>
             </tr>
-            <tr v-if="trigger.type == 'CRON'">
-              <th>Every</th>
+            <tr class="form_row" v-if="trigger.type == 'CRON'">
+              <th class="form_label">Every</th>
               <td>
-                <span v-if="editing"><input type="text" v-model="trigger.every" /> minutes</span>
+                <span v-if="editing"><input type="number" style="width: 4em;" v-model="trigger.every" /> minutes</span>
                 <span v-else>{{trigger.every}} minutes</span>
               </td>
             </tr>
-            <tr v-if="trigger.type == 'QUEUE'">
-              <th>Queue Name</th>
+            <tr class="form_row" v-if="trigger.type == 'QUEUE'">
+              <th class="form_label">Queue Name</th>
               <td>
                 <input v-if="editing" type="text" v-model="trigger.queue_name" />
                 <span v-else>{{trigger.queue_name}}</span>
               </td>
             </tr>
           </tbody>
+          <tbody v-if="editing">
+            <tr class="form_row">
+              <th></th>
+              <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
+            </tr>
+          </tbody>
           <tbody>
-            <tr>
-              <th>Code</th>
+            <tr class="form_row">
+              <th class="form_label">Code</th>
               <td>
                 <div v-if="editing" class="code_editor">
                   <codemirror v-model="script.code" :options="editorOptions"></codemirror>
@@ -58,9 +70,12 @@
                 </div>
               </td>
             </tr>
-            <tr>
+            <tr v-if="editing" class="form_row">
               <th></th>
-              <td><button>Save</button></td>
+              <td>
+                <button type="submit" class="btn btn-main" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+                <button type="button" class="btn" @click="cancel()"> <i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -87,6 +102,7 @@
 </template>
 <script>
 import state from '../state/state.js'
+import * as senate from '../state'
 import initial from '../state/initial.js'
 export default {
   data: function(){
@@ -128,7 +144,33 @@ export default {
     }
   },
   methods: {
-    toggle_edit(){ this.editing = !this.editing }
+    edit(){ this.editing = true },
+    cancel(){ this.editing = false },
+    save(){
+      fetch(`/api/scripts`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(state.current.script)
+      }).then(res => {
+        if (res.ok){ return res.json() }
+        console.log(res)
+        throw new Error("not OK")
+      }).then( data => {
+        console.log(data)
+        senate.flash("Script saved")
+        state.current.script = data.script
+        this.editing = false
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    add_trigger(){
+      state.current.script.triggers.push(senate.new_trigger())
+    },
+    remove_trigger(trigger){
+      var idx = state.current.script.triggers.indexOf(trigger)
+      if (idx > -1){ state.current.script.triggers.splice(idx, 1) }
+    }
   }
 }
 </script>

@@ -1,7 +1,7 @@
 require './app/database/database.rb'
 
 module DBMigrations
-  # Adds scrapes table to DB
+  # Adds scripts table to DB
   class Scripts
     def self.up
       db = DB.raw_connection

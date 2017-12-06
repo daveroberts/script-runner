@@ -1,86 +1,15 @@
 <template>
   <div>
     <div v-if="script">
-      <h1>{{script.name}}</h1>
-      <button type="button" v-if="!editing" style="position: absolute;" class="btn" @click="edit()"><i class="fa fa-pencil"></i> Edit</button>
-      <form @submit.prevent="save()">
-        <table>
-          <tbody>
-            <tr class="form_row">
-              <th class="form_label">Name</th>
-              <td>
-                <input v-if="editing" type="text" v-model="script.name" />
-                <span v-else>{{script.name}}</span>
-              </td>
-            </tr>
-            <tr class="form_row">
-              <th class="form_label">Description</th>
-              <td>
-                <input v-if="editing" type="text" v-model="script.description" />
-                <span v-else>{{script.description}}</span>
-              </td>
-            </tr>
-          </tbody>
-          <tbody class="form_section" v-for="(trigger, index) in script.triggers">
-            <tr class="form_row" v-if="script.triggers.length > 1">
-              <th colspan="2" style="text-align: left;">Trigger #{{index+1}}</th>
-            </tr>
-            <tr class="form_row">
-              <th class="form_label">Type</th>
-              <td>
-                <span v-if="editing">
-                  <select v-model="trigger.type">
-                    <option v-for="type in trigger_types" v-bind:value="type">{{type}}</option>
-                  </select>
-                  <button type="button" class="btn btn-small btn-danger" @click="remove_trigger(trigger)"><i class="fa fa-minus-circle" aria-hidden="true"></i> remove</button>
-                </span>
-                <span v-else>{{trigger.type}}</span>
-              </td>
-            </tr>
-            <tr class="form_row" v-if="trigger.type == 'CRON'">
-              <th class="form_label">Every</th>
-              <td>
-                <span v-if="editing"><input type="number" style="width: 4em;" v-model="trigger.every" /> minutes</span>
-                <span v-else>{{trigger.every}} minutes</span>
-              </td>
-            </tr>
-            <tr class="form_row" v-if="trigger.type == 'QUEUE'">
-              <th class="form_label">Queue Name</th>
-              <td>
-                <input v-if="editing" type="text" v-model="trigger.queue_name" />
-                <span v-else>{{trigger.queue_name}}</span>
-              </td>
-            </tr>
-          </tbody>
-          <tbody v-if="editing">
-            <tr class="form_row">
-              <th></th>
-              <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr class="form_row">
-              <th class="form_label">Code</th>
-              <td>
-                <div v-if="editing" class="code_editor">
-                  <codemirror v-model="script.code" :options="editorOptions"></codemirror>
-                </div>
-                <div v-else>
-                  <pre v-highlightjs="script.code"><code class="javascript"></code></pre>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="editing" class="form_row">
-              <th></th>
-              <td>
-                <button type="submit" class="btn btn-main" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
-                <button v-if="script.id" type="button" class="btn" @click="cancel()"> <i class="fa fa-ban" aria-hidden="true"></i> Cancel</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-      <h2>Run now</h2>
+      <h1 v-if="script.name">{{script.name}}</h1>
+      <h1 v-else>Code</h1>
+      <div class="code_editor">
+        <codemirror v-model="script.code" :options="editorOptions"></codemirror>
+      </div>
+      <div v-if="script.id">
+        <button type="submit" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
+      </div>
+      <h2>Run Script</h2>
       <div class="fancy_checkbox">
         <input id="input_send" type="checkbox" v-model="state.current.input.send" />
         <label for="input_send"></label>
@@ -92,8 +21,10 @@
       <div style="margin: 1em 0;">
         <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
       </div>
-      <pre>{{state.current.runs}}</pre>
-      <div v-if="!editing">
+      <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
+        <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
+      </div>
+      <div v-if="runs.length">
         <h2>Last 10 Runs</h2>
         <table class="table">
           <thead>
@@ -110,6 +41,69 @@
           </tbody>
         </table>
       </div>
+      <div v-if="script.id || save_for_later">
+        <h2>Script Details</h2>
+        <form @submit.prevent="save()">
+          <table>
+            <tbody>
+              <tr class="form_row">
+                <th class="form_label">Name</th>
+                <td>
+                  <input type="text" v-model="script.name" />
+                </td>
+              </tr>
+              <tr class="form_row">
+                <th class="form_label">Description</th>
+                <td>
+                  <input type="text" v-model="script.description" />
+                </td>
+              </tr>
+            </tbody>
+            <tbody class="form_section" v-for="(trigger, index) in script.triggers">
+              <tr class="form_row" v-if="script.triggers.length > 1">
+                <th colspan="2" style="text-align: left;">Trigger #{{index+1}}</th>
+              </tr>
+              <tr class="form_row">
+                <th class="form_label">Type</th>
+                <td>
+                  <span>
+                    <select v-model="trigger.type">
+                      <option v-for="type in trigger_types" v-bind:value="type">{{type}}</option>
+                    </select>
+                    <button type="button" class="btn btn-small btn-danger" @click="remove_trigger(trigger)"><i class="fa fa-minus-circle" aria-hidden="true"></i> remove</button>
+                  </span>
+                </td>
+              </tr>
+              <tr class="form_row" v-if="trigger.type == 'CRON'">
+                <th class="form_label">Every</th>
+                <td>
+                  <span><input type="number" style="width: 4em;" v-model="trigger.every" /> minutes</span>
+                </td>
+              </tr>
+              <tr class="form_row" v-if="trigger.type == 'QUEUE'">
+                <th class="form_label">Queue Name</th>
+                <td>
+                  <input type="text" v-model="trigger.queue_name" />
+                </td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="form_row">
+                <th></th>
+                <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="form_row">
+                <th></th>
+                <td>
+                  <button type="submit" class="btn btn-main" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -121,7 +115,7 @@ export default {
   data: function(){
     return {
       state: state,
-      editing: false,
+      save_for_later: false,
       trigger_types: ['CRON', 'QUEUE'],
       editorOptions: {
         tabSize: 2,
@@ -133,10 +127,12 @@ export default {
   },
   computed: {
     script(){ return state.current.script },
-    runs(){ return state.current.runs },
+    runs(){ return state.current.runs }
   },
   created: function(){
-    if (this.$route.params.id == 'new'){ this.editing = true }
+    if (this.$route.params.id == 'new'){
+      state.current = JSON.parse(JSON.stringify(initial.current))
+    }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
       fetch(`/api/scripts/${this.$route.params.id}`).then((res)=>{
@@ -158,8 +154,7 @@ export default {
     }
   },
   methods: {
-    edit(){ this.editing = true },
-    cancel(){ this.editing = false },
+    set_save_for_later(){ this.save_for_later=true; },
     save(){
       fetch(`/api/scripts`, {
         method: 'POST',
@@ -173,7 +168,7 @@ export default {
         console.log(data)
         senate.flash("Script saved")
         state.current.script = data.script
-        this.editing = false
+        this.$router.replace(`/scripts/${state.current.script.id}`)
       }).catch(err => {
         console.log(err)
       })
@@ -193,7 +188,7 @@ export default {
       }).then(res => {
         return res.json()
       }).then(output => {
-        state.current.runs.push(output)
+        state.current.runs.unshift(output)
       }).catch(err => {
         console.log(err)
       })

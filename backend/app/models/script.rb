@@ -74,6 +74,12 @@ WHERE s.id = ?
   def self.validation_errors(script)
     field_errors = {}
     field_errors[:name] = "Name cannot be blank" if script[:name].blank?
+    sql = "SELECT id from scripts WHERE id != ? AND name = ?"
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      results = stmt.execute(script[:id]||"", script[:name])
+      field_errors[:name] = "Script name already taken" if results.count > 0
+    end
     return {
       error_type: 'validation',
       message: 'Could not save the script.  There was a validation error.',
@@ -121,7 +127,12 @@ WHERE s.id = ?
       end
     end
     # delete doomed triggers
-    sql = "DELETE FROM triggers WHERE script_id=? and id NOT IN (#{script[:triggers].map{|t|"'#{t[:id]}'"}.join(',')})"
+    sql = ''
+    if script[:triggers].length > 0
+      sql = "DELETE FROM triggers WHERE script_id=? and id NOT IN (#{script[:triggers].map{|t|"'#{t[:id]}'"}.join(',')})"
+    else
+      sql = "DELETE FROM triggers WHERE script_id=?"
+    end
     DB.use do |db|
       stmt = db.prepare(sql)
       stmt.execute(script[:id])

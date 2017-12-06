@@ -2,7 +2,7 @@
   <div>
     <div v-if="script">
       <h1>{{script.name}}</h1>
-      <button type="button" v-if="!editing" class="btn" @click="edit()"><i class="fa fa-pencil"></i> Edit</button>
+      <button type="button" v-if="!editing" style="position: absolute;" class="btn" @click="edit()"><i class="fa fa-pencil"></i> Edit</button>
       <form @submit.prevent="save()">
         <table>
           <tbody>

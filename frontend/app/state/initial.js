@@ -9,6 +9,10 @@ const initial_state = {
     runs: null
   },
   adhoc: {
+    input: {
+      send: false,
+      payload: ""
+    },
     code: "",
     history: [
     ]

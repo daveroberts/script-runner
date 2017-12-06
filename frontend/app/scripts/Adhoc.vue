@@ -2,11 +2,21 @@
   <div>
     <h1>Script Runner</h1>
     <div v-if="error">{{ error }}</div>
+    <h2>Input</h2>
+    <div class="fancy_checkbox">
+      <input id="input_send" type="checkbox" v-model="state.adhoc.input.send" />
+      <label for="input_send"></label>
+    </div>
+    <label for="input_send">Send Input</label>
+    <div v-if="state.adhoc.input.send" class="code_editor">
+      <codemirror v-model="state.adhoc.input.payload" :options="editorOptions"></codemirror>
+    </div>
+    <h2>Code</h2>
     <div class="code_editor">
       <codemirror v-model="state.adhoc.code" :options="editorOptions"></codemirror>
     </div>
     <div style="margin: 1em 0;">
-      <button class="btn" @click="run()">Do it</button>
+      <button class="btn btn-main" @click="run()">Do it</button>
     </div>
     <div v-if="output">
       <h2>Script Run</h2>
@@ -74,7 +84,7 @@ export default {
     "run": function(){
       fetch(`/api/run`, {
         method: 'POST',
-        body: state.adhoc.code
+        body: JSON.stringify(state.adhoc)
       }).then(res => {
         return res.json()
       }).then(output => {

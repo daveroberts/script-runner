@@ -290,6 +290,14 @@ module SimpleLanguage
         next_token = tokens[i+1]
         i = i+1
         next if token[:type] != :left_curly
+        # Empty hashmap
+        if next_token[:type] == :right_curly
+          tokens.delete_at i-1 # left_curly
+          tokens.delete_at i-1 # right_curly
+          cmd = { type: :hashmap, objects: [] }
+          tokens.insert(i-1, cmd)
+          next
+        end
         next if next_token[:type] != :symbol
         # We have a hashmap
         i = i - 1

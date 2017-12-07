@@ -24,6 +24,10 @@ class DataItem
     end
   end
 
+  def self.by_tag(tag)
+    DataItem.by_tags([tag])
+  end
+
   def self.by_tags(tags)
     sql = "SELECT
   #{DataItem.columns.map{|c|"di.`#{c}` as di_#{c}"}.join(",")},

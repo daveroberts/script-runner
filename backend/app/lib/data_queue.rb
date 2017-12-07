@@ -16,6 +16,10 @@ class DataQueue
     DataItem.find(key)
   end
 
+  def retrieve_by_tag(tag)
+    DataItem.by_tag(tag)
+  end
+
   def retrieve_by_tags(tags)
     DataItem.by_tags(tags)
   end

@@ -11,14 +11,16 @@ end
 # manages scripts in database
 class Script
 
+  def self.columns
+    [:id, :name, :description, :code, :active, :created_at]
+  end
+
   def self.all
-    sql = "
-SELECT
-  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
-  t.id as t_id, t.type as t_type, t.every as t_every, t.queue_name as t_queue_name
+    sql = "SELECT
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
+  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id
-    "
+  LEFT JOIN triggers t on s.id=t.script_id"
     DataMapper.select(sql, {
       prefix: 's',
       has_many: [
@@ -28,16 +30,12 @@ FROM scripts s
   end
 
   def self.for_queue(name)
-    sql = "
-SELECT
-  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
-  t.id as t_id, t.type as t_type, t.queue_name as t_queue_name
+    sql = "SELECT
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
+  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
 FROM scripts s
-  LEFT JOIN script_runs sr on s.id=sr.script_id
   LEFT JOIN triggers t on s.id=t.script_id
-WHERE
-  qt.queue_name = ?
-    "
+WHERE t.queue_name = ?"
     DataMapper.select(sql, {
       prefix: 's',
       has_many: [
@@ -47,10 +45,9 @@ WHERE
   end
 
   def self.find(id)
-    sql = "
-SELECT
-  s.id as s_id, s.name as s_name, s.description as s_description, s.code as s_code, s.active as s_active, s.created_at as s_created_at,
-  t.id as t_id, t.type as t_type, t.every as t_every, t.queue_name as t_queue_name
+    sql = "SELECT
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
+  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
 FROM scripts s
   LEFT JOIN triggers t on s.id=t.script_id
 WHERE s.id = ?
@@ -95,7 +92,19 @@ WHERE s.id = ?
       description: script[:description],
       code:        script[:code],
       active:      script[:active],
-      created_at:  script[:created_at]
+      created_at:  Time.new(script[:created_at])
+    }
+  end
+
+  def self.trigger_to_fields(trigger)
+    return {
+      id:         trigger[:id],
+      script_id:  trigger[:script_id],
+      type:       trigger[:type],
+      active:     trigger[:active],
+      every:      trigger[:every],
+      queue_name: trigger[:queue_name],
+      created_at: Time.new(trigger[:created_at])
     }
   end
 
@@ -108,7 +117,7 @@ WHERE s.id = ?
 
   def self.insert(script)
     script[:id] = SecureRandom.uuid unless script[:id]
-    script[:created_at] = Time.now unless script[:created_at]
+    script[:created_at] = Time.now.to_s unless script[:created_at]
     fields = script_to_fields script
     DataMapper.insert('scripts', fields)
     self.save_triggers(script)
@@ -118,12 +127,14 @@ WHERE s.id = ?
   def self.save_triggers(script)
     script[:triggers].each do |trigger|
       trigger[:script_id] = script[:id]
-      trigger[:created_at] = Time.now unless trigger[:created_at]
+      trigger[:created_at] = Time.now.to_s unless trigger[:created_at]
       if trigger[:id]
-        DataMapper.update("triggers", trigger)
+        fields = trigger_to_fields(trigger)
+        DataMapper.update("triggers", fields)
       else
         trigger[:id] = SecureRandom.uuid unless trigger[:id]
-        DataMapper.insert("triggers", trigger)
+        fields = trigger_to_fields(trigger)
+        DataMapper.insert("triggers", fields)
       end
     end
     # delete doomed triggers

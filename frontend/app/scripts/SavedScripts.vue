@@ -21,8 +21,8 @@
         <td>{{script.created_at}}</td>
         <td>
           <div v-for="trigger in script.triggers">
-            <span v-if="trigger.type == 'CRON'">CRON {{trigger.every}}</span>
-            <span v-if="trigger.type == 'QUEUE'">QUEUE {{trigger.queue_name}}</span>
+            <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
+            <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
           </div>
         </td>
       </tbody>

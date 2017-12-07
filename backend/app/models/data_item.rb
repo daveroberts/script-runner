@@ -18,6 +18,7 @@ class DataItem
         id: SecureRandom.uuid,
         data_item_key: key,
         name: tag,
+        created_at: Time.now
       }
       DataMapper.insert("tags", tag_fields)
     end
@@ -31,12 +32,13 @@ FROM data_items di
   LEFT JOIN tags t on di.`key`=t.data_item_key
 WHERE t.name IN (#{tags.map{|t|"'#{t}'"}.join(",")})
     "
-    DataMapper.select(sql, {
+    data_items = DataMapper.select(sql, {
       prefix: 'di',
       has_many: [
         { tags: { prefix: 't' } }
       ]
     })
+    data_items.map{|di|di[:item]}
   end
 
   def self.find(key)
@@ -47,12 +49,14 @@ FROM data_items di
   LEFT JOIN tags t on di.`key`=t.data_item_key
 WHERE di.`key` = ?
     "
-    DataMapper.select(sql, {
+    data_item = DataMapper.select(sql, {
       prefix: 'di',
       has_many: [
         { tags: { prefix: 't' } }
       ]
     }, key).first
+    return nil if !data_item
+    data_item[:item]
   end
 
 end

@@ -155,13 +155,15 @@ WHERE s.id = ?
 
   def self.run_code(code, input = nil, script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
-    q = DataQueue.new
-    executor.register("queue", q, :queue)
-    executor.register("store", q, :store)
-    executor.register("has_key?", q, :has_key?)
-    executor.register("retrieve", q, :retrieve)
-    executor.register("save", q, :save)
-    executor.register("log", q, :log)
+    classes = ['DataQueue']
+    classes.each do |class_string|
+      clazz = Object.const_get(class_string)
+      o = clazz.new
+      methods = clazz.instance_methods - Object.instance_methods
+      methods.each do |method|
+        executor.register(method.to_s, o, method)
+      end
+    end
     output = nil
     error = nil
     begin

@@ -28,7 +28,7 @@ class DataQueue
     SetItem.by_name(name)
   end
 
-  def set_has_value?(name, value)
+  def set_has_value(name, value)
     SetItem.has_value?(name, value)
   end
 

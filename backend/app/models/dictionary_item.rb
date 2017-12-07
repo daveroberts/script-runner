@@ -9,7 +9,7 @@ class DictionaryItem
       id: SecureRandom.uuid,
       name: name,
       key: key,
-      value: value,
+      value: value.to_json,
       created_at: Time.now
     }
     DataMapper.insert("dictionary_items", fields)

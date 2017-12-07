@@ -7,6 +7,9 @@ h1{ font-size: 1.8em; color: darken(@background, 20%); margin-top: 0.5em; margin
 h2{ font-size: 1.4em; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
 input{ color: black; }
 input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 30em; }
+pre{ font-family: monospace; font-size: @font-size-small; }
+
+.small{ font-size: @font-size-small; }
 
 .nav-bar{ background-color: @background; color: @color; line-height: 2em; margin-bottom: 0.5em; }
 .nav-item{ color: @color !important; text-decoration: none; display: inline-block; padding: 0 1em; border-right: 0.15em solid white; }
@@ -39,7 +42,7 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .table th { padding: 0.4em; text-align: left; }
 .table td { padding: 0.1em; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
-.table > tbody > tr:hover { background-color: lighten(@background, 40%); }
+.table > tbody > tr:hover { }
 
 .form_row{ color: @font-color; height: 2.5em; font-size: @font-size-large; }
 .form_row th,td{ vertical-align: middle; font-size: @font-size-large; }

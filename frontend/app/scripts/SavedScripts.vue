@@ -14,17 +14,19 @@
         </tr>
       </thead>
       <tbody class="script" v-for="script in scripts">
-        <td><a href="#" :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
-        <td>{{script.description}}</td>
-        <td>last run</td>
-        <td>{{script.active}}</td>
-        <td>{{script.created_at}}</td>
-        <td>
-          <div v-for="trigger in script.triggers">
-            <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
-            <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
-          </div>
-        </td>
+        <tr>
+          <td><a href="#" :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
+          <td>{{script.description}}</td>
+          <td>last run</td>
+          <td>{{script.active}}</td>
+          <td>{{script.created_at}}</td>
+          <td>
+            <div v-for="trigger in script.triggers">
+              <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
+              <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>

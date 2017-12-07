@@ -178,7 +178,7 @@ WHERE s.id = ?
       queue_name: queue_name,
       queue_item_key: queue_item_key,
       code: code,
-      output: output,
+      output: output.to_json,
       error: error,
       run_at: Time.now
     }

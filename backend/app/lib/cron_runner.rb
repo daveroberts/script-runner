@@ -1,13 +1,14 @@
 class CronRunner
   def self.run
-    CronTrigger.all.each do |trigger|
-      run = false
-      run = true if !trigger[:last_run]
-      if trigger[:last_run]
-        minutes = (Time.now - trigger[:last_run]) / 60
-        run = true if minutes > trigger[:every]
+    # Get all active scripts with active CRON triggers
+    scripts = Script.all.select{|s|s[:active]&&s[:triggers].any?{|t|t[:active]&&t[:type]=='CRON'}}
+    scripts.each do |script|
+      triggers = script[:triggers].select{|t|t[:active]&&t[:type]=='CRON'}
+      triggers.each do |trigger|
+        # If the script hasn't been triggered in the last X minutes, run it
+        next if script[:last_run] && ((Time.now - script[:last_run])/60) < trigger[:every]
+        script_run = Script.run_code(script[:code], nil, script[:id], trigger[:id])
       end
-      Script.pull_trigger(trigger[:id], trigger[:script_id], trigger[:script]) if run
     end
   end
 end

@@ -18,9 +18,12 @@ class Script
   def self.all
     sql = "SELECT
   #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")},
+  max(sr.run_at) as s_last_run
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id"
+  LEFT JOIN triggers t on s.id=t.script_id
+  LEFT JOIN script_runs sr on s.id=sr.script_id
+GROUP BY s.id, t.id"
     DataMapper.select(sql, {
       prefix: 's',
       has_many: [
@@ -150,7 +153,7 @@ WHERE s.id = ?
     end
   end
 
-  def self.run_code(code, arg = nil, script_id=nil, trigger_id=nil)
+  def self.run_code(code, input = nil, script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
     q = DataQueue.new
     executor.register("queue", q, :queue)
@@ -162,7 +165,7 @@ WHERE s.id = ?
     output = nil
     error = nil
     begin
-      output = executor.run(code, arg)
+      output = executor.run(code, input)
     rescue SimpleLanguage::NullPointer => e
       error = "#{e.class.to_s} #{e.to_s}"
     end
@@ -170,6 +173,8 @@ WHERE s.id = ?
       id: SecureRandom.uuid,
       script_id: script_id,
       trigger_id: trigger_id,
+      queue_name: queue_name,
+      queue_item_key: queue_item_key,
       code: code,
       output: output,
       error: error,

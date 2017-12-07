@@ -1,14 +1,17 @@
 class QueueRunner
   def self.run
-    triggers = QueueTrigger.all
+    scripts = Script.all
     items = QueueItem.new_items
     items.each do |item|
-      next if triggers.has_key? item[:queue_name]
-      result = QueueItem.process(item[:id])
+      processing_scripts = scripts.select{|s|s[:active]&&s[:triggers].any?{|t|t[:active]&&t[:type]=='QUEUE'&&t[:queue_name]==item[:queue_name]}}
+      next if processing_scripts.none?
+      result = QueueItem.lock_for_processing(item[:id])
       next if result == 0
-      triggers[item[:queue_name]].each do |trigger|
-        Script.pull_trigger(trigger[:id], trigger[:script_id], trigger[:script], item[:item])
+      processing_scripts.each do |script|
+        trigger = script[:triggers].detect{|t|t[:active]&&t[:type]=='QUEUE'&&t[:queue_name]==item[:queue_name]}
+        script_run = Script.run_code(script[:code], item[:item], script[:id], trigger[:id], item[:queue_name], item[:item_key])
       end
+      result = QueueItem.finish_processing(item[:id])
     end
   end
 end

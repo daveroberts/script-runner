@@ -8,7 +8,7 @@ class DBSeed
   @scripts = [
     { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', code: "numbers = input()\nmap(numbers, (x)->{ x*x })" },
     { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', code: "number = random(1,10)\nqueue('numbers', number)" },
-    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', code: "number = arg()\nsave('numbers',number)" },
+    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', code: "number = int(input())\nnumber = number + 100\nnumber" },
   ]
   @triggers = [
     { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[1][:id], type: "CRON", every: 1 },
@@ -26,7 +26,7 @@ class DBSeed
     { id: 'e8fb67c4-99fd-43f3-8552-f2cd13b740f8', queue_name: 'numbers', state: 'NEW', item_key: 'd18f2231-cea2-4e92-b7a3-3c0603e16c8e', item: '8' },
     { id: 'b7151457-4f3d-4fed-a0ef-b7f5d9f631d8', queue_name: 'numbers', state: 'NEW', item_key: '4b5ca664-43c0-48f2-a7e2-e590533876f9', item: '15' },
     { id: '35081bef-384b-4c63-8f1c-99644b8664e9', queue_name: 'numbers', state: 'NEW', item_key: '6132c06b-7b4f-4ff4-90d0-8a75781c9b48', item: '16' },
-    { id: '8afec2ab-cb78-41c2-aa56-b307057d4e94', queue_name: 'numbers', state: 'PROCESSED', item_key: '7627c311-ec03-4d63-9c79-e0bddb97cd63', item: '23' },
+    { id: '8afec2ab-cb78-41c2-aa56-b307057d4e94', queue_name: 'numbers', state: 'DONE', item_key: '7627c311-ec03-4d63-9c79-e0bddb97cd63', item: '23' },
   ]
   def self.seed
     puts 'Seeding database'

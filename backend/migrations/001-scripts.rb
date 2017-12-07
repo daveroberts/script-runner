@@ -26,6 +26,8 @@ module DBMigrations
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255),
         `trigger_id` VARCHAR(255),
+        `queue_name` VARCHAR(255),
+        `queue_item_key` VARCHAR(255),
         `input` TEXT,
         `code` TEXT,
         `output` TEXT,
@@ -35,6 +37,7 @@ module DBMigrations
         INDEX `id_index` (`id`),
         INDEX `trigger_id_index` (`trigger_id`),
         INDEX `script_id_index` (`script_id`),
+        INDEX `queue_index` (`queue_name`, `queue_item_key`),
         INDEX `run_at_index` (`run_at`)
       )"
       db.query(sql)
@@ -60,12 +63,10 @@ module DBMigrations
         `id` VARCHAR(255) NOT NULL,
         `queue_name` VARCHAR(255) NOT NULL,
         `state` VARCHAR(255) NOT NULL,
-        `script_run_id` VARCHAR(255),
         `item_key` VARCHAR(255) NOT NULL,
         `item` TEXT NOT NULL,
         `created_at` DATETIME NOT NULL,
         INDEX `id_index` (`id`),
-        INDEX `script_run_id_index` (`script_run_id`),
         INDEX `queue_name_index` (`queue_name`),
         INDEX `item_key_index` (`item_key`, `queue_name`),
         UNIQUE KEY `item_key` (`item_key`, `queue_name`),

@@ -201,7 +201,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','len','random', 'input']
+      system_cmds = ['print','join','push','map','len','random', 'input',"int"]
       return system_cmds.include? fun
     end
 
@@ -247,6 +247,9 @@ module SimpleLanguage
         return Random.rand(a..b)
       when "input"
         return @input
+      when "int"
+        x = exec_cmd(args[0], variables)
+        return x.to_i
       else
         raise Exception, "system call '#{fun}' not implemented"
       end

@@ -28,6 +28,30 @@ class DBSeed
     { id: '35081bef-384b-4c63-8f1c-99644b8664e9', queue_name: 'numbers', state: 'NEW', item_key: '6132c06b-7b4f-4ff4-90d0-8a75781c9b48', item: '16' },
     { id: '8afec2ab-cb78-41c2-aa56-b307057d4e94', queue_name: 'numbers', state: 'DONE', item_key: '7627c311-ec03-4d63-9c79-e0bddb97cd63', item: '23' },
   ]
+  @data_items = [
+    { id: 'c8853cd1-c93a-45fe-a3cc-085fe75bfe3e', key: '3b3074b2-47a7-4f62-b163-a664224ef52b', item: "Google - Don't be evil" },
+    { id: 'd3e867c1-ba08-472a-a3f3-318a7b0fc1e5', key: '8746b969-1666-4810-83f8-e667b77fa64a', item: 'CNN - The most trusted name in news' },
+    { id: 'e462129d-1be9-478b-8b86-ee4f037f9682', key: '031a3d59-a42e-4764-8e13-c515a2c3c210', item: 'Fair and Balanced' },
+    { id: '892d5a3f-798d-42f9-afbc-462637380dd5', key: 'aa9ee163-b6f3-407d-ab00-940c2ed1ba8d', item: 'Do the right thing' },
+  ]
+  @tags = [
+    { id: 'aeccec6b-9d01-4522-80e1-a61b798b8ce9', data_item_key: @data_items[0][:key], dictionary_item_key: nil, name: 'pages' },
+    { id: '403d6d01-9d04-4a08-a95e-91f24aa1c465', data_item_key: @data_items[1][:key], dictionary_item_key: nil, name: 'pages' },
+    { id: '57266aea-b905-43fe-b642-31d7f609fc82', data_item_key: @data_items[2][:key], dictionary_item_key: nil, name: 'pages' },
+    { id: '6154cd42-ac2e-4cb0-b4bd-206382a55335', data_item_key: @data_items[3][:key], dictionary_item_key: nil, name: 'pages' },
+  ]
+  @dictionary_items = [
+    { id: '2bcff45d-67fe-47d4-ade1-8d9437f1b8e4', name: 'countries', key: 'USA', value: {id: "8a0d4c31-49e5-49da-9f4c-5c6d747fb49d", name: "United States"}.to_json },
+    { id: '38723350-38e7-4f0d-8c78-a51789da8280', name: 'countries', key: 'CAN', value: {id: "05db0534-a826-4dea-bfda-c415901c7aa2", name: "Canada"}.to_json },
+    { id: '92a4c1b8-a10d-4bec-937c-071802858276', name: 'countries', key: 'MEX', value: {id: "93d225ce-019d-43d7-8d2b-5675d10f1acf", name: "Mexico"}.to_json },
+    { id: '33c04631-4952-4e24-ab68-756486af11d8', name: 'countries', key: 'PAN', value: {id: "af4a2829-bb9b-4ff9-9cbb-797d183b193f", name: "Panama"}.to_json },
+  ]
+  @set_items = [
+    { id: '35fbcda8-169e-4f6c-99c5-ba37790e6feb', name: 'urls', value: 'http://www.google.com' },
+    { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'urls', value: 'http://www.cnn.com' },
+    { id: 'e88fa93d-a4b7-4b51-9906-6e961066c7a9', name: 'urls', value: 'http://www.foxnews.com' },
+    { id: '04b2ebd9-fe0f-4c15-b3aa-0a378c9e8d06', name: 'urls', value: 'http://gmail.com' },
+  ]
   def self.seed
     puts 'Seeding database'
     @scripts.each do |script|
@@ -79,6 +103,47 @@ class DBSeed
       DataMapper.insert("queue_items", values)
     end
     puts "Added #{@queue_items.count} queue_items"
+    @data_items.each do |o|
+      values = {
+        id: o[:id],
+        key: o[:key],
+        item: o[:item],
+        created_at: DateTime.now
+      }
+      DataMapper.insert("data_items", values)
+    end
+    puts "Added #{@data_items.count} data_items"
+    @tags.each do |o|
+      values = {
+        id: o[:id],
+        data_item_key: o[:data_item_key],
+        name: o[:name],
+        created_at: DateTime.now
+      }
+      DataMapper.insert("tags", values)
+    end
+    puts "Added #{@tags.count} tags"
+    @dictionary_items.each do |o|
+      values = {
+        id: o[:id],
+        name: o[:name],
+        key: o[:key],
+        value: o[:value],
+        created_at: DateTime.now
+      }
+      DataMapper.insert("dictionary_items", values)
+    end
+    puts "Added #{@dictionary_items.count} dictionary_items"
+    @set_items.each do |o|
+      values = {
+        id: o[:id],
+        name: o[:name],
+        value: o[:value],
+        created_at: DateTime.now
+      }
+      DataMapper.insert("set_items", values)
+    end
+    puts "Added #{@set_items.count} set_items"
     puts 'Done seeding DB'
   end
 end

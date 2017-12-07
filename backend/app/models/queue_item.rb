@@ -6,6 +6,19 @@ class QueueItem
 
   @columns = [:id, :queue_name, :state, :item_key, :item, :created_at]
 
+  def self.add(name, item, item_key=nil)
+    item_key=SecureRandom.uuid if item_key.blank?
+    fields = {
+      id: SecureRandom.uuid,
+      queue_name: name,
+      state: 'NEW',
+      item_key: item_key,
+      item: item,
+      created_at: Time.now
+    }
+    DataMapper.insert("queue_items", fields)
+  end
+
   def self.new_items
     sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
            FROM queue_items qi

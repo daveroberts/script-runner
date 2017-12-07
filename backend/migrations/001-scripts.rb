@@ -74,6 +74,59 @@ module DBMigrations
         INDEX `queue_name_created_at_index` (`queue_name`, `created_at`)
       )"
       db.query(sql)
+      sql = "CREATE TABLE `data_items` (
+        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `id` VARCHAR(255) NOT NULL,
+        `key` VARCHAR(255) NOT NULL,
+        `item` TEXT NOT NULL,
+        `created_at` DATETIME NOT NULL,
+        INDEX `id_index` (`id`),
+        INDEX `key_index` (`key`),
+        UNIQUE KEY `key` (`key`),
+        INDEX `created_at_index` (`created_at`)
+      )"
+      db.query(sql)
+      sql = "CREATE TABLE `tags` (
+        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `id` VARCHAR(255) NOT NULL,
+        `data_item_key` VARCHAR(255),
+        `dictionary_item_key` VARCHAR(255),
+        `name` VARCHAR(255) NOT NULL,
+        `created_at` DATETIME NOT NULL,
+        INDEX `id_index` (`id`),
+        INDEX `name_index` (`name`),
+        INDEX `data_item_key_index` (`data_item_key`),
+        INDEX `name_data_item_key_index` (`name`,`data_item_key`),
+        INDEX `created_at_index` (`created_at`)
+      )"
+      db.query(sql)
+      sql = "CREATE TABLE `dictionary_items` (
+        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `id` VARCHAR(255) NOT NULL,
+        `name` VARCHAR(255) NOT NULL,
+        `key` VARCHAR(255) NOT NULL,
+        `value` TEXT NOT NULL,
+        `created_at` DATETIME NOT NULL,
+        INDEX `id_index` (`id`),
+        INDEX `name_index` (`name`),
+        INDEX `name_key_index` (`name`,`key`),
+        UNIQUE KEY `name_key` (`name`,`key`),
+        INDEX `created_at_index` (`created_at`)
+      )"
+      db.query(sql)
+      sql = "CREATE TABLE `set_items` (
+        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `id` VARCHAR(255) NOT NULL,
+        `name` VARCHAR(255) NOT NULL,
+        `value` VARCHAR(255) NOT NULL,
+        `created_at` DATETIME NOT NULL,
+        INDEX `id_index` (`id`),
+        INDEX `name_index` (`name`),
+        INDEX `name_value_index` (`name`,`value`),
+        UNIQUE KEY `name_value` (`name`,`value`),
+        INDEX `created_at_index` (`created_at`)
+      )"
+      db.query(sql)
     end
   end
 end

@@ -5,30 +5,43 @@ class DataQueue
   end
 
   def queue(name, item, item_key=nil)
-    item_key=SecureRandom.uuid if item_key.blank?
-    item = {
-      id: SecureRandom.uuid,
-      queue_name: name,
-      state: 'NEW',
-      item_key: item_key,
-      item: item,
-      created_at: Time.now
-    }
-    DataMapper.insert("queue_items", item)
+    QueueItem.add(name, item, item_key)
   end
 
-  def store(set, key, value)
+  def store(item, key=nil, tags=[])
+    DataItem.add(item, key, tags)
   end
 
-  def has_key?(set, key)
+  def retrieve(key)
+    DataItem.find(key)
   end
 
-  def retrieve(set, key)
+  def retrieve_by_tags(tags)
+    DataItem.by_tags(tags)
   end
 
-  def save(set, data)
+  def set_store(name, value)
+    SetItem.add(name, value)
   end
 
-  def log(set, msg)
+  def set_retrieve(name)
+    SetItem.by_name(name)
   end
+
+  def set_has_value?(name, value)
+    SetItem.has_value?(name, value)
+  end
+
+  def dict_store(name, key, value)
+    DictionaryItem.add(name, key, value)
+  end
+
+  def dict_retrieve(name, key)
+    DictionaryItem.find(name, key)
+  end
+
+  def dict_values(name)
+    DictionaryItem.values(name)
+  end
+
 end

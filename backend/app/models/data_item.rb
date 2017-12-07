@@ -4,7 +4,7 @@ class DataItem
     [:id, :key, :item, :created_at]
   end
 
-  def self.add(item, key=nil, tags=[])
+  def self.add(item, tags=[], key=nil)
     key = SecureRandom.uuid if key.blank?
     data_item_fields = {
       id: SecureRandom.uuid,

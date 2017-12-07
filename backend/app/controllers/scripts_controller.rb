@@ -24,7 +24,9 @@ class App < Sinatra::Application
 
   post "/run/?" do
     payload = JSON.parse(request.body.read, symbolize_names: true)
-    script_run = Script.run_code(payload[:code], JSON.parse(payload[:input]), payload[:script_id])
+    input = nil
+    input = JSON.parse(payload[:input]) if payload[:input]
+    script_run = Script.run_code(payload[:code], input, payload[:script_id])
     return script_run.to_json
   end
 end

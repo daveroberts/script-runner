@@ -8,8 +8,8 @@ class DataQueue
     QueueItem.add(name, item, item_key)
   end
 
-  def store(item, key=nil, tags=[])
-    DataItem.add(item, key, tags)
+  def store(item, tags=[], key=nil)
+    DataItem.add(item, tags, key)
   end
 
   def retrieve(key)

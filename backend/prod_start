@@ -1,1 +1,1 @@
-RACK_ENV=production bundle exec puma --port 8080
+RACK_ENV=production bundle exec puma config.ru -b tcp://127.0.0.1:8090

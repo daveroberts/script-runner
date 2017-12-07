@@ -8,7 +8,7 @@ class DB
   def self.raw_connection
     config = Config.get[:database]
     Mysql2::Client.default_query_options.merge!(symbolize_keys: true, cast_booleans: true)
-    return Mysql2::Client.new(host: config[:host], database: config[:database], username: config[:username], password: config[:password], sslverify: config[:ssl_pem].present?, sslca: config[:ssl_pem])
+    return Mysql2::Client.new(host: config[:host], database: config[:database], username: config[:username], password: config[:password], sslverify: config[:ssl_pem].present?, sslca: config[:ssl_ca])
   end
 
   config = Config.get[:database]

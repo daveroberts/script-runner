@@ -176,7 +176,7 @@ WHERE s.id = ?
       run_at: Time.now
     }
     DataMapper.insert("script_runs", script_run)
-    return output
+    return script_run
   end
 
 end

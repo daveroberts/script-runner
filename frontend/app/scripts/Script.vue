@@ -184,10 +184,19 @@ export default {
       if (idx > -1){ state.current.script.triggers.splice(idx, 1) }
     },
     run(){
+      var input = null
+      if (state.current.input.send){
+        input = state.current.input.payload
+      }
+      var payload = {
+        code: state.current.script.code,
+        input: input,
+        script_id: state.current.script.id
+      }
       fetch(`/api/run`, {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify(state.current)
+        body: JSON.stringify(payload)
       }).then(res => {
         return res.json()
       }).then(output => {

@@ -4,11 +4,13 @@ class DataQueue
   def initialize
   end
 
-  def queue(name, item)
+  def queue(name, item, item_key=nil)
+    item_key=SecureRandom.uuid if item_key.blank?
     item = {
       id: SecureRandom.uuid,
       queue_name: name,
       state: 'NEW',
+      item_key: item_key,
       item: item,
       created_at: Time.now
     }

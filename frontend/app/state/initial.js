@@ -14,7 +14,7 @@ const initial_state = {
       created_at: null,
       triggers: []
     },
-    runs: [],
+    runs: null,
     input: {
       send: false,
       payload: ""

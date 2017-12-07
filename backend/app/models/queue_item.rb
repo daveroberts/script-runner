@@ -35,6 +35,14 @@ class QueueItem
     DataMapper.select(sql, { prefix: 'qi' }, [name])
   end
 
+  def self.names
+    sql = "SELECT DISTINCT qi.queue_name as qi_queue_name FROM queue_items qi"
+    queues = DataMapper.select(sql, {
+      prefix: 'qi',
+    })
+    queues.map{|s|s[:queue_name]}
+  end
+
   def self.lock_for_processing(id)
     sql = "UPDATE queue_items SET state='PROCESSING' WHERE state='NEW' AND id=?"
     stmt = nil

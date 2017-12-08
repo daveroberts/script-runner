@@ -25,8 +25,11 @@
       <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
         <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
       </div>
-      <div v-if="runs && runs.length">
-        <h2>Last 10 Runs</h2>
+      <h2>Last 10 Runs</h2>
+      <div v-if="!runs">
+        Loading...
+      </div>
+      <div v-else>
         <table class="table">
           <thead>
             <tr>
@@ -34,7 +37,12 @@
               <th>Output</th>
             </tr>
           </thead>
-          <tbody v-for="run in runs">
+          <tbody v-if="runs.length == 0">
+            <tr>
+              <td colspan="2" style="text-align: center; font-style: italic; padding: 2em;">Script has not yet been run</td>
+            </tr>
+          </tbody>
+          <tbody v-else v-for="run in runs">
             <tr>
               <td class="small">{{run.run_at}}</td>
               <td><pre v-if="run.output">{{JSON.parse(run.output)}}</pre></td>

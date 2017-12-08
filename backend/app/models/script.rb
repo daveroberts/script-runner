@@ -168,7 +168,9 @@ WHERE s.id = ?
     error = nil
     begin
       output = executor.run(code, input)
-    rescue SimpleLanguage::NullPointer => e
+    #rescue SimpleLanguage::NullPointer => e
+    # catch all execptions like this for now
+    rescue Exception => e
       error = "#{e.class.to_s} #{e.to_s}"
     end
     script_run = {
@@ -177,6 +179,7 @@ WHERE s.id = ?
       trigger_id: trigger_id,
       queue_name: queue_name,
       queue_item_key: queue_item_key,
+      input: input,
       code: code,
       output: output.to_json,
       error: error,

@@ -3,6 +3,7 @@
     <div class="nav-bar">
       <router-link class="nav-item" to="/scripts" exact>Scripts</router-link>
       <router-link class="nav-item" to="/data-explorer" exact>Data Explorer</router-link>
+      <router-link class="nav-item" to="/extensions" exact>Extensions</router-link>
     </div>
     <div style="padding: 1em;">
       <div id="alerts">

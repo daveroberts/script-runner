@@ -155,7 +155,7 @@ WHERE s.id = ?
 
   def self.run_code(code, input = nil, script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
-    classes = ['DataQueue']
+    classes = ['DataStorage']
     classes.each do |class_string|
       clazz = Object.const_get(class_string)
       o = clazz.new

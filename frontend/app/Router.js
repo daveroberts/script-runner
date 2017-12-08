@@ -9,6 +9,7 @@ import Dictionary from './data/Dictionary.vue'
 import Queue from './data/Queue.vue'
 import Set from './data/Set.vue'
 import Tag from './data/Tag.vue'
+import Extensions from './extensions/List.vue'
 const routes = [
   { path: '/', component: SavedScripts },
   { path: '/scripts', component: SavedScripts },
@@ -18,6 +19,7 @@ const routes = [
   { path: '/queues/:name', component: Queue },
   { path: '/sets/:name', component: Set },
   { path: '/tags/:name', component: Tag },
+  { path: '/extensions', component: Extensions },
 ]
 const router = new VueRouter({routes})
 

@@ -4,6 +4,7 @@ const initial_state = {
     {id: 5, msg: 'warning', show: true, type: 'warning'},
     {id: 6, msg: 'danger', show: true, type: 'danger'},*/
   ],
+  extensions: null,
   tags: {
     current: null,
     data: null

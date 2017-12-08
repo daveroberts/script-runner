@@ -1,6 +1,6 @@
 require 'securerandom'
 
-class DataQueue
+class DataStorage
   def initialize
   end
 

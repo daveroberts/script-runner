@@ -11,7 +11,7 @@
     </div>
     <h2>Dictionaries</h2>
     <div v-for="data in dictionaries">
-      <a :href="'/#/dictionaries/'+data.name" @click="dictionary(data.name)">{{data.name}}</a>
+      <a :href="'/#/dictionaries/'+data.name"">{{data.name}}</a>
     </div>
     <h2>Queues</h2>
     <div v-for="(q,name) in queues">
@@ -66,7 +66,7 @@ export default {
       if (res.ok){ return res.json() }
     }).then((dictionaries)=>{
       dictionaries.forEach(dictionary =>{
-        var idx = state.dictionaries.data.findIndex((d)=>{d.name==dictionary})
+        var idx = state.dictionaries.data.findIndex(d=>d.name==dictionary)
         if (idx == -1){
           state.dictionaries.data.push({name: dictionary, items: []})
         }
@@ -89,7 +89,6 @@ export default {
     })
   },
   methods: {
-    dictionary(name){ state.dictionaries.current = name }
   }
 }
 </script>

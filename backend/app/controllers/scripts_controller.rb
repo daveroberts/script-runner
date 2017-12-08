@@ -10,6 +10,10 @@ class App < Sinatra::Application
     return Script.find(params[:id]).to_json
   end
 
+  get "/queue/:name/scripts/?" do
+    return Script.for_queue(params[:name]).to_json
+  end
+
   post "/scripts/?" do
     script = JSON.parse(request.body.read, symbolize_names: true)
     begin

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="nav-bar">
-      <router-link class="nav-item" to="/scripts" exact>Saved Scripts</router-link>
+      <router-link class="nav-item" to="/scripts" exact>Scripts</router-link>
       <router-link class="nav-item" to="/data-explorer" exact>Data Explorer</router-link>
     </div>
     <div style="padding: 1em;">

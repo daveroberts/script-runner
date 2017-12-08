@@ -95,6 +95,10 @@
                   <input type="text" v-model="trigger.queue_name" />
                 </td>
               </tr>
+              <tr class="form_row" v-if="trigger.type == 'QUEUE' && trigger.queue_name">
+                <th class="form_label"></th>
+                <td>Inspect <a target="_blank" :href="'/#/queues/'+trigger.queue_name">`{{trigger.queue_name}}` queue</a></td>
+              </tr>
             </tbody>
             <tbody>
               <tr class="form_row">

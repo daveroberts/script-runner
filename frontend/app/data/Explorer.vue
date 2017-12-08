@@ -87,7 +87,7 @@ export default {
       if (state.queues.data == null){ state.queues.data = [] }
       queues.forEach(queue =>{
         var idx = state.queues.data.findIndex(q=>q.name==queue)
-        if (idx == -1){ state.queues.data.push({name: queue, items: null}) }
+        if (idx == -1){ state.queues.data.push({name: queue, scripts: null, items: null}) }
       })
     }).catch((err)=>{
       console.log(err)

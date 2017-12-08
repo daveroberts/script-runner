@@ -15,7 +15,7 @@
       </thead>
       <tbody class="script" v-for="script in scripts">
         <tr>
-          <td><a href="#" :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
+          <td><a :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
           <td>{{script.description}}</td>
           <td>last run</td>
           <td>{{script.active}}</td>

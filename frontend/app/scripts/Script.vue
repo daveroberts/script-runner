@@ -62,6 +62,12 @@
                 </td>
               </tr>
               <tr class="form_row">
+                <th class="form_label">Category</th>
+                <td>
+                  <input type="text" v-model="script.category" />
+                </td>
+              </tr>
+              <tr class="form_row">
                 <th class="form_label">Description</th>
                 <td>
                   <input type="text" v-model="script.description" />
@@ -104,6 +110,15 @@
               <tr class="form_row">
                 <th></th>
                 <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
+              </tr>
+              <tr class="form_row">
+                <th class="form_label"><label for="active">Active?</label></th>
+                <td>
+                  <div class="fancy_checkbox">
+                    <input id="active" type="checkbox" v-model="script.active" />
+                    <label for="active"></label>
+                  </div>
+                </td>
               </tr>
             </tbody>
             <tbody>
@@ -180,7 +195,6 @@ export default {
         console.log(res)
         throw new Error("not OK")
       }).then( data => {
-        console.log(data)
         senate.flash("Script saved")
         state.current.script = data.script
         this.$router.replace(`/scripts/${state.current.script.id}`)

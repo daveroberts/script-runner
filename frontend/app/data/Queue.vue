@@ -9,9 +9,9 @@
             <a :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a>
           </li>
         </ul>
-        <span style="font-style: italic">No scripts set to pick up from this queue</span>
       </div>
     </div>
+    <span v-else style="font-style: italic">No scripts set to pick up from this queue</span>
     <div v-if="!items">
       Loading...
     </div>

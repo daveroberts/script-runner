@@ -31,7 +31,6 @@ export default {
     extensions(){ return state.extensions },
   },
   created: function(){
-    console.log("About to fetch")
     fetch(`/api/extensions`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then(extensions=>{

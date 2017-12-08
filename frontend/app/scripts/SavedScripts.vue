@@ -6,26 +6,22 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
-          <th>Last Run</th>
-          <th>Active</th>
-          <th>Created</th>
           <th>Triggered by</th>
+          <th style="text-align: center;">Active</th>
+          <th>Last Run</th>
         </tr>
       </thead>
       <tbody class="script" v-for="script in scripts">
         <tr>
           <td><a :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
-          <td>{{script.description}}</td>
-          <td>last run</td>
-          <td>{{script.active}}</td>
-          <td>{{script.created_at}}</td>
           <td>
             <div v-for="trigger in script.triggers">
               <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
               <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
             </div>
           </td>
+          <td style="text-align: center;"><span v-if="script.active"><i class="success fa fa-check" aria-hidden="true"></i></span></td>
+          <td>{{script.last_run}}</td>
         </tr>
       </tbody>
     </table>

@@ -12,7 +12,7 @@ end
 class Script
 
   def self.columns
-    [:id, :name, :description, :code, :active, :created_at]
+    [:id, :name, :category, :description, :code, :active, :created_at]
   end
 
   def self.all
@@ -92,6 +92,7 @@ WHERE s.id = ?
     return {
       id:          script[:id],
       name:        script[:name],
+      category:    script[:category],
       description: script[:description],
       code:        script[:code],
       active:      script[:active],

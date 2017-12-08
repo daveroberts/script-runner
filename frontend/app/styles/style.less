@@ -10,6 +10,7 @@ input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 30em; }
 pre{ font-family: monospace; font-size: @font-size-small; }
 
 .small{ font-size: @font-size-small; }
+.success{ color: @success }
 
 .nav-bar{ background-color: @background; color: @color; line-height: 2em; margin-bottom: 0.5em; }
 .nav-item{ color: @color !important; text-decoration: none; display: inline-block; padding: 0 1em; border-right: 0.15em solid white; }
@@ -58,6 +59,9 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .fancy_checkbox input[type=checkbox]{ display: none; }
 .fancy_checkbox input[type=checkbox]:checked + label:after { opacity: 1; }
+.fancy_static_checkbox{ width: 20px; height: 14px; position: relative; display: inline-block; }
+.fancy_static_checkbox div{ cursor: pointer; position: absolute; width: 12px; height: 12px; top: 0; left: 0; }
+.fancy_static_checkbox div:after { content: ''; position: absolute; width: 16px; height: 5px; background: transparent; top: 2px; left: 2px; border: 3px solid @success; border-top: none; border-right: none; transform: rotate(-45deg); }
 
 .code_editor{ border: 1px solid #666; }
 .CodeMirror{ height: auto !important; }

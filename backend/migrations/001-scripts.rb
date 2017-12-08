@@ -9,6 +9,7 @@ module DBMigrations
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
         `name` VARCHAR(255) NOT NULL,
+        `category` VARCHAR(255),
         `description` VARCHAR(255),
         `code` TEXT,
         `active` BOOLEAN NOT NULL,

@@ -12,7 +12,7 @@ class DataItem
       item: item,
       created_at: Time.now
     }
-    DataMapper.insert("data_items", data_item_fields)
+    result = DataMapper.insert("data_items", data_item_fields)
     tags.each do |tag|
       tag_fields = {
         id: SecureRandom.uuid,
@@ -20,7 +20,7 @@ class DataItem
         name: tag,
         created_at: Time.now
       }
-      DataMapper.insert("tags", tag_fields)
+      result = DataMapper.insert("tags", tag_fields)
     end
   end
 

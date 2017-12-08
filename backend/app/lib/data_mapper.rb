@@ -6,6 +6,7 @@ class DataMapper
     DB.use do |db|
       stmt = db.prepare(sql)
       stmt.execute(*values.values)
+      return db.affected_rows
     end
   end
 

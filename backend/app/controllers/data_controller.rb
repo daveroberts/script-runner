@@ -6,8 +6,16 @@ class App < Sinatra::Application
     return Tag.names.to_json
   end
 
+  get "/tags/:name/?" do
+    return DataItem.by_tag(params[:name]).to_json
+  end
+
   get "/sets/?" do
     return SetItem.names.to_json
+  end
+
+  get "/sets/:name/?" do
+    return SetItem.by_name(params[:name]).to_json
   end
 
   get "/dictionaries/?" do

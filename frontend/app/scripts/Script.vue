@@ -29,8 +29,8 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Run</th>
                 <th>Output</th>
+                <th style="text-align: right;">Run</th>
               </tr>
             </thead>
             <tbody v-if="runs.length == 0">
@@ -40,18 +40,12 @@
             </tbody>
             <tbody v-else v-for="run in runs">
               <tr>
-                <td class="small">{{run.run_at}}</td>
                 <td><pre v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
+                <td style="text-align: right;" class="small">{{run.run_at}}</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
-      <div v-if="script.code">
-        <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
-          <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
-        </div>
-        <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       </div>
       <div v-if="script.id || save_for_later">
         <h2>Script Details</h2>
@@ -134,6 +128,12 @@
             </tbody>
           </table>
         </form>
+      </div>
+      <div v-if="script.code && runs && runs.length">
+        <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
+          <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
+        </div>
+        <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       </div>
     </div>
   </div>

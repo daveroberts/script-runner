@@ -20,8 +20,8 @@ class DBSeed
     { id: 'b541d40e-9cd5-485a-a0e2-87d0e1a020f5', script_id: @scripts[0][:id], trigger_id: nil, input: '[2,4,6,8,10]', code:@scripts[0][:code], output: "[4,16,36,64,100]", run_at: DateTime.new(2017, 12, 6)},
     { id: '27ca4650-6c6d-4a23-a588-c34d8b5377bc', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:@scripts[1][:code], output: "4", run_at: DateTime.new(1982, 7, 15)},
     { id: 'd19c8caa-ec49-4cc1-824b-2bb2f78c61f9', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:@scripts[1][:code], output: "7", run_at: DateTime.new(1776, 7, 4)},
-    { id: '6684f5e4-518a-4b08-855a-dcc24327a60b', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], code:@scripts[2][:code], output: "", run_at: DateTime.new(2017, 12, 4)},
-    { id: '0e2336da-4e49-4233-a491-70ea8b77e7a2', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], code:@scripts[2][:code], output: "", run_at: DateTime.new(2017, 12, 5)},
+    { id: '6684f5e4-518a-4b08-855a-dcc24327a60b', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], input: "7", code:@scripts[2][:code], output: "107", run_at: DateTime.new(2017, 12, 4)},
+    { id: '0e2336da-4e49-4233-a491-70ea8b77e7a2', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], input: "9", code:@scripts[2][:code], output: "109", run_at: DateTime.new(2017, 12, 5)},
   ]
   @queue_items = [
     { id: 'b57bf943-072c-47eb-88db-e3c55fc32190', queue_name: 'numbers', state: 'NEW', item_key: '58c6fe21-cb16-4847-b3dd-171c5d6888e0', item: '4' },
@@ -73,6 +73,7 @@ class DBSeed
         id: run[:id],
         script_id: run[:script_id],
         trigger_id: run[:trigger_id],
+        input: run[:input],
         code: run[:code],
         output: run[:output],
         run_at: run[:run_at]

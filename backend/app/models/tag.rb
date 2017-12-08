@@ -5,10 +5,8 @@ class Tag
   end
 
   def self.names
-    sql = "SELECT DISTINCT t.name as t_name FROM tags t"
-    tags = DataMapper.select(sql, {
-      prefix: 't',
-    })
+    sql = "SELECT DISTINCT t.name FROM tags t ORDER BY t.name ASC"
+    tags = DataMapper.raw_select(sql)
     tags.map{|t|t[:name]}
   end
 end

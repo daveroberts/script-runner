@@ -28,10 +28,8 @@ WHERE di.`name`=? AND di.`key` = ?"
   end
 
   def self.names
-    sql = "SELECT DISTINCT d.name as d_name FROM dictionary_items d"
-    dictionaries = DataMapper.select(sql, {
-      prefix: 'd',
-    })
+    sql = "SELECT DISTINCT d.name FROM dictionary_items d ORDER BY d.name ASC"
+    dictionaries = DataMapper.raw_select(sql)
     dictionaries.map{|d|d[:name]}
   end
 

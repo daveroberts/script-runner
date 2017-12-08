@@ -35,10 +35,8 @@ WHERE si.name = ? AND si.value=?"
   end
 
   def self.names
-    sql = "SELECT DISTINCT s.name as s_name FROM set_items s"
-    sets = DataMapper.select(sql, {
-      prefix: 's',
-    })
+    sql = "SELECT DISTINCT s.name FROM set_items s ORDER BY s.name ASC"
+    sets = DataMapper.raw_select(sql)
     sets.map{|s|s[:name]}
   end
 

@@ -36,11 +36,9 @@ class QueueItem
   end
 
   def self.names
-    sql = "SELECT DISTINCT qi.queue_name as qi_queue_name FROM queue_items qi"
-    queues = DataMapper.select(sql, {
-      prefix: 'qi',
-    })
-    queues.map{|s|s[:queue_name]}
+    sql = "SELECT DISTINCT qi.queue_name FROM queue_items qi ORDER BY qi.queue_name ASC"
+    queues = DataMapper.raw_select(sql)
+    queues.map{|q|q[:queue_name]}
   end
 
   def self.lock_for_processing(id)

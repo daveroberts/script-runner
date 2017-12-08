@@ -23,4 +23,14 @@ const routes = [
 ]
 const router = new VueRouter({routes})
 
+router.beforeEach((to, from, next)=>{
+  if (from.path == '/scripts/new'){
+    if (confirm("You haven't saved your script, are you sure?")){
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 export default router

@@ -22,8 +22,10 @@ a.nav-item:hover{ background-color: darken(@background, 10%); }
 .alert{ opacity: 0; visibility: hidden; transition: visibility 0s linear 0.5s, opacity 0.5s linear; text-align: center; padding: 1em;  margin: 0.5em; font-size: @font-size-x-large; box-shadow: 0 2px 12px 7px rgba(0, 0, 0, 0.8); border-width: 3px; border-style: solid; }
 .alert-success { background-color: @success; border-color: darken(@success, 30%); color: white; }
 .alert-danger  { background-color: lighten(@danger, 43%); border-color: @danger; color: @danger; }
-.alert-warning { background-color: white; border-color: @warn; color: @warn; }
+.alert-warning { background-color: white; border-color: @warn-fg; color: @warn-fg; }
 .visible{ visibility: visible; opacity: 0.93; transition-delay: 0s; }
+
+.warning{ text-align: center; font-size: @font-size-large; font-style: italic; background-color: @warn-bg; color: @warn-fg; padding: 1em; border: 2px solid @warn-fg; }
 
 .btn{ color: @base !important; background-color: white; padding: 0.2em 0.5em; border-radius: 3px; font-size: @font-size-large; -webkit-appearance: none; -moz-appearance: none; border: 1px solid @background; text-decoration: none; }
 .btn-main{ color: white !important; background-color: @background; border: 1px solid @background; }

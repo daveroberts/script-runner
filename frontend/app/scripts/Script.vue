@@ -1,6 +1,5 @@
 <template>
   <div>
-    <queue-browser queue_name="testing"></queue-browser>
     <div v-if="script">
       <h1 v-if="script.name">{{script.name}}</h1>
       <h1 v-else>Code</h1>
@@ -10,8 +9,7 @@
       <div v-if="script.id">
         <button type="submit" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
       </div>
-      <h2>Run Script</h2>
-      <div class="fancy_checkbox">
+      <div style="margin-top: 1em;" class="fancy_checkbox">
         <input id="input_send" type="checkbox" v-model="state.current.input.send" />
         <label for="input_send"></label>
       </div>
@@ -21,9 +19,6 @@
       </div>
       <div style="margin: 1em 0;">
         <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
-      </div>
-      <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
-        <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
       </div>
       <h2>Last 10 Runs</h2>
       <div v-if="!runs">
@@ -49,6 +44,9 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
+        <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
       </div>
       <div v-if="script.id || save_for_later">
         <h2>Script Details</h2>
@@ -111,7 +109,7 @@
                 <th></th>
                 <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
               </tr>
-              <tr class="form_row">
+              <tr class="form_row" v-if="script.triggers && script.triggers.length">
                 <th class="form_label"><label for="active">Active?</label></th>
                 <td>
                   <div class="fancy_checkbox">
@@ -139,7 +137,6 @@
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
-import QueueBrowser from '../queues/Browser.vue'
 export default {
   data: function(){
     return {
@@ -154,7 +151,6 @@ export default {
       }
     }
   },
-  components: { QueueBrowser },
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs }

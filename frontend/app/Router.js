@@ -23,11 +23,15 @@ const routes = [
 ]
 const router = new VueRouter({routes})
 
+import state from './state/state.js'
+
 router.beforeEach((to, from, next)=>{
-  if (from.path == '/scripts/new'){
-    if (confirm("You haven't saved your script, are you sure?")){
-      next()
-    }
+  console.log(to)
+  console.log(from)
+  if (from.path == '/scripts/new' && state.current.script.code){
+    var re = /\/scripts\/.+/
+    if(re.exec(to.path)){ next(); return; }
+    if (confirm("You haven't saved your script, are you sure?")){ next() }
   } else {
     next()
   }

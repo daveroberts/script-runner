@@ -20,35 +20,39 @@
       <div style="margin: 1em 0;">
         <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
       </div>
-      <h2>Last 10 Runs</h2>
-      <div v-if="!runs">
-        Loading...
+      <div v-if="script.id || (runs && runs.length)">
+        <h2>Last 10 Runs</h2>
+        <div v-if="!runs">
+          Loading...
+        </div>
+        <div v-else>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Run</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody v-if="runs.length == 0">
+              <tr>
+                <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
+              </tr>
+            </tbody>
+            <tbody v-else v-for="run in runs">
+              <tr>
+                <td class="small">{{run.run_at}}</td>
+                <td><pre v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div v-else>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Run</th>
-              <th>Output</th>
-            </tr>
-          </thead>
-          <tbody v-if="runs.length == 0">
-            <tr>
-              <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
-            </tr>
-          </tbody>
-          <tbody v-else v-for="run in runs">
-            <tr>
-              <td class="small">{{run.run_at}}</td>
-              <td><pre v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-if="script.code">
+        <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
+          <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
+        </div>
+        <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       </div>
-      <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
-        <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
-      </div>
-      <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       <div v-if="script.id || save_for_later">
         <h2>Script Details</h2>
         <form @submit.prevent="save()">

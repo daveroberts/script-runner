@@ -2,12 +2,18 @@
   <div>
     <h1>Data Explorer</h1>
     <h2>Tags</h2>
-    <div v-for="(tag,name) in tags">
-      <a :href="'/#/tags/'+name">{{name}}</a>
+    <div v-if="!tags">
+      Loading...
+    </div>
+    <div v-else v-for="data in tags">
+      <a :href="'/#/tags/'+data.name">{{data.name}}</a>
     </div>
     <h2>Sets</h2>
-    <div v-for="(set,name) in sets">
-      <a :href="'/#/sets/'+name">{{name}}</a>
+    <div v-if="!sets">
+      Loading...
+    </div>
+    <div v-else v-for="data in sets">
+      <a :href="'/#/sets/'+data.name">{{data.name}}</a>
     </div>
     <h2>Dictionaries</h2>
     <div v-if="!dictionaries">
@@ -17,8 +23,11 @@
       <a :href="'/#/dictionaries/'+data.name">{{data.name}}</a>
     </div>
     <h2>Queues</h2>
-    <div v-for="(q,name) in queues">
-      <a :href="'/#/queues/'+name">{{name}}</a>
+    <div v-if="!queues">
+      Loading...
+    </div>
+    <div v-else v-for="data in queues">
+      <a :href="'/#/queues/'+data.name">{{data.name}}</a>
     </div>
   </div>
 </template>
@@ -42,12 +51,10 @@ export default {
     fetch(`/api/tags`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((tags)=>{
+      if (state.tags.data == null){ state.tags.data = [] }
       tags.forEach(tag =>{
-        if (!(tag in state.tags.data)){
-          state.tags.data[tag] = {
-            items: []
-          }
-        }
+        var idx = state.tags.data.findIndex(t=>t.name==tag)
+        if (idx == -1){ state.tags.data.push({name: tag, items: null}) }
       })
     }).catch((err)=>{
       console.log(err)
@@ -55,12 +62,10 @@ export default {
     fetch(`/api/sets`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((sets)=>{
+      if (state.sets.data == null){ state.sets.data = [] }
       sets.forEach(set =>{
-        if (!(set in state.sets.data)){
-          state.sets.data[set] = {
-            items: []
-          }
-        }
+        var idx = state.sets.data.findIndex(s=>s.name==set)
+        if (idx == -1){ state.sets.data.push({name: set, items: null}) }
       })
     }).catch((err)=>{
       console.log(err)
@@ -68,14 +73,10 @@ export default {
     fetch(`/api/dictionaries`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((dictionaries)=>{
-      if (state.dictionaries.data == null){
-        state.dictionaries.data = []
-      }
+      if (state.dictionaries.data == null){ state.dictionaries.data = [] }
       dictionaries.forEach(dictionary =>{
         var idx = state.dictionaries.data.findIndex(d=>d.name==dictionary)
-        if (idx == -1){
-          state.dictionaries.data.push({name: dictionary, items: null})
-        }
+        if (idx == -1){ state.dictionaries.data.push({name: dictionary, items: null}) }
       })
     }).catch((err)=>{
       console.log(err)
@@ -83,12 +84,10 @@ export default {
     fetch(`/api/queues`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((queues)=>{
+      if (state.queues.data == null){ state.queues.data = [] }
       queues.forEach(queue =>{
-        if (!(queue in state.queues.data)){
-          state.queues.data[queue] = {
-            items: []
-          }
-        }
+        var idx = state.queues.data.findIndex(q=>q.name==queue)
+        if (idx == -1){ state.queues.data.push({name: queue, items: null}) }
       })
     }).catch((err)=>{
       console.log(err)

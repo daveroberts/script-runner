@@ -6,11 +6,11 @@ const initial_state = {
   ],
   tags: {
     current: null,
-    data: []
+    data: null
   },
   sets: {
     current: null,
-    data: []
+    data: null
   },
   dictionaries: {
     current: null,
@@ -18,7 +18,7 @@ const initial_state = {
   },
   queues: {
     current: null,
-    data: []
+    data: null
   },
   current: {
     script: {

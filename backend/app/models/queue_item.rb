@@ -23,7 +23,7 @@ class QueueItem
     sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
            FROM queue_items qi
            WHERE qi.state = 'NEW'
-           ORDER BY qi.created_at ASC"
+           ORDER BY qi.created_at DESC"
     DataMapper.select(sql, { prefix: 'qi' })
   end
 
@@ -31,7 +31,7 @@ class QueueItem
     sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
            FROM queue_items qi
            WHERE qi.queue_name = ?
-           ORDER BY qi.created_at ASC"
+           ORDER BY qi.created_at DESC"
     DataMapper.select(sql, { prefix: 'qi' }, [name])
   end
 

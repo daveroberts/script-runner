@@ -22,4 +22,8 @@ class App < Sinatra::Application
     return QueueItem.names.to_json
   end
 
+  get "/queues/:name/?" do
+    return QueueItem.by_queue_name(params[:name]).to_json
+  end
+
 end

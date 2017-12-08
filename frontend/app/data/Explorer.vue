@@ -10,8 +10,11 @@
       <a :href="'/#/sets/'+name">{{name}}</a>
     </div>
     <h2>Dictionaries</h2>
-    <div v-for="data in dictionaries">
-      <a :href="'/#/dictionaries/'+data.name"">{{data.name}}</a>
+    <div v-if="!dictionaries">
+      Loading...
+    </div>
+    <div v-else v-for="data in dictionaries">
+      <a :href="'/#/dictionaries/'+data.name">{{data.name}}</a>
     </div>
     <h2>Queues</h2>
     <div v-for="(q,name) in queues">
@@ -65,10 +68,13 @@ export default {
     fetch(`/api/dictionaries`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((dictionaries)=>{
+      if (state.dictionaries.data == null){
+        state.dictionaries.data = []
+      }
       dictionaries.forEach(dictionary =>{
         var idx = state.dictionaries.data.findIndex(d=>d.name==dictionary)
         if (idx == -1){
-          state.dictionaries.data.push({name: dictionary, items: []})
+          state.dictionaries.data.push({name: dictionary, items: null})
         }
       })
     }).catch((err)=>{

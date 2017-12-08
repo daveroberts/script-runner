@@ -14,7 +14,7 @@ const initial_state = {
   },
   dictionaries: {
     current: null,
-    data: []
+    data: null
   },
   queues: {
     current: null,

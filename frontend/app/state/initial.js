@@ -33,6 +33,7 @@ const initial_state = {
       triggers: []
     },
     runs: null,
+    field_errors: {},
     input: {
       send: false,
       payload: ""

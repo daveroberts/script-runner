@@ -6,7 +6,7 @@
       <div class="code_editor">
         <codemirror v-model="script.code" :options="editorOptions"></codemirror>
       </div>
-      <div v-if="script.id">
+      <div v-if="script.id && script.code != orig_code">
         <button type="submit" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
       </div>
       <div style="margin-top: 1em;" class="fancy_checkbox">
@@ -56,9 +56,10 @@
           <table>
             <tbody>
               <tr class="form_row">
-                <th class="form_label">Name</th>
+                <th :class="['form_label', errors.name?'error-form-label':'']">Name</th>
                 <td>
-                  <input type="text" v-model="script.name" />
+                  <input type="text" v-model="script.name" :class="errors.name?'error-input':''" />
+                  <div v-if="errors.name" class="error">{{errors.name}}</div>
                 </td>
               </tr>
               <tr class="form_row">
@@ -142,6 +143,7 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
@@ -150,6 +152,7 @@ export default {
     return {
       state: state,
       save_for_later: false,
+      orig_code: '',
       trigger_types: ['CRON', 'QUEUE'],
       editorOptions: {
         tabSize: 2,
@@ -165,7 +168,8 @@ export default {
   },
   computed: {
     script(){ return state.current.script },
-    runs(){ return state.current.runs }
+    runs(){ return state.current.runs },
+    errors(){ return state.current.field_errors },
   },
   created: function(){
     if (this.$route.params.id == 'new'){
@@ -175,12 +179,14 @@ export default {
       state.current.input.send = true
       state.current.input.payload = state.current.script.default_test_input
     }
+    if (state.current.script.code){ this.orig_code = state.current.script.code }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
       fetch(`/api/scripts/${this.$route.params.id}`).then((res)=>{
         if (res.ok){ return res.json() }
       }).then((script)=>{
         state.current.script = script
+        this.orig_code = state.current.script.code
         if (state.current.script.default_test_input){
           state.current.input.send = true
           state.current.input.payload = state.current.script.default_test_input
@@ -202,17 +208,25 @@ export default {
   methods: {
     set_save_for_later(){ this.save_for_later=true; },
     save(){
+      var status = null
+      Vue.set(state.current, 'field_errors', {})
       fetch(`/api/scripts`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(state.current.script)
       }).then(res => {
-        if (res.ok){ return res.json() }
-        throw new Error("not OK")
+        status = res.status
+        return res.json()
       }).then( data => {
-        senate.flash("Script saved")
-        state.current.script = data.script
-        this.$router.replace(`/scripts/${state.current.script.id}`)
+        if (status >= 200 && status <= 299){
+          senate.flash("Script saved")
+          state.current.script = data.script
+          this.orig_code = state.current.script.code
+          this.$router.replace(`/scripts/${state.current.script.id}`)
+        } else if (status == 400){
+          senate.flash(data.message, "warning")
+          Vue.set(state.current, 'field_errors', data.field_errors)
+        }
       }).catch(err => {
         console.log(err)
       })

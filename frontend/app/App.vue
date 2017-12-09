@@ -5,6 +5,7 @@
       <router-link class="nav-item" to="/data-explorer" exact>Data Explorer</router-link>
       <router-link class="nav-item" to="/extensions" exact>Extensions</router-link>
     </div>
+    <div v-if="loading" class="progress-line"></div>
     <div style="padding: 1em;">
       <div id="alerts">
         <div v-for="alert in alerts">
@@ -19,7 +20,8 @@
 import state from './state/state.js'
 export default {
   computed: {
-    alerts: function(){ return state.alerts }
+    alerts: function(){ return state.alerts },
+    loading: function(){ return state.loading }
   },
   created: function(){
   },

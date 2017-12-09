@@ -46,7 +46,10 @@
         </div>
       </div>
       <div style="margin: 1em 0;">
-        <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
+        <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
+          <span v-if="!running"><i class="fa fa-code" aria-hidden="true"></i> Run</span>
+          <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
+        </button>
       </div>
       <div v-if="script.id || (runs && runs.length)">
         <h2>Last 10 Runs</h2>
@@ -198,6 +201,7 @@ export default {
       orig_code: '',
       trigger_types: ['CRON', 'QUEUE'],
       show_extensions: false,
+      running: false,
       editorOptions: {
         tabSize: 2,
         mode: {
@@ -310,11 +314,15 @@ export default {
         extensions: state.current.script.extensions,
         script_id: state.current.script.id
       }
+      this.running = true
+      state.loading = true
       fetch(`/api/run`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(payload)
       }).then(res => {
+        this.running = false
+        state.loading = false
         return res.json()
       }).then(output => {
         state.current.runs.unshift(output)
@@ -323,6 +331,8 @@ export default {
         }
       }).catch(err => {
         console.log(err)
+        this.running = false
+        state.loading = false
       })
     }
   }
@@ -332,6 +342,6 @@ export default {
 @import '../styles/variables.less';
 .extensions_toggle{ text-decoration: none; }
 .method_line{ font-size: @font-size-small; line-height: 1.5em; }
-.method_signature{ font-family: monospace; font-weight: bold; }
-.method_description{ color: @base; }
+.method_signature{ color: @base; font-family: monospace; font-weight: bold; }
+.method_description{ }
 </style>

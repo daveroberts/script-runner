@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    childprocess (0.8.0)
+      ffi (~> 1.0, >= 1.0.11)
     citrus (3.0.2)
     coderay (1.1.2)
     ffi (1.9.18)
@@ -24,6 +26,10 @@ GEM
     rerun (0.11.0)
       listen (~> 3.0)
     ruby_dep (1.5.0)
+    rubyzip (1.2.1)
+    selenium-webdriver (3.8.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.0)
     sinatra (2.0.0)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -41,6 +47,7 @@ DEPENDENCIES
   pry!
   puma!
   rerun!
+  selenium-webdriver!
   sinatra!
   toml-rb!
 

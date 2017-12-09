@@ -15,3 +15,4 @@ pull off queue manually
 sftp interface
 threading
 move js modules out of bundle
+set_store: make it return false on duplicate

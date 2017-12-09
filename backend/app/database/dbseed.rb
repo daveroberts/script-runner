@@ -64,7 +64,7 @@ class DBSeed
         category: script[:category],
         description: "Sample description",
         default_input: script[:default_input],
-        extensions: ["DataStorage"].to_json,
+        extensions: ["LocalDataStorage"].to_json,
         code: script[:code],
         active: true,
         created_at: DateTime.now
@@ -77,7 +77,7 @@ class DBSeed
         id: run[:id],
         script_id: run[:script_id],
         trigger_id: run[:trigger_id],
-        extensions: ["DataStorage"].to_json,
+        extensions: ["LocalDataStorage"].to_json,
         input: run[:input],
         code: run[:code],
         output: run[:output],

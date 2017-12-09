@@ -31,13 +31,17 @@
           Loading...
         </div>
         <div v-else>
-          <div v-for="ext in extensions">
+          <div style="margin: 0.5em;" v-for="ext in extensions">
             <div class="fancy_checkbox">
               <input :id="'check_ext_'+ext.name" type="checkbox" :value="ext.name" v-model="script.extensions" />
               <label :for="'check_ext_'+ext.name"></label>
             </div>
-            <label :for="'check_ext_'+ext.name">{{ext.name}}</label>
-            <div style="margin: 1em 0;" v-if="script.extensions.indexOf(ext.name) > -1" class="small">{{ ext.methods.join(", ") }}</div>
+            <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
+            <div v-if="script.extensions.indexOf(ext.name) > -1">
+              <div class="method_line" v-for="(info, name) in ext.methods">
+                <span class="method_signature">{{name}}({{info.params.join(', ')}})</span><span class="method_description" v-if="info.description"> - {{info.description}}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -327,4 +331,7 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .extensions_toggle{ text-decoration: none; }
+.method_line{ font-size: @font-size-small; line-height: 1.5em; }
+.method_signature{ font-family: monospace; font-weight: bold; }
+.method_description{ color: @base; }
 </style>

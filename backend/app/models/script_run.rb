@@ -4,7 +4,27 @@ require './app/database/database.rb'
 class ScriptRun
 
   def self.columns
-    [:id, :script_id, :trigger_id, :queue_name, :queue_item_key, :input, :code, :output, :error, :run_at]
+    [:id, :script_id, :trigger_id, :queue_name, :queue_item_key, :input, :extensions, :code, :output, :error, :run_at]
+  end
+
+  def self.add(script_run)
+    fields = self.script_run_to_fields(script_run)
+    DataMapper.insert("script_runs", fields)
+  end
+
+  def self.script_run_to_fields(script_run)
+    script_run[:id] = SecureRandom.uuid if !script_run[:id]
+    fields = {}
+    self.columns.each do |col|
+      if col == :output
+        fields[:output] = script_run[:output].to_json
+      elsif col == :extensions
+        fields[:extensions] = script_run[:extensions].to_json
+      else
+        fields[col] = script_run[col]
+      end
+    end
+    fields
   end
 
   def self.last_n(script_id, n)
@@ -17,12 +37,24 @@ WHERE sr.script_id = ?
 ORDER BY sr.run_at DESC
 LIMIT ?
     "
-    DataMapper.select(sql, {
+    rows = DataMapper.select(sql, {
       prefix: 'sr',
       has_many: [
         { triggers: { prefix: 't' } }
       ]
     }, [script_id, n])
+    script_runs = rows_to_script_runs(rows)
+    script_runs
+  end
+
+  def self.rows_to_script_runs(rows)
+    script_runs = []
+    rows.each do |row|
+      script_run = row
+      script_run[:extensions] = JSON.parse(row[:extensions])
+      script_runs.push(script_run)
+    end
+    return script_runs
   end
 
 end

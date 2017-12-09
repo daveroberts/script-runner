@@ -7,7 +7,7 @@ class CronRunner
       triggers.each do |trigger|
         # If the script hasn't been triggered in the last X minutes, run it
         next if script[:last_run] && ((Time.now - script[:last_run])/60) < trigger[:every]
-        script_run = Script.run_code(script[:code], nil, script[:id], trigger[:id])
+        script_run = Script.run_code(script[:code], nil, script[:extensions], script[:id], trigger[:id])
       end
     end
   end

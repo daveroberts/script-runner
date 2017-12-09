@@ -18,7 +18,28 @@
         <div class="code_editor">
           <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
         </div>
-        <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_test_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
+        <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
+      </div>
+      <div style="margin: 1em 0;">
+        <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
+          <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Code Extensions</span>
+          <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Extensions</span>
+        </a>
+      </div>
+      <div v-if="show_extensions">
+        <div v-if="!extensions">
+          Loading...
+        </div>
+        <div v-else>
+          <div v-for="ext in extensions">
+            <div class="fancy_checkbox">
+              <input :id="'check_ext_'+ext.name" type="checkbox" :value="ext.name" v-model="script.extensions" />
+              <label :for="'check_ext_'+ext.name"></label>
+            </div>
+            <label :for="'check_ext_'+ext.name">{{ext.name}}</label>
+            <div style="margin: 1em 0;" v-if="script.extensions.indexOf(ext.name) > -1" class="small">{{ ext.methods.join(", ") }}</div>
+          </div>
+        </div>
       </div>
       <div style="margin: 1em 0;">
         <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
@@ -147,6 +168,21 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+const loadExtensions = (time = new Date()) => {
+  fetch(`/api/extensions/`, {
+    credentials: 'include'
+  }).then(res => {
+    if (res.ok){ return res.json() }
+  }).then(extensions => {
+    if (!state.extensions.list){ state.extensions.list = [] }
+    extensions.forEach(ext => {
+      var idx = state.extensions.list.findIndex(e=>e.name==ext.name)
+      if (idx == -1){ state.extensions.list.push(ext) }
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+}
 export default {
   data: function(){
     return {
@@ -154,6 +190,7 @@ export default {
       save_for_later: false,
       orig_code: '',
       trigger_types: ['CRON', 'QUEUE'],
+      show_extensions: false,
       editorOptions: {
         tabSize: 2,
         mode: {
@@ -170,14 +207,16 @@ export default {
     script(){ return state.current.script },
     runs(){ return state.current.runs },
     errors(){ return state.current.field_errors },
+    extensions(){ return state.extensions.list }
   },
   created: function(){
+    loadExtensions()
     if (this.$route.params.id == 'new'){
       state.current = JSON.parse(JSON.stringify(initial.current))
     }
-    if (state.current.script.default_test_input){
+    if (state.current.script.default_input){
       state.current.input.send = true
-      state.current.input.payload = state.current.script.default_test_input
+      state.current.input.payload = state.current.script.default_input
     }
     if (state.current.script.code){ this.orig_code = state.current.script.code }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
@@ -187,9 +226,9 @@ export default {
       }).then((script)=>{
         state.current.script = script
         this.orig_code = state.current.script.code
-        if (state.current.script.default_test_input){
+        if (state.current.script.default_input){
           state.current.input.send = true
-          state.current.input.payload = state.current.script.default_test_input
+          state.current.input.payload = state.current.script.default_input
         }
       }).catch((err)=>{
         console.log(err)
@@ -206,6 +245,7 @@ export default {
     }
   },
   methods: {
+    toggle_extensions_pane(){ this.show_extensions = !this.show_extensions },
     set_save_for_later(){ this.save_for_later=true; },
     save(){
       var status = null
@@ -232,13 +272,13 @@ export default {
       })
     },
     save_as_default_input(script_id, payload){
-      fetch(`/api/scripts/${script_id}/set_default_test_input`, {
+      fetch(`/api/scripts/${script_id}/set_default_input`, {
         method: 'POST',
         credentials: 'include',
         body: payload
       }).then(res => {
         if (res.ok){
-          state.current.script.default_test_input = payload
+          state.current.script.default_input = payload
         }
       }).catch(err => {
         console.log(err)
@@ -259,6 +299,7 @@ export default {
       var payload = {
         code: state.current.script.code,
         input: input,
+        extensions: state.current.script.extensions,
         script_id: state.current.script.id
       }
       fetch(`/api/run`, {
@@ -278,4 +319,5 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
+.extensions_toggle{ text-decoration: none; }
 </style>

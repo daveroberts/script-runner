@@ -4,7 +4,6 @@ const initial_state = {
     {id: 5, msg: 'warning', show: true, type: 'warning'},
     {id: 6, msg: 'danger', show: true, type: 'danger'},*/
   ],
-  extensions: null,
   tags: {
     current: null,
     data: null
@@ -21,12 +20,17 @@ const initial_state = {
     current: null,
     data: null
   },
+  extensions: {
+    list: null,
+    last_loaded: null
+  },
   current: {
     script: {
       id: null,
       name: "",
       description: "",
-      default_test_input: null,
+      default_input: null,
+      extensions: [],
       code: "",
       active: true,
       created_at: null,
@@ -37,7 +41,7 @@ const initial_state = {
     input: {
       send: false,
       payload: ""
-    }
+    },
   },
   list: null,
   blank: {

@@ -44,6 +44,9 @@ module.exports = {
   },
   plugins: [
     new webpack.NamedModulesPlugin(), /* displays the name of what was updated in HMR */
+    new webpack.DefinePlugin({
+      SETTINGS: JSON.stringify(require('./settings.json'))
+    }),
   ],
   devServer: {
     /* Warning, adding hot and inline here, instead of on the command line, doesn't work.  (Console will say HMR is disabled.) */

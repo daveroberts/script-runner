@@ -25,7 +25,8 @@ export default {
   },
   data: function(){
     return {
-      state: state
+      state: state,
+      SETTINGS: SETTINGS
     }
   },
   methods: {

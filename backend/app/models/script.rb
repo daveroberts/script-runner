@@ -12,7 +12,7 @@ end
 class Script
 
   def self.columns
-    [:id, :name, :category, :description, :default_test_input, :code, :active, :created_at]
+    [:id, :name, :category, :description, :default_input, :extensions, :code, :active, :created_at]
   end
 
   def self.all
@@ -24,12 +24,16 @@ FROM scripts s
   LEFT JOIN triggers t on s.id=t.script_id
   LEFT JOIN script_runs sr on s.id=sr.script_id
 GROUP BY s.id, t.id"
-    DataMapper.select(sql, {
+    rows = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
         { triggers: { prefix: 't' } }
       ]
     })
+    rows.each do |r|
+      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions]):[]
+    end
+    rows
   end
 
   def self.for_queue(name)
@@ -39,12 +43,16 @@ GROUP BY s.id, t.id"
 FROM scripts s
   LEFT JOIN triggers t on s.id=t.script_id
 WHERE t.queue_name = ?"
-    DataMapper.select(sql, {
+    rows = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
         { triggers: { prefix: 't'  } }
       ]
     }, name)
+    rows.each do |r|
+      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions]):[]
+    end
+    rows
   end
 
   def self.find(id)
@@ -55,12 +63,15 @@ FROM scripts s
   LEFT JOIN triggers t on s.id=t.script_id
 WHERE s.id = ?
     "
-    DataMapper.select(sql, {
+    row = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
         { triggers: { prefix: 't' } }
       ]
     }, id).first
+    return nil if !row
+    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions]):[]
+    row
   end
 
   def self.save(script)
@@ -90,14 +101,15 @@ WHERE s.id = ?
 
   def self.script_to_fields(script)
     return {
-      id:                 script[:id],
-      name:               script[:name],
-      category:           script[:category],
-      description:        script[:description],
-      default_test_input: script[:default_test_input],
-      code:               script[:code],
-      active:             script[:active],
-      created_at:         Time.new(script[:created_at])
+      id:            script[:id],
+      name:          script[:name],
+      category:      script[:category],
+      description:   script[:description],
+      default_input: script[:default_input],
+      extensions:    script[:extensions].to_json,
+      code:          script[:code],
+      active:        script[:active],
+      created_at:    Time.new(script[:created_at])
     }
   end
 
@@ -155,18 +167,17 @@ WHERE s.id = ?
     end
   end
 
-  def self.set_default_test_input(script_id, payload)
+  def self.set_default_input(script_id, payload)
     fields = {
       id: script_id,
-      default_test_input: payload
+      default_input: payload
     }
     DataMapper.update('scripts', fields)
   end
 
-  def self.run_code(code, input = nil, script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
+  def self.run_code(code, input = nil, extensions = [], script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
-    classes = ['DataStorage']
-    classes.each do |class_string|
+    extensions.each do |class_string|
       clazz = Object.const_get(class_string)
       o = clazz.new
       methods = clazz.instance_methods - Object.instance_methods
@@ -184,18 +195,18 @@ WHERE s.id = ?
       error = "#{e.class.to_s} #{e.to_s}"
     end
     script_run = {
-      id: SecureRandom.uuid,
       script_id: script_id,
       trigger_id: trigger_id,
       queue_name: queue_name,
       queue_item_key: queue_item_key,
+      extensions: extensions,
       input: input,
       code: code,
       output: output.to_json,
       error: error,
       run_at: Time.now
     }
-    DataMapper.insert("script_runs", script_run)
+    ScriptRun.add(script_run)
     return script_run
   end
 

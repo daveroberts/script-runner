@@ -8,7 +8,7 @@ class DBSeed
   @scripts = [
     { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: 'Sample', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nmap(numbers, (x)->{ x*x })" },
     { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', category: 'queue_example', code: "number = random(1,10)\nqueue('numbers', number)\nnumber" },
-    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', category: 'queue_example', default_test_input: '44', code: "number = int(input())\nnumber = number + 100\nnumber" },
+    { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', category: 'queue_example', default_input: '44', code: "number = int(input())\nnumber = number + 100\nnumber" },
     { id: '0b2d252d-77de-48a4-992d-b094a4b7ae56', name: 'Data Retrieval', category: 'data_storage', code: "{\n  :countries dict_values('countries'),\n  :pages retrieve_by_tag('pages'),\n  :urls set_retrieve('urls')\n}" },
     { id: 'eb07e93d-0d30-403d-aaac-ef1f46d32cdf', name: 'Data Storage', category: 'data_storage', code: "store('fake log data',['logs'])\nset_store('names','Dave')\ndict_store('employees', 'Dave', {:id 4,:name 'Dave'})" },
     { id: 'ec1259c1-c7f4-450c-9037-188eeff597e2', name: 'Recursive Function', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nfib = (n)->{\n  if n == 0 {\n    0\n  } elsif n == 1 {\n    1\n  } else {\n    fib(n-1) + fib(n-2)\n  }\n}\nmap(numbers, fib)" },
@@ -63,7 +63,8 @@ class DBSeed
         name: script[:name],
         category: script[:category],
         description: "Sample description",
-        default_test_input: script[:default_test_input],
+        default_input: script[:default_input],
+        extensions: ["DataStorage"].to_json,
         code: script[:code],
         active: true,
         created_at: DateTime.now
@@ -76,6 +77,7 @@ class DBSeed
         id: run[:id],
         script_id: run[:script_id],
         trigger_id: run[:trigger_id],
+        extensions: ["DataStorage"].to_json,
         input: run[:input],
         code: run[:code],
         output: run[:output],

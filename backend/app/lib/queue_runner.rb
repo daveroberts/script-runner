@@ -9,7 +9,7 @@ class QueueRunner
       next if result == 0
       processing_scripts.each do |script|
         trigger = script[:triggers].detect{|t|t[:active]&&t[:type]=='QUEUE'&&t[:queue_name]==item[:queue_name]}
-        script_run = Script.run_code(script[:code], item[:item], script[:id], trigger[:id], item[:queue_name], item[:item_key])
+        script_run = Script.run_code(script[:code], item[:item], script[:extensions], script[:id], trigger[:id], item[:queue_name], item[:item_key])
       end
       result = QueueItem.finish_processing(item[:id])
     end

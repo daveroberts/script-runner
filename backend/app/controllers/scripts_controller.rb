@@ -26,9 +26,9 @@ class App < Sinatra::Application
     end
   end
   
-  post "/scripts/:id/set_default_test_input/?" do
+  post "/scripts/:id/set_default_input/?" do
     payload = request.body.read
-    result = Script.set_default_test_input(params[:id], payload)
+    result = Script.set_default_input(params[:id], payload)
     return [200, "OK"]
   end
 
@@ -36,7 +36,7 @@ class App < Sinatra::Application
     payload = JSON.parse(request.body.read, symbolize_names: true)
     input = nil
     input = JSON.parse(payload[:input]) if payload[:input]
-    script_run = Script.run_code(payload[:code], input, payload[:script_id])
+    script_run = Script.run_code(payload[:code], input, payload[:extensions], payload[:script_id])
     return script_run.to_json
   end
 end

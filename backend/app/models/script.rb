@@ -202,7 +202,7 @@ WHERE s.id = ?
       extensions: extensions,
       input: input,
       code: code,
-      output: output.to_json,
+      output: output,
       error: error,
       run_at: Time.now
     }

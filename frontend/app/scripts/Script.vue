@@ -64,7 +64,10 @@
             </tbody>
             <tbody v-else v-for="run in runs">
               <tr>
-                <td><pre class="monospace" v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
+                <td>
+                  <pre class="monospace" v-if="run.output">{{run.output}}</pre>
+                  <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
+                </td>
                 <td style="text-align: right;" class="small">{{run.run_at}}</td>
               </tr>
             </tbody>
@@ -206,6 +209,7 @@ export default {
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs },
+    last_run(){ return state.current.runs[0] },
     errors(){ return state.current.field_errors },
     extensions(){ return state.extensions.list }
   },
@@ -310,6 +314,9 @@ export default {
         return res.json()
       }).then(output => {
         state.current.runs.unshift(output)
+        if (output.error) {
+          senate.flash("Script produced an error", "danger")
+        }
       }).catch(err => {
         console.log(err)
       })

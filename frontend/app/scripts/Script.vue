@@ -40,7 +40,7 @@
             </tbody>
             <tbody v-else v-for="run in runs">
               <tr>
-                <td><pre v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
+                <td><pre class="monospace" v-if="run.output">{{JSON.parse(run.output)}}</pre></td>
                 <td style="text-align: right;" class="small">{{run.run_at}}</td>
               </tr>
             </tbody>
@@ -150,7 +150,11 @@ export default {
       trigger_types: ['CRON', 'QUEUE'],
       editorOptions: {
         tabSize: 2,
-        mode: 'text/javascript',
+        mode: {
+          name: 'clojure',
+          json: true
+        },
+        theme: 'mdn-like',
         lineNumbers: true,
         line: true,
       }
@@ -186,7 +190,7 @@ export default {
   },
   methods: {
     set_save_for_later(){ this.save_for_later=true; },
-    save(){
+      save(){
       fetch(`/api/scripts`, {
         method: 'POST',
         credentials: 'include',

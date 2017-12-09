@@ -26,6 +26,7 @@ const initial_state = {
       id: null,
       name: "",
       description: "",
+      default_test_input: null,
       code: "",
       active: true,
       created_at: null,

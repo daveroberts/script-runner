@@ -1,5 +1,3 @@
-Save inputs
-automatically load an input
 validation errors
 web interface
 sftp interface
@@ -11,7 +9,9 @@ doesn't need to use custom script, could be any language with eval or scripting 
 pretty print dates
 if script contains input(), warn if no input
 triggers on other data types
-sending emails
+  manually "dequeing" other data types
+sending emails, tweets
 http triggers / http get data
 call func from func
 system function uuid
+pull off queue manually

@@ -11,6 +11,7 @@ module DBMigrations
         `name` VARCHAR(255) NOT NULL,
         `category` VARCHAR(255),
         `description` VARCHAR(255),
+        `default_test_input` TEXT,
         `code` TEXT,
         `active` BOOLEAN NOT NULL,
         `created_at` DATETIME NOT NULL,

@@ -14,8 +14,11 @@
         <label for="input_send"></label>
       </div>
       <label for="input_send">Send Input</label>
-      <div v-if="state.current.input.send" class="code_editor">
-        <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
+      <div v-if="state.current.input.send">
+        <div class="code_editor">
+          <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
+        </div>
+        <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_test_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
       </div>
       <div style="margin: 1em 0;">
         <button class="btn" @click="run()"><i class="fa fa-code" aria-hidden="true"></i> Run</button>
@@ -168,12 +171,20 @@ export default {
     if (this.$route.params.id == 'new'){
       state.current = JSON.parse(JSON.stringify(initial.current))
     }
+    if (state.current.script.default_test_input){
+      state.current.input.send = true
+      state.current.input.payload = state.current.script.default_test_input
+    }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
       fetch(`/api/scripts/${this.$route.params.id}`).then((res)=>{
         if (res.ok){ return res.json() }
       }).then((script)=>{
         state.current.script = script
+        if (state.current.script.default_test_input){
+          state.current.input.send = true
+          state.current.input.payload = state.current.script.default_test_input
+        }
       }).catch((err)=>{
         console.log(err)
       })
@@ -190,19 +201,31 @@ export default {
   },
   methods: {
     set_save_for_later(){ this.save_for_later=true; },
-      save(){
+    save(){
       fetch(`/api/scripts`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(state.current.script)
       }).then(res => {
         if (res.ok){ return res.json() }
-        console.log(res)
         throw new Error("not OK")
       }).then( data => {
         senate.flash("Script saved")
         state.current.script = data.script
         this.$router.replace(`/scripts/${state.current.script.id}`)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    save_as_default_input(script_id, payload){
+      fetch(`/api/scripts/${script_id}/set_default_test_input`, {
+        method: 'POST',
+        credentials: 'include',
+        body: payload
+      }).then(res => {
+        if (res.ok){
+          state.current.script.default_test_input = payload
+        }
       }).catch(err => {
         console.log(err)
       })

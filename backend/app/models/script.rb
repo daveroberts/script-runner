@@ -12,7 +12,7 @@ end
 class Script
 
   def self.columns
-    [:id, :name, :category, :description, :code, :active, :created_at]
+    [:id, :name, :category, :description, :default_test_input, :code, :active, :created_at]
   end
 
   def self.all
@@ -90,13 +90,14 @@ WHERE s.id = ?
 
   def self.script_to_fields(script)
     return {
-      id:          script[:id],
-      name:        script[:name],
-      category:    script[:category],
-      description: script[:description],
-      code:        script[:code],
-      active:      script[:active],
-      created_at:  Time.new(script[:created_at])
+      id:                 script[:id],
+      name:               script[:name],
+      category:           script[:category],
+      description:        script[:description],
+      default_test_input: script[:default_test_input],
+      code:               script[:code],
+      active:             script[:active],
+      created_at:         Time.new(script[:created_at])
     }
   end
 
@@ -152,6 +153,14 @@ WHERE s.id = ?
       stmt = db.prepare(sql)
       stmt.execute(script[:id])
     end
+  end
+
+  def self.set_default_test_input(script_id, payload)
+    fields = {
+      id: script_id,
+      default_test_input: payload
+    }
+    DataMapper.update('scripts', fields)
   end
 
   def self.run_code(code, input = nil, script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)

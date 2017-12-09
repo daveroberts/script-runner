@@ -10,3 +10,8 @@ show data flow diagram; show problems solved; show commands can be complex, not 
 doesn't need to use custom script, could be any language with eval or scripting capability
 pretty print dates
 if script contains input(), warn if no input
+triggers on other data types
+sending emails
+http triggers / http get data
+call func from func
+system function uuid

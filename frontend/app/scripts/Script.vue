@@ -70,7 +70,7 @@
             </tbody>
             <tbody v-else v-for="run in runs">
               <tr>
-                <td>
+                <td style="font-size: 10pt;">
                   <pre class="monospace" v-if="run.output">{{run.output}}</pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
                 </td>

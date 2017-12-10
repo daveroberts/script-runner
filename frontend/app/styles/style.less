@@ -7,7 +7,7 @@ h1{ font-size: 1.8em; color: darken(@background, 20%); margin-top: 0.5em; margin
 h2{ font-size: 1.4em; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
 input{ color: black; }
 input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 30em; }
-pre{ font-family: monospace; font-size: @font-size-small; }
+pre{ font-family: monospace; }
 
 .small{ font-size: @font-size-small; }
 .success{ color: @success }
@@ -71,7 +71,7 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .fancy_static_checkbox div{ cursor: pointer; position: absolute; width: 12px; height: 12px; top: 0; left: 0; }
 .fancy_static_checkbox div:after { content: ''; position: absolute; width: 16px; height: 5px; background: transparent; top: 2px; left: 2px; border: 3px solid @success; border-top: none; border-right: none; transform: rotate(-45deg); }
 
-.monospace{ font-family: monospace; font-size: @font-size-monospace; }
+.monospace{ font-family: monospace; white-space: pre-wrap; }
 .code_editor{ border: 1px solid #666; }
 .CodeMirror{ height: auto !important; }
 

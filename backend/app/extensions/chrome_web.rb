@@ -1,4 +1,5 @@
 require 'selenium-webdriver'
+require 'securerandom'
 
 class ChromeWeb
   def self.icon
@@ -28,8 +29,18 @@ class ChromeWeb
     element.submit
   end
 
+  # Get inner text from element
   def text_from_element(element)
     element.text
+  end
+
+  def save_screenshot()
+    filename = SecureRandom.uuid
+    filepath = "/tmp/#{filename}.png"
+    driver.save_screenshot(filepath)
+    data = File.read(filepath)
+    File.delete(filepath)
+    return data
   end
 
   private

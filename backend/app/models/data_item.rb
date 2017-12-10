@@ -6,6 +6,7 @@ class DataItem
 
   def self.add(item, tags=[], key=nil)
     key = SecureRandom.uuid if key.blank?
+    binding.pry
     data_item_fields = {
       id: SecureRandom.uuid,
       key: key,
@@ -22,6 +23,7 @@ class DataItem
       }
       result = DataMapper.insert("tags", tag_fields)
     end
+    key
   end
 
   def self.by_tag(tag)

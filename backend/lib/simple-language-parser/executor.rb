@@ -11,6 +11,7 @@ module SimpleLanguage
   class InfiniteLoop < Exception; end
   class MismatchedTag < Exception; end
   class Break < Exception; end
+  class Next < Exception; end
   class Return < Exception
     attr_reader :value
     def initialize(v)
@@ -111,10 +112,17 @@ module SimpleLanguage
         collection = run_block(command[:collection], variables)
         symbol = command[:symbol]
         block = command[:block]
-        locals = variables.dup
+        #locals = variables.dup
+        #TODO: outer variables should be altered, inner no
         collection.each do |item|
-          locals[symbol] = item
-          run_block(block, locals)
+          variables[symbol] = item
+          begin
+            run_block(block, variables)
+          rescue Next
+            next
+          rescue Break
+            break
+          end
         end
       elsif command[:type] == :while_apply
         condition = command[:condition]
@@ -138,10 +146,14 @@ module SimpleLanguage
             run_block(block, variables)
           rescue Break
             break
+          rescue Next
+            next
           end
         end
       elsif command[:type] == :break
         raise Break
+      elsif command[:type] == :next
+        raise Next
       elsif command[:type] == :return_apply
         raise Return.new(exec_cmd(command[:value], variables))
       elsif command[:type] == :null

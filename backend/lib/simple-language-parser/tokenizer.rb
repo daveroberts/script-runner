@@ -25,6 +25,7 @@ module SimpleLanguage
       { type: :loop, regex: /^loop/ },
       { type: :while, regex: /^while/ },
       { type: :break, regex: /^break/ },
+      { type: :next, regex: /^next/ },
       { type: :arrow, regex: /^\-\>/ },
       { type: :less_than_or_equals, regex: /^\<=/ },
       { type: :less_than, regex: /^\</ },

@@ -6,10 +6,12 @@ class DataItem
 
   def self.add(item, item_mime_type = "text/plain", tags=[], key=nil)
     key = SecureRandom.uuid if key.blank?
+    db_item = item
+    db_item = item.to_json if item.class == Hash
     data_item_fields = {
       id: SecureRandom.uuid,
       key: key,
-      item: item,
+      item: db_item,
       item_mime_type: item_mime_type,
       created_at: Time.now
     }
@@ -37,6 +39,7 @@ class DataItem
 FROM data_items di
   LEFT JOIN tags t on di.`key`=t.data_item_key
 WHERE t.name IN (#{tags.map{|t|"'#{t}'"}.join(",")})
+ORDER BY di.created_at DESC
     "
     DataMapper.select(sql, {
       prefix: 'di',

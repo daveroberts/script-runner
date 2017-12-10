@@ -7,7 +7,8 @@
         <codemirror v-model="script.code" :options="editorOptions"></codemirror>
       </div>
       <div v-if="script.id && script.code != orig_code">
-        <button type="submit" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
+        <button type="button" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
+        <button type="button" class="btn btn-danger btn-small" @click.prevent="undo()"> <i class="fa fa-undo" aria-hidden="true"></i> Undo Changes</button>
       </div>
       <div style="margin-top: 1em;" class="fancy_checkbox">
         <input id="input_send" type="checkbox" v-model="state.current.input.send" />
@@ -70,7 +71,7 @@
             <tbody v-else v-for="run in runs">
               <tr>
                 <td style="font-size: 10pt;">
-                  <pre class="monospace" v-if="run.output">{{run.output}}</pre>
+                  <pre class="monospace" v-if="run.output != null">{{run.output}}</pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
                 </td>
                 <td style="text-align: right;" class="small">{{run.run_at}}</td>
@@ -210,6 +211,7 @@ export default {
         theme: 'mdn-like',
         lineNumbers: true,
         line: true,
+        smartIndent: false
       }
     }
   },
@@ -259,6 +261,7 @@ export default {
   methods: {
     toggle_extensions_pane(){ this.show_extensions = !this.show_extensions },
     set_save_for_later(){ this.save_for_later=true; },
+    undo(){ state.current.script.code = this.orig_code },
     save(){
       var status = null
       Vue.set(state.current, 'field_errors', {})

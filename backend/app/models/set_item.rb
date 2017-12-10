@@ -11,7 +11,13 @@ class SetItem
       value: value,
       created_at: Time.now
     }
-    DataMapper.insert("set_items", fields)
+    begin
+      rows_added = DataMapper.insert("set_items", fields)
+      return true
+    rescue Mysql2::Error => e
+      return false if e.to_s.include?("Duplicate entry")
+      raise e
+    end
   end
 
   def self.by_name(name)

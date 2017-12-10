@@ -9,9 +9,14 @@ class ChromeWeb
   def initialize
   end
 
-  # Navigates to the given URL in chrome; returns nothing
+  # Navigates to the given URL in chrome; returns true if navigation is successful
   def go_to_url(url)
-    driver.get(url)
+    begin
+      driver.get(url)
+      return true
+    rescue # usually a bad URL
+      return false
+    end
   end
 
   # Get element from a selector.  Selector should be a hash like {:id "sidebar"} or {:name search_bar}
@@ -35,7 +40,7 @@ class ChromeWeb
   end
 
   # Returns raw data for png screenshot
-  def screenshot()
+  def get_screenshot()
     filename = SecureRandom.uuid
     filepath = "/tmp/#{filename}.png"
     driver.save_screenshot(filepath)
@@ -45,20 +50,26 @@ class ChromeWeb
   end
 
   # Returns the full HTML after page has been rendered and changed by JavaScript
-  def html()
+  def get_html()
     driver.execute_script("return document.documentElement.outerHTML")
   end
 
   # Returns the page source for the current page.  Does not render JavaScript.  See html() method instead
-  def page_source()
+  def get_page_source()
     driver.page_source
   end
 
   # grabs all links on a webpage
-  def grab_links()
+  def get_links()
     anchors = driver.find_elements({ tag_name: 'a'})
     links = anchors.map{|a|a.attribute(:href)}
     return links
+  end
+
+  # pause for n seconds (defaults to 5)
+  def wait(n=5)
+    binding.pry
+    sleep n
   end
 
   private

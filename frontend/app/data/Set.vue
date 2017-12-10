@@ -13,7 +13,7 @@
         </thead>
         <tbody>
           <tr v-for="item in items">
-            <td><pre>{{item}}</pre></td>
+            <td><pre style="font-size: 10pt;">{{item}}</pre></td>
           </tr>
         </tbody>
       </table>

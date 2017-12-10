@@ -10,12 +10,14 @@ class QueueItem
 
   def self.add(name, item, item_mime_type='application/json', item_key=nil)
     item_key=SecureRandom.uuid if item_key.blank?
+    db_item = item
+    db_item = item.to_json if item.class == Hash
     fields = {
       id: SecureRandom.uuid,
       queue_name: name,
       state: 'NEW',
       item_key: item_key,
-      item: item,
+      item: db_item,
       item_mime_type: item_mime_type,
       created_at: Time.now
     }

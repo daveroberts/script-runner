@@ -38,7 +38,6 @@
             </div>
             <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
             <div v-if="script.extensions.indexOf(ext.name) > -1">
-              xyzzy
               <methods :methods="ext.methods"></methods>
             </div>
           </div>

@@ -34,7 +34,7 @@ module DBMigrations
         `input` TEXT,
         `extensions` TEXT,
         `code` TEXT,
-        `output` TEXT,
+        `output` LONGTEXT,
         `error` TEXT,
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),

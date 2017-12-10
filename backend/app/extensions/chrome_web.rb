@@ -44,6 +44,23 @@ class ChromeWeb
     return data
   end
 
+  # Returns the full HTML after page has been rendered and changed by JavaScript
+  def html()
+    driver.execute_script("return document.documentElement.outerHTML")
+  end
+
+  # Returns the page source for the current page.  Does not render JavaScript.  See html() method instead
+  def page_source()
+    driver.page_source
+  end
+
+  # grabs all links on a webpage
+  def grab_links()
+    anchors = driver.find_elements({ tag_name: 'a'})
+    links = anchors.map{|a|a.attribute(:href)}
+    return links
+  end
+
   private
 
   def driver

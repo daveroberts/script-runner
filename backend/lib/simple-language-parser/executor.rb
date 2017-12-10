@@ -201,7 +201,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','len','random', 'input',"int"]
+      system_cmds = ['print','join','push','map','filter','match','len','random', 'input',"int"]
       return system_cmds.include? fun
     end
 
@@ -237,6 +237,36 @@ module SimpleLanguage
           arr.push output
         end
         return arr
+      when "filter"
+        collection = exec_cmd(args[0], variables)
+        fun = nil
+        fun_name = exec_cmd(args[1], variables)
+        if fun_name.class == String
+          raise NullPointer, "#{fun_name} does not exist" if !variables.has_key? fun_name
+          fun = variables[fun_name]
+        else
+          fun = exec_cmd(fun_name, variables)
+        end
+        locals = variables.dup
+        output = nil
+        locals = fun[:locals].merge(locals)
+        arr = []
+        collection.each do |item|
+          locals[fun[:params][0][:value]] = item
+          begin
+            output = run_block(fun[:block], locals)
+          rescue Return => ret
+            output = ret.value
+          end
+          arr.push(item) if output
+        end
+        return arr
+      when "match"
+        str = exec_cmd(args[0], variables)
+        regex_str = exec_cmd(args[1], variables)
+        match = Regexp.new(regex_str).match(str)
+        return nil if !match
+        return match.to_a
       when "push"
         collection = exec_cmd(args[0], variables)
         item = exec_cmd(args[1], variables)

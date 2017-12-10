@@ -10,19 +10,14 @@ class DBSeed
     { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: 'Ingest', category: 'queue_example', code: "number = random(1,10)\nqueue('numbers', number)\nnumber" },
     { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: 'Process', category: 'queue_example', default_input: '44', code: "number = int(input())\nnumber = number + 100\nnumber" },
     { id: '0b2d252d-77de-48a4-992d-b094a4b7ae56', name: 'Data Retrieval', category: 'data_storage', code: "{\n  :countries dict_values('countries'),\n  :pages retrieve_by_tag('pages'),\n  :urls set_retrieve('urls')\n}" },
-    { id: 'eb07e93d-0d30-403d-aaac-ef1f46d32cdf', name: 'Data Storage', category: 'data_storage', code: "store('fake log data',['logs'])\nset_store('names','Dave')\ndict_store('employees', 'Dave', {:id 4,:name 'Dave'})" },
+    { id: 'eb07e93d-0d30-403d-aaac-ef1f46d32cdf', name: 'Data Storage', category: 'data_storage', code: "store('fake log data','text/plain',['logs'])\nset_store('names','Dave')\ndict_store('employees', 'Dave', {:id 4,:name 'Dave'})" },
     { id: 'ec1259c1-c7f4-450c-9037-188eeff597e2', name: 'Recursive Function', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nfib = (n)->{\n  if n == 0 {\n    0\n  } elsif n == 1 {\n    1\n  } else {\n    fib(n-1) + fib(n-2)\n  }\n}\nmap(numbers, fib)" },
+    { id: 'd6f2a465-6702-444a-bc9d-8157cbd45e20', name: 'Other Language Features', category: 'language_examples', default_input: '["Monday","Tuesday","Wednesday"]', code: "days = input()\npush(days, 'Thursday')\nforeach day in days {\n  queue('days', day, 'text/plain')\n}\n\n// Count up then down\ncounter = 0\nloop {\n  counter = counter + 1\n  if counter >= 10 { break }\n}\nwhile counter != 0 {\n  counter = counter - 1\n}\ncounter" },
+    { id: '54ef5a07-a515-4bfb-8113-f1daf7810648', name: 'Google Screenshot', category: 'web', code: "go_to_url('http://google.com')\nsearch_box = element({:name 'q'})\nfill_in_textbox(search_box, 'XOR security')\nsubmit_form(search_box)\nraw_data = screenshot()\nstore(raw_data, 'image/png', ['images', 'xor'])", extensions: ["LocalDataStorage", "ChromeWeb"] },
   ]
   @triggers = [
     { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[1][:id], type: "CRON", every: 1 },
     { id: '59805e73-01cd-4185-98a7-f1bb582cae27', script_id: @scripts[2][:id], type: "QUEUE", queue_name: 'numbers' },
-  ]
-  @script_runs = [
-    { id: 'b541d40e-9cd5-485a-a0e2-87d0e1a020f5', script_id: @scripts[0][:id], trigger_id: nil, input: '[2,4,6,8,10]', code:@scripts[0][:code], output: "[4,16,36,64,100]", run_at: DateTime.new(2017, 12, 6)},
-    { id: '27ca4650-6c6d-4a23-a588-c34d8b5377bc', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:@scripts[1][:code], output: "4", run_at: DateTime.new(1982, 7, 15)},
-    { id: 'd19c8caa-ec49-4cc1-824b-2bb2f78c61f9', script_id: @scripts[1][:id], trigger_id: @triggers[0][:id], code:@scripts[1][:code], output: "7", run_at: DateTime.new(1776, 7, 4)},
-    { id: '6684f5e4-518a-4b08-855a-dcc24327a60b', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], input: "7", code:@scripts[2][:code], output: "107", run_at: DateTime.new(2017, 12, 4)},
-    { id: '0e2336da-4e49-4233-a491-70ea8b77e7a2', script_id: @scripts[2][:id], trigger_id: @triggers[1][:id], input: "9", code:@scripts[2][:code], output: "109", run_at: DateTime.new(2017, 12, 5)},
   ]
   @queue_items = [
     { id: 'b57bf943-072c-47eb-88db-e3c55fc32190', queue_name: 'numbers', state: 'NEW', item_key: '58c6fe21-cb16-4847-b3dd-171c5d6888e0', item: '4' },
@@ -58,13 +53,15 @@ class DBSeed
   def self.seed
     puts 'Seeding database'
     @scripts.each do |script|
+      extensions = script[:extensions].to_json
+      extensions = ["LocalDataStorage"].to_json if !script[:extensions]
       values = {
         id: script[:id],
         name: script[:name],
         category: script[:category],
         description: "Sample description",
         default_input: script[:default_input],
-        extensions: ["LocalDataStorage"].to_json,
+        extensions: extensions,
         code: script[:code],
         active: true,
         created_at: DateTime.now
@@ -72,20 +69,6 @@ class DBSeed
       DataMapper.insert("scripts", values)
     end
     puts "Added #{@scripts.count} scripts"
-    @script_runs.each do |run|
-      values = {
-        id: run[:id],
-        script_id: run[:script_id],
-        trigger_id: run[:trigger_id],
-        extensions: ["LocalDataStorage"].to_json,
-        input: run[:input],
-        code: run[:code],
-        output: run[:output],
-        run_at: run[:run_at]
-      }
-      DataMapper.insert("script_runs", values)
-    end
-    puts "Added #{@script_runs.count} script runs"
     @triggers.each do |trigger|
       values = {
         id: trigger[:id],
@@ -106,6 +89,7 @@ class DBSeed
         state: qi[:state],
         item_key: qi[:item_key],
         item: qi[:item],
+        item_mime_type: 'text/plain',
         created_at: DateTime.now
       }
       DataMapper.insert("queue_items", values)
@@ -116,6 +100,7 @@ class DBSeed
         id: o[:id],
         key: o[:key],
         item: o[:item],
+        item_mime_type: "text/plain",
         created_at: DateTime.now
       }
       DataMapper.insert("data_items", values)

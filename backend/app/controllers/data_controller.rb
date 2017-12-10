@@ -10,6 +10,14 @@ class App < Sinatra::Application
     return DataItem.by_tag(params[:name]).to_json
   end
 
+  get "/data_item/:key/?" do
+    data_item = DataItem.find(params[:key])
+    content_type 'text/plain', charset: 'utf-8'
+    return [404, "data item not found"] if !data_item
+    content_type data_item[:item_mime_type]
+    return [200, data_item[:item]]
+  end
+
   get "/sets/?" do
     return SetItem.names.to_json
   end
@@ -32,6 +40,14 @@ class App < Sinatra::Application
 
   get "/queues/:name/?" do
     return QueueItem.by_queue_name(params[:name]).to_json
+  end
+
+  get "/queue_item/:key/?" do
+    item = QueueItem.by_item_key(params[:key])
+    content_type 'text/plain', charset: 'utf-8'
+    return [404, "item not found"] if !item
+    content_type item[:item_mime_type]
+    return [200, item[:item]]
   end
 
 end

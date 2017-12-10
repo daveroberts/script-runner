@@ -20,15 +20,17 @@
         <thead>
           <tr>
             <th>Key</th>
-            <th>Item</th>
             <th>State</th>
             <th>Added At</th>
           </tr>
         </thead>
         <tbody v-if="items.length">
           <tr v-for="item in items">
-            <td><pre>{{item.item_key}}</pre></td>
-            <td><pre>{{item.item}}</pre></td>
+            <td>
+              <a :href="'/api/queue_item/'+item.item_key">
+                <pre>{{item.item_key}}</pre>
+              </a>
+            </td>
             <td>{{item.state}}</td>
             <td>{{item.created_at}}</td>
           </tr>

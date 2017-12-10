@@ -6,11 +6,9 @@
     </div>
     <div v-else>
       <div v-for="ext in extensions">
-        <h2><a href="#" class="extension_link" @click.prevent="toggle_ext(ext.name)">{{ext.name}}</a></h2>
+        <h2><a href="#" class="extension_link" @click.prevent="toggle_ext(ext.name)"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</a></h2>
         <div v-if="show_methods(ext.name)">
-          <ul class="method_list">
-            <li class="method" v-for="method in ext.methods">{{method}}</li>
-          </ul>
+          <methods :methods="ext.methods"></methods>
         </div>
       </div>
     </div>
@@ -20,6 +18,7 @@
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import Methods from './Methods.vue'
 export default {
   data: function(){
     return {
@@ -28,13 +27,18 @@ export default {
     }
   },
   computed: {
-    extensions(){ return state.extensions },
+    extensions(){ return state.extensions.list },
   },
+  components: { Methods },
   created: function(){
     fetch(`/api/extensions`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then(extensions=>{
-      state.extensions = extensions
+      if (!state.extensions.list){ state.extensions.list = [] }
+      extensions.forEach(ext => {
+        var idx = state.extensions.list.findIndex(e=>e.name==ext.name)
+        if (idx == -1){ state.extensions.list.push(ext) }
+      })
     }).catch((err)=>{
       console.log(err)
     })
@@ -58,6 +62,4 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .extension_link{ text-decoration: none; color: @font-color; font-size: @font-size-large; }
-.method_list{ padding: 1em; }
-.method{ }
 </style>

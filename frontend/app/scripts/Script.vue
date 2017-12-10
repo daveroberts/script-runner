@@ -38,9 +38,8 @@
             </div>
             <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
             <div v-if="script.extensions.indexOf(ext.name) > -1">
-              <div class="method_line" v-for="(info, name) in ext.methods">
-                <span class="method_signature">{{name}}({{info.params.join(', ')}})</span><span class="method_description" v-if="info.description"> - {{info.description}}</span>
-              </div>
+              xyzzy
+              <methods :methods="ext.methods"></methods>
             </div>
           </div>
         </div>
@@ -178,6 +177,7 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import Methods from '../extensions/Methods.vue'
 const loadExtensions = (time = new Date()) => {
   fetch(`/api/extensions/`, {
     credentials: 'include'
@@ -214,6 +214,7 @@ export default {
       }
     }
   },
+  components: { Methods },
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs },
@@ -341,7 +342,4 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .extensions_toggle{ text-decoration: none; }
-.method_line{ font-size: @font-size-small; line-height: 1.5em; }
-.method_signature{ color: @base; font-family: monospace; font-weight: bold; }
-.method_description{ }
 </style>

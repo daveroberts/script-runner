@@ -8,12 +8,16 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Value</th>
+            <th>Item Key</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="value in items">
-            <td><pre>{{value}}</pre></td>
+          <tr v-for="item in items">
+            <td>
+              <a :href="'/api/data_item/'+item.key">
+                <pre>{{item.key}}</pre>
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>

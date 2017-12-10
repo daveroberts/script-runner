@@ -34,7 +34,8 @@ class ChromeWeb
     element.text
   end
 
-  def save_screenshot()
+  # Returns raw data for png screenshot
+  def screenshot()
     filename = SecureRandom.uuid
     filepath = "/tmp/#{filename}.png"
     driver.save_screenshot(filepath)
@@ -49,6 +50,7 @@ class ChromeWeb
     return @wd if @wd
     options = Selenium::WebDriver::Chrome::Options.new(args: ['headless'])
     @wd = Selenium::WebDriver.for(:chrome, options: options)
+    @wd.manage.window.resize_to(1920, 1080)
     return @wd
   end
 end

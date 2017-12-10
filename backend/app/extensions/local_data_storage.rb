@@ -9,28 +9,30 @@ class LocalDataStorage
   end
 
   # Add `item` to queue with `name`.  Another script can read these items off of the queue.  You can optionally pass an item key for lookup later
-  def queue(name, item, item_key=nil)
-    QueueItem.add(name, item, item_key)
+  def queue(name, item, item_mime_type='application/json', item_key=nil)
+    QueueItem.add(name, item, item_mime_type, item_key)
   end
 
   # Store a piece of data.  You can give it a key to look it up later, or you can tag it with one or more tags to look up all this data later.
-  def store(item, tags=[], key=nil)
-    DataItem.add(item, tags, key)
+  def store(item, item_mime_type='application/json', tags=[], key=nil)
+    DataItem.add(item, item_mime_type, tags, key)
   end
 
   # Retrieve data stored with store() method by key
   def retrieve(key)
-    DataItem.find(key)
+    data_item = DataItem.find(key)
+    return nil if !data_item
+    return data_item[:item]
   end
 
-  # Retrieve data stored with store() method by tag
+  # Retrieve list of keys stored with store() method by tag
   def retrieve_by_tag(tag)
-    DataItem.by_tag(tag)
+    DataItem.by_tag(tag).map{|di|di[:key]}
   end
 
-  # Retrieve data stored with store() method matching all tags in array
+  # Retrieve list of keys stored with store() method by multiple tags
   def retrieve_by_tags(tags)
-    DataItem.by_tags(tags)
+    DataItem.by_tags(tags).map{|di|di[:key]}
   end
 
   # Store a value in a named set.  Will return false if item is already in set.

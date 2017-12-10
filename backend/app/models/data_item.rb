@@ -63,6 +63,9 @@ WHERE di.`key` = ?"
       ]
     }, [key]).first
     return nil if !data_item
+    if data_item[:item_mime_type] == 'application/json'
+      data_item[:item] = JSON.parse(data_item[:item])
+    end
     data_item
   end
 

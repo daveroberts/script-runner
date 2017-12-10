@@ -14,7 +14,7 @@ class DBSeed
     { id: 'ec1259c1-c7f4-450c-9037-188eeff597e2', name: 'Recursive Function', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nfib = (n)->{\n  if n == 0 {\n    0\n  } elsif n == 1 {\n    1\n  } else {\n    fib(n-1) + fib(n-2)\n  }\n}\nmap(numbers, fib)" },
     { id: 'd6f2a465-6702-444a-bc9d-8157cbd45e20', name: 'Other Language Features', category: 'language_examples', default_input: '["Monday","Tuesday","Wednesday"]', code: "days = input()\npush(days, 'Thursday')\nforeach day in days {\n  queue('days', day, 'text/plain')\n}\n\n// Count up then down\ncounter = 0\nloop {\n  counter = counter + 1\n  if counter >= 10 { break }\n}\nhigh_value = counter\nwhile counter != 0 {\n  counter = counter - 1\n}\njoin(['Was: ', high_value, ' Counter ended at: ',counter])" },
     { id: '54ef5a07-a515-4bfb-8113-f1daf7810648', name: 'Google Screenshot', category: 'web', code: "go_to_url('http://google.com')\nsearch_box = element({:name 'q'})\nfill_in_textbox(search_box, 'XOR security')\nsubmit_form(search_box)\nraw_data = get_screenshot()\nstore(raw_data, 'image/png', ['images', 'xor'])", extensions: ["LocalDataStorage", "ChromeWeb"] },
-    { id: 'e4636472-d285-4934-bbc2-d1e350bc6491', name: 'Scrape GD Press Releases', category: 'web', code: "go_to_url('https://www.gd.com')\nall_links = get_links()\nlinks = filter(all_links, (link)->{match(link, '^https:\/\/www\.gd\.com\/news\/press-releases\/.*$')})\npages_scraped = 0\nforeach link in links {\n  if set_has_value('gd_urls_scraped', link) { next }\n  //wait(random(5,15))\n  made_it = go_to_url(link)\n  if made_it == false { next }\n  html = get_html()\n  screenshot = get_screenshot()\n  page = { :url link, :html html }\n  store(page, 'application/json', ['gd', 'gd_pages'])\n  store(screenshot, 'image/png', ['gd', 'gd_images'])\n  queue('raw_gd_pages', page, 'application/json')\n  set_store('gd_urls_scraped', link)\n  pages_scraped = pages_scraped + 1\n}\npages_scraped", extensions: ["LocalDataStorage", "ChromeWeb"] },
+    { id: 'e4636472-d285-4934-bbc2-d1e350bc6491', name: 'Scrape GD Press Releases', category: 'web', code: "go_to_url('https://www.gd.com')\nall_links = get_links()\nlinks = filter(all_links, (link)->{match(link, '^https:\/\/www\.gd\.com\/news\/press-releases\/.*$')})\npages_scraped = 0\nforeach link in links {\n  if set_has_value('gd_urls_scraped', link) { next }\n  //wait(random(5,15))\n  made_it = go_to_url(link)\n  if made_it == false { next }\n  html = get_html()\n  screenshot = get_screenshot()\ntoday = now()\n  page = { :url link, :html html :scraped_at today }\n  store(page, 'application/json', ['gd', 'gd_pages'])\n  store(screenshot, 'image/png', ['gd', 'gd_images'])\n  queue('raw_gd_pages', page, 'application/json')\n  set_store('gd_urls_scraped', link)\n  pages_scraped = pages_scraped + 1\n}\npages_scraped", extensions: ["LocalDataStorage", "ChromeWeb"] },
   ]
   @triggers = [
     { id: '32aaec50-fc57-42eb-b7d6-e634ba69a9b8', script_id: @scripts[1][:id], type: "CRON", every: 1 },
@@ -37,6 +37,9 @@ class DBSeed
     { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'valid_senders', value: 'bob@@example.com' },
     { id: 'e88fa93d-a4b7-4b51-9906-6e961066c7a9', name: 'valid_senders', value: 'candice@example.com' },
     { id: '04b2ebd9-fe0f-4c15-b3aa-0a378c9e8d06', name: 'valid_senders', value: 'daniel@example.com' },
+    { id: '56498833-3beb-49f1-ae3d-20aa4375cada', name: 'hot_topics', value: 'Navy' },
+    { id: 'bb24aa77-2cee-4282-b196-c57bdd73fbde', name: 'hot_topics', value: 'contract' },
+    { id: 'e78851e2-cc72-4bc8-8c84-6883c534d56b', name: 'hot_topics', value: 'awarded' },
   ]
   def self.seed
     puts 'Seeding database'

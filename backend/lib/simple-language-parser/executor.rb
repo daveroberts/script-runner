@@ -213,7 +213,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','filter','match','len','random', 'input',"int"]
+      system_cmds = ['print','join','push','map','filter','match','len','random', 'input',"int", "now"]
       return system_cmds.include? fun
     end
 
@@ -225,6 +225,8 @@ module SimpleLanguage
         return run_block(args, variables).join
       when "len"
         return exec_cmd(args[0], variables).length
+      when "now"
+        return Time.new
       when "map"
         collection = exec_cmd(args[0], variables)
         fun = nil

@@ -2,6 +2,7 @@ source 'https://rubygems.org' do
   gem 'sinatra' # DSL web framework
   gem 'toml-rb' # Read TOML files
   gem 'mysql2' # Connect to mysql db
+  gem 'nokogiri' # parse HTML
   gem 'selenium-webdriver' # headless web browsing with Chrome
   #gem 'sinatra-contrib' # used for sinatra/json, but didn't set the encoding
   group :production do

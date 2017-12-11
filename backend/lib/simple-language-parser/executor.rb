@@ -1,5 +1,6 @@
 require 'pry'
 require 'json'
+require 'securerandom'
 require_relative './tokenizer.rb'
 require_relative './parser.rb'
 
@@ -213,7 +214,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','filter','match','len','random', 'input',"int", "now"]
+      system_cmds = ['print','join','push','map','filter','match','len','random', 'uuid', 'input',"int", "now"]
       return system_cmds.include? fun
     end
 
@@ -225,6 +226,8 @@ module SimpleLanguage
         return run_block(args, variables).join
       when "len"
         return exec_cmd(args[0], variables).length
+      when "uuid"
+        return SecureRandom.uuid
       when "now"
         return Time.new
       when "map"

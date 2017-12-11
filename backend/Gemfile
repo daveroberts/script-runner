@@ -4,6 +4,7 @@ source 'https://rubygems.org' do
   gem 'mysql2' # Connect to mysql db
   gem 'nokogiri' # parse HTML
   gem 'net-sftp' # connect to sftp servers
+  gem 'rest-client' # make HTTP calls
   gem 'selenium-webdriver' # headless web browsing with Chrome
   #gem 'sinatra-contrib' # used for sinatra/json, but didn't set the encoding
   group :production do

@@ -5,18 +5,26 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     citrus (3.0.2)
     coderay (1.1.2)
+    domain_name (0.5.20170404)
+      unf (>= 0.0.5, < 1.0.0)
     ffi (1.9.18)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     method_source (0.9.0)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     mustermann (1.0.1)
     mysql2 (0.4.10)
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
+    netrc (0.11.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     pry (0.11.3)
@@ -31,6 +39,10 @@ GEM
       ffi (>= 0.5.0, < 2)
     rerun (0.11.0)
       listen (~> 3.0)
+    rest-client (2.0.2)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     selenium-webdriver (3.8.0)
@@ -44,6 +56,9 @@ GEM
     tilt (2.0.8)
     toml-rb (1.1.1)
       citrus (~> 3.0, > 3.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.4)
 
 PLATFORMS
   ruby
@@ -55,6 +70,7 @@ DEPENDENCIES
   pry!
   puma!
   rerun!
+  rest-client!
   selenium-webdriver!
   sinatra!
   toml-rb!

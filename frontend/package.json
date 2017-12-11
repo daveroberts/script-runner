@@ -22,7 +22,6 @@
     "build": "NODE_ENV=production webpack && cp -r static/* ../backend/dist/"
   },
   "dependencies": {
-    "highlight.js": "^9.12.0",
     "vue": "^2.5.9",
     "vue-codemirror": "^4.0.1",
     "vue-router": "^3.0.1"

@@ -7,11 +7,16 @@ export const flash = (msg, type = 'success') => {
   setTimeout(()=>{
     var idx = state.alerts.findIndex((a)=>a.id==id)
     state.alerts[idx].show = false
-  }, 3000)
+  }, 4000)
   setTimeout(()=>{
     var idx = state.alerts.findIndex((a)=>a.id==id)
     state.alerts.splice(idx, 1)
-  }, 3500 )
+  }, 4500 )
+}
+
+export const close_alert = (id) => {
+  var idx = state.alerts.findIndex(al => al.id==id)
+  if (idx > -1){ state.alerts.splice(idx, 1) }
 }
 
 export const new_script = () => JSON.parse(JSON.stringify(initial.blank.script))

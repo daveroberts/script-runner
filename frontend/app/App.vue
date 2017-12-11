@@ -9,7 +9,10 @@
     <div style="padding: 1em;">
       <div id="alerts">
         <div v-for="alert in alerts">
-          <div v-bind:class="['alert', `alert-${alert.type}`, alert.show?'visible':'']" role="alert">{{alert.msg}}</div>
+          <div v-bind:class="['alert', `alert-${alert.type}`, alert.show?'visible':'']" role="alert">
+            {{alert.msg}}
+            <a href="#" @click.prevent="close_alert(alert)" class="alert-close"><i class="fa fa-times" aria-hidden="true"></i></a>
+          </div>
         </div>
       </div>
       <router-view></router-view>
@@ -18,6 +21,7 @@
 </template>
 <script>
 import state from './state/state.js'
+import * as senate from './state'
 export default {
   computed: {
     alerts: function(){ return state.alerts },
@@ -32,6 +36,10 @@ export default {
     }
   },
   methods: {
+    close_alert(al){ senate.close_alert(al.id) }
   }
 }
 </script>
+<style lang="less" scoped>
+@import './styles/variables.less';
+</style>

@@ -12,7 +12,7 @@
             <button type="button" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
             <button type="button" class="btn btn-danger btn-small" @click.prevent="undo()"> <i class="fa fa-undo" aria-hidden="true"></i> Undo Changes</button>
           </div>
-          <div style="margin-top: 1em;" class="fancy_checkbox">
+          <div style="margin-top: 0.5em;" class="fancy_checkbox">
             <input id="input_send" type="checkbox" v-model="state.current.input.send" />
             <label for="input_send"></label>
           </div>
@@ -23,7 +23,7 @@
             </div>
             <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
           </div>
-          <div style="margin: 1em 0;">
+          <div style="margin: 0.5em 0;">
             <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
               <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Code Extensions</span>
               <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Extensions</span>
@@ -46,7 +46,7 @@
               </div>
             </div>
           </div>
-          <div style="margin: 1em 0;">
+          <div style="margin: 0.5em 0;">
             <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
               <span v-if="!running"><i class="fa fa-circle-o-notch" aria-hidden="true"></i> Run</span>
               <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
@@ -152,10 +152,10 @@
         </form>
       </div>
       <div v-if="script.code && runs && runs.length">
-        <div v-if="!script.id && !save_for_later" style="margin-top: 3em;">
+        <div v-if="!script.id && !save_for_later">
           <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
         </div>
-        <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
+        <div v-if="!script.id" style="margin: 0.5em 0;" class="warning">This script has not yet been saved.</div>
       </div>
       <div v-if="script.id || (runs && runs.length)">
         <h2><i class="fa fa-bar-chart" aria-hidden="true"></i> Last 10 Runs</h2>
@@ -365,6 +365,6 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .extensions_toggle{ text-decoration: none; }
-.left_panel{ width: 60%; box-sizing: border-box;padding: 1em; float: left; }
-.right_panel{ width: 40%; box-sizing: border-box; padding: 1em; float: left; }
+.left_panel{ width: 60%; box-sizing: border-box; padding-right: 0.5em; float: left; }
+.right_panel{ width: 40%; box-sizing: border-box; padding-left: 0.5em; float: left; }
 </style>

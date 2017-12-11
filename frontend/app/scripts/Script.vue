@@ -50,39 +50,19 @@
           <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
         </button>
       </div>
-      <div v-if="script.id || (runs && runs.length)">
-        <h2>Last 10 Runs</h2>
-        <div v-if="!runs">
-          Loading...
-        </div>
-        <div v-else>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Output</th>
-                <th style="text-align: right;">Run</th>
-              </tr>
-            </thead>
-            <tbody v-if="runs.length == 0">
-              <tr>
-                <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
-              </tr>
-            </tbody>
-            <tbody v-else v-for="run in runs">
-              <tr>
-                <td style="font-size: 10pt;">
-                  <pre class="monospace" v-if="run.output != null">{{run.output}}</pre>
-                  <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
-                </td>
-                <td style="text-align: right;" class="small">{{run.run_at}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div v-if="last_run">
+        <pre class="monospace" v-if="last_run.output != null">{{last_run.output}}</pre>
+        <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
       </div>
       <div v-if="script.id || save_for_later">
-        <h2>Script Details</h2>
-        <form @submit.prevent="save()">
+        <h2>
+          <a href="#" style="text-decoration: none;" @click.prevent="show_script_details = !show_script_details">
+            <span style="display: inline-block; width: 0.5em;" v-if="show_script_details"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
+            <span style="display: inline-block; width: 0.5em;" v-else><i class="fa fa-caret-right" aria-hidden="true"></i></span>
+            <span>Script Details</span>
+          </a>
+        </h2>
+        <form v-if="show_script_details" @submit.prevent="save()">
           <table>
             <tbody>
               <tr class="form_row">
@@ -169,6 +149,36 @@
         </div>
         <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       </div>
+      <div v-if="script.id || (runs && runs.length)">
+        <h2>Last 10 Runs</h2>
+        <div v-if="!runs">
+          Loading...
+        </div>
+        <div v-else>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Output</th>
+                <th style="text-align: right;">Run</th>
+              </tr>
+            </thead>
+            <tbody v-if="runs.length == 0">
+              <tr>
+                <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
+              </tr>
+            </tbody>
+            <tbody v-else v-for="run in runs">
+              <tr>
+                <td style="font-size: 10pt;">
+                  <pre class="monospace" v-if="run.output != null">{{run.output}}</pre>
+                  <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
+                </td>
+                <td style="text-align: right;" class="small">{{run.run_at}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -201,6 +211,7 @@ export default {
       orig_code: '',
       trigger_types: ['CRON', 'QUEUE'],
       show_extensions: false,
+      show_script_details: true,
       running: false,
       editorOptions: {
         tabSize: 2,
@@ -219,7 +230,7 @@ export default {
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs },
-    last_run(){ return state.current.runs[0] },
+    last_run(){ if (state.current.runs){ return state.current.runs[0] } else { return null } },
     errors(){ return state.current.field_errors },
     extensions(){ return state.extensions.list }
   },

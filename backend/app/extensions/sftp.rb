@@ -16,7 +16,7 @@ class Sftp
   end
 
   # Disconnect from an SFTP server
-  def sftp_disconnect(hostname, username, password)
+  def sftp_disconnect()
     @sftp = nil
   end
 
@@ -31,6 +31,11 @@ class Sftp
     content = file.gets
     file.close
     return content
+  end
+
+  # uploads a file to an SFTP server. TODO: Not yet implemented
+  def sftp_upload(remote_path, content)
+    return false
   end
 
   # Move a file on the remote server. TODO: Not yet implemented

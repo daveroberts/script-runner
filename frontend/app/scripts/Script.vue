@@ -181,7 +181,7 @@
                   <pre class="json" v-if="run.output != null" v-html="syntax_highlight(run.output)"></pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
                 </td>
-                <td style="text-align: right;" class="small">{{run.run_at}}</td>
+                <td style="text-align: right;" class="small">{{pretty_date(run.run_at)}}</td>
               </tr>
             </tbody>
           </table>
@@ -196,6 +196,7 @@ import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
 import Methods from '../extensions/Methods.vue'
+import Helpers from '../helpers.js'
 const loadExtensions = (time = new Date()) => {
   fetch(`/api/extensions/`, {
     credentials: 'include'
@@ -277,6 +278,7 @@ export default {
       })
     }
   },
+  mixins: [Helpers],
   methods: {
     syntax_highlight(json) {
       if (typeof json != 'string') {

@@ -281,7 +281,19 @@ module SimpleLanguage
       when "match"
         str = exec_cmd(args[0], variables)
         regex_str = exec_cmd(args[1], variables)
-        match = Regexp.new(regex_str).match(str)
+        match = nil
+        if regex_str.start_with? "/"
+          parts = /\/(.*)\/(.*)/.match(regex_str)
+          regex_str = parts[1]
+          opts_str = parts[2]
+          opts = 0
+          opts = opts | Regexp::IGNORECASE if opts_str.include? "i"
+          opts = opts | Regexp::MULTILINE if opts_str.include? "m"
+          opts = opts | Regexp::EXTENDED if opts_str.include? "x"
+          match = Regexp.new(regex_str, opts).match(str)
+        else
+          match = Regexp.new(regex_str).match(str)
+        end
         return nil if !match
         return match.to_a
       when "push"

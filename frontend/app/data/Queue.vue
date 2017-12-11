@@ -32,7 +32,7 @@
               </a>
             </td>
             <td>{{item.state}}</td>
-            <td>{{item.created_at}}</td>
+            <td>{{pretty_date(item.created_at)}}</td>
           </tr>
         </tbody>
         <tbody v-else>
@@ -49,6 +49,7 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import Helpers from '../helpers.js'
 export default {
   data: function(){
     return {
@@ -99,6 +100,7 @@ export default {
       console.log(err)
     })
   },
+  mixins: [Helpers],
   methods: {
     select(script){
       state.current = JSON.parse(JSON.stringify(initial.current))

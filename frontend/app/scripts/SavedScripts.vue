@@ -6,7 +6,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Triggered by</th>
+          <th>Triggered</th>
           <th style="text-align: center;">Active</th>
           <th>Last Run</th>
         </tr>
@@ -21,7 +21,7 @@
             </div>
           </td>
           <td style="text-align: center;"><span v-if="script.active"><i class="success fa fa-check" aria-hidden="true"></i></span></td>
-          <td>{{script.last_run}}</td>
+          <td>{{pretty_date(script.last_run)}}</td>
         </tr>
       </tbody>
     </table>
@@ -30,6 +30,7 @@
 <script>
 import initial from '../state/initial.js'
 import state from '../state/state.js'
+import Helpers from '../helpers.js'
 export default {
   data: function(){
     return {
@@ -48,6 +49,7 @@ export default {
       console.log(err)
     })
   },
+  mixins: [Helpers],
   methods: {
     select(script){
       state.current = JSON.parse(JSON.stringify(initial.current))

@@ -1,7 +1,7 @@
 <template>
   <div>
     <a class="btn" href="/#/scripts/new" @click="new_script()"><i class="fa fa-file-text-o"></i> New Script</a>
-    <h1>Saved Scripts</h1>
+    <h1>Scripts</h1>
     <table class="table">
       <thead>
         <tr>
@@ -63,6 +63,6 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
-.script{ border: 1px solid @background; margin: 1em; padding: 1em; line-height: 1.3em; }
 .key{ font-weight: bold; }
+.script_link{ text-decoration: none; }
 </style>

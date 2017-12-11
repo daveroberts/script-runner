@@ -1,33 +1,33 @@
 <template>
   <div>
-    <h1>Data Explorer</h1>
-    <h2>Tags</h2>
+    <h1><i class="fa fa-search" aria-hidden="true"></i> Data Explorer</h1>
+    <h2><i class="fa fa-tags" aria-hidden="true"></i> Tags</h2>
     <div v-if="!tags">
       Loading...
     </div>
-    <div v-else v-for="data in tags">
-      <a :href="'/#/tags/'+data.name">{{data.name}}</a>
+    <div v-else v-for="data in tags" class="collection">
+      <a :href="'/#/tags/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
-    <h2>Sets</h2>
+    <h2><i class="fa fa-object-group" aria-hidden="true"></i> Sets</h2>
     <div v-if="!sets">
       Loading...
     </div>
-    <div v-else v-for="data in sets">
-      <a :href="'/#/sets/'+data.name">{{data.name}}</a>
+    <div v-else v-for="data in sets" class="collection">
+      <a :href="'/#/sets/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
-    <h2>Dictionaries</h2>
+    <h2><i class="fa fa-key" aria-hidden="true"></i> Dictionaries</h2>
     <div v-if="!dictionaries">
       Loading...
     </div>
-    <div v-else v-for="data in dictionaries">
-      <a :href="'/#/dictionaries/'+data.name">{{data.name}}</a>
+    <div v-else v-for="data in dictionaries" class="collection">
+      <a :href="'/#/dictionaries/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
-    <h2>Queues</h2>
+    <h2><i class="fa fa-list-ol" aria-hidden="true"></i> Queues</h2>
     <div v-if="!queues">
       Loading...
     </div>
-    <div v-else v-for="data in queues">
-      <a :href="'/#/queues/'+data.name">{{data.name}}</a>
+    <div v-else v-for="data in queues" class="collection">
+      <a :href="'/#/queues/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
   </div>
 </template>
@@ -99,4 +99,7 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
+.collection{ text-indent: 1.5em; padding: 0.3em; }
+.collection_item{ text-decoration: none; font-size: @font-size-normal; }
+.collection_item:hover{ text-decoration: underline; }
 </style>

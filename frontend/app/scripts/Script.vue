@@ -48,7 +48,7 @@
           </div>
           <div style="margin: 1em 0;">
             <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
-              <span v-if="!running"><i class="fa fa-code" aria-hidden="true"></i> Run</span>
+              <span v-if="!running"><i class="fa fa-circle-o-notch" aria-hidden="true"></i> Run</span>
               <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
             </button>
           </div>
@@ -67,7 +67,7 @@
           <a href="#" style="text-decoration: none;" @click.prevent="show_script_details = !show_script_details">
             <span style="display: inline-block; width: 0.5em;" v-if="show_script_details"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
             <span style="display: inline-block; width: 0.5em;" v-else><i class="fa fa-caret-right" aria-hidden="true"></i></span>
-            <span>Script Details</span>
+            <span><i class="fa fa-info-circle" aria-hidden="true"></i> Script Details</span>
           </a>
         </h2>
         <form v-if="show_script_details" @submit.prevent="save()">
@@ -158,7 +158,7 @@
         <div v-if="!script.id" style="margin: 2em 0;" class="warning">This script has not yet been saved.</div>
       </div>
       <div v-if="script.id || (runs && runs.length)">
-        <h2>Last 10 Runs</h2>
+        <h2><i class="fa fa-bar-chart" aria-hidden="true"></i> Last 10 Runs</h2>
         <div v-if="!runs">
           Loading...
         </div>
@@ -175,8 +175,8 @@
                 <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
               </tr>
             </tbody>
-            <tbody v-else v-for="run in runs">
-              <tr>
+            <tbody v-else>
+              <tr v-for="run in runs">
                 <td style="font-size: 10pt;">
                   <pre class="json" v-if="run.output != null" v-html="syntax_highlight(run.output)"></pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
@@ -280,27 +280,6 @@ export default {
   },
   mixins: [Helpers],
   methods: {
-    syntax_highlight(json) {
-      if (typeof json != 'string') {
-        json = JSON.stringify(json, undefined, 2);
-      }
-      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = 'key';
-          } else {
-            cls = 'string';
-          }
-        } else if (/true|false/.test(match)) {
-          cls = 'boolean';
-        } else if (/null/.test(match)) {
-          cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-      });
-    },
     toggle_extensions_pane(){ this.show_extensions = !this.show_extensions },
     set_save_for_later(){ this.save_for_later=true; },
     undo(){ state.current.script.code = this.orig_code },

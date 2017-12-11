@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{set}}</h1>
+    <h1><i class="fa fa-object-group" aria-hidden="true"></i> {{set}}</h1>
     <div v-if="!items">
       Loading...
     </div>

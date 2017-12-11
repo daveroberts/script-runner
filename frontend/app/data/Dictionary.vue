@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{dictionary}}</h1>
+    <h1><i class="fa fa-key" aria-hidden="true"></i> {{dictionary}}</h1>
     <div v-if="!items">
       Loading...
     </div>
@@ -14,8 +14,8 @@
         </thead>
         <tbody>
           <tr v-for="(value,key) in items">
-            <td>{{key}}</td>
-            <td><pre>{{value}}</pre></td>
+            <td class="small" style="width: 30em;">{{key}}</td>
+            <td><pre class="small json" v-html="syntax_highlight(value)"></pre></td>
           </tr>
         </tbody>
       </table>
@@ -27,7 +27,9 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import Helpers from '../helpers.js'
 export default {
+  mixins: [Helpers],
   data: function(){
     return {
       state: state,

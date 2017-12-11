@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Queue: {{queue}}</h1>
+    <h1><i class="fa fa-list-ol" aria-hidden="true"></i> Queue: {{queue}}</h1>
     <div v-if="scripts">
       <h2>Scripts</h2>
       <div style="margin-bottom: 2em;">
@@ -26,13 +26,13 @@
         </thead>
         <tbody v-if="items.length">
           <tr v-for="item in items">
-            <td>
+            <td class="small">
               <a :href="'/api/queue_item/'+item.item_key">
                 <pre>{{item.item_key}}</pre>
               </a>
             </td>
-            <td>{{item.state}}</td>
-            <td>{{pretty_date(item.created_at)}}</td>
+            <td class="small">{{item.state}}</td>
+            <td class="small">{{pretty_date(item.created_at)}}</td>
           </tr>
         </tbody>
         <tbody v-else>

@@ -3,8 +3,9 @@
 body{ color: @normal-color; font-family: sans; font-size: @font-size-normal; }
 a{ color: darken(@background, 10%); outline: 0 }
 a:visited{ color: darken(@background, 20%) }
-h1{ font-size: 1.8em; color: darken(@background, 20%); margin-top: 0.5em; margin-bottom: 0.5em; }
-h2{ font-size: 1.4em; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
+h1{ font-size: @font-size-xx-large; color: darken(@background, 20%); margin-top: 0.5em; margin-bottom: 0.5em; }
+h2{ font-size: @font-size-x-large; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
+h3{ font-size: @font-size-large; color: darken(@background, 20%); margin-top: 1em; margin-bottom: 0.5em;}
 input{ color: black; }
 input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 30em; }
 pre{ font-family: monospace; }
@@ -46,17 +47,16 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .btn-disabled{ color: lighten(desaturate(@base, 40%), 30%) !important; background-color: white !important; border: 1px solid lighten(desaturate(@base, 40%), 30%); }
 .btn-disabled:hover{ cursor: not-allowed; color: lighten(desaturate(@base, 40%), 30%) !important; background-color: white !important; border: 1px solid lighten(desaturate(@base, 40%), 30%); }
 
-.table{ border: 0.3em solid @background; width: 100%; }
-.table > thead { background-color: @background; color: @color; font-size: 1.1em; }
-.table th { padding: 0.4em; text-align: left; }
-.table td { padding: 0.1em; }
+.table{ width: 100%; }
+.table > thead { color: @base; font-size: @font-size-large; border-bottom: 2px solid @base; }
+.table th { padding: 0.7em 0 0.2em 0; text-align: left; }
+.table td { padding: 0.7em 0 0.2em 0; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
-.table > tbody > tr:hover { }
 
 .form_row{ color: @font-color; height: 2.5em; font-size: @font-size-large; }
 .form_row th,td{ vertical-align: middle; font-size: @font-size-large; }
 .form_row input{ font-size: @font-size-large; }
-.form_label{ font-weight: bold; min-width: 15em; padding-right: 1em; text-align: right }
+.form_label{ min-width: 15em; padding-right: 1em; text-align: right }
 .form_section { }
 .form_section .form_row{ height: 2em; }
 

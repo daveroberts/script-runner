@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{tag}}</h1>
+    <h1><i class="fa fa-tag" aria-hidden="true"></i> {{tag}}</h1>
     <div v-if="!items">
       Loading...
     </div>
@@ -15,7 +15,7 @@
           <tr v-for="item in items">
             <td>
               <a :href="'/api/data_item/'+item.key">
-                <pre>{{item.key}}</pre>
+                <pre class="small">{{item.key}}</pre>
               </a>
             </td>
           </tr>

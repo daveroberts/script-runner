@@ -23,7 +23,8 @@ class Script
 FROM scripts s
   LEFT JOIN triggers t on s.id=t.script_id
   LEFT JOIN script_runs sr on s.id=sr.script_id
-GROUP BY s.id, t.id"
+GROUP BY s.id, t.id
+ORDER BY s.`name`"
     rows = DataMapper.select(sql, {
       prefix: 's',
       has_many: [

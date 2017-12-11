@@ -15,7 +15,11 @@ class App < Sinatra::Application
     content_type 'text/plain', charset: 'utf-8'
     return [404, "data item not found"] if !data_item
     content_type data_item[:item_mime_type]
-    return [200, data_item[:item]]
+    if data_item[:item_mime_type] == 'application/json'
+      return [200, data_item[:item].to_json]
+    else
+      return [200, data_item[:item]]
+    end
   end
 
   get "/sets/?" do
@@ -47,7 +51,11 @@ class App < Sinatra::Application
     content_type 'text/plain', charset: 'utf-8'
     return [404, "item not found"] if !item
     content_type item[:item_mime_type]
-    return [200, item[:item]]
+    if item[:item_mime_type] == 'application/json'
+      return [200, item[:item].to_json]
+    else
+      return [200, item[:item]]
+    end
   end
 
 end

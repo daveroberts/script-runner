@@ -25,11 +25,17 @@ class QueueItem
   end
 
   def self.new_items
-    sql = "SELECT #{@columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
+    sql = "SELECT #{QueueItem.columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
            FROM queue_items qi
            WHERE qi.state = 'NEW'
            ORDER BY qi.created_at DESC"
-    DataMapper.select(sql, { prefix: 'qi' })
+    items = DataMapper.select(sql, { prefix: 'qi' })
+    items.each do |item|
+      if item[:item_mime_type] == 'application/json'
+        item[:item] = JSON.parse(item[:item])
+      end
+    end
+    items
   end
 
   def self.by_queue_name(name)
@@ -64,7 +70,7 @@ FROM queue_items qi
   LEFT JOIN scripts s on t.script_id=s.id AND s.active=true
 WHERE qi.item_key = ?
 ORDER BY qi.created_at DESC"
-    DataMapper.select(sql, { prefix: 'qi', has_many: [{
+    item = DataMapper.select(sql, { prefix: 'qi', has_many: [{
        triggers: {
          prefix: 't',
          has_one: [
@@ -72,6 +78,11 @@ ORDER BY qi.created_at DESC"
          ]
        }
     }] }, [key]).first
+    return nil if !item
+    if item[:item_mime_type] == 'application/json'
+      item[:item] = JSON.parse(item[:item])
+    end
+    item
   end
 
   def self.names

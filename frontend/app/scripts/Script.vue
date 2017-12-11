@@ -1,58 +1,66 @@
 <template>
   <div>
     <div v-if="script">
-      <h1 v-if="script.name">{{script.name}}</h1>
-      <h1 v-else>Code</h1>
-      <div class="code_editor">
-        <codemirror v-model="script.code" :options="editorOptions"></codemirror>
-      </div>
-      <div v-if="script.id && script.code != orig_code">
-        <button type="button" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
-        <button type="button" class="btn btn-danger btn-small" @click.prevent="undo()"> <i class="fa fa-undo" aria-hidden="true"></i> Undo Changes</button>
-      </div>
-      <div style="margin-top: 1em;" class="fancy_checkbox">
-        <input id="input_send" type="checkbox" v-model="state.current.input.send" />
-        <label for="input_send"></label>
-      </div>
-      <label for="input_send">Send Input</label>
-      <div v-if="state.current.input.send">
-        <div class="code_editor">
-          <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
-        </div>
-        <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
-      </div>
-      <div style="margin: 1em 0;">
-        <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
-          <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Code Extensions</span>
-          <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Extensions</span>
-        </a>
-      </div>
-      <div v-if="show_extensions">
-        <div v-if="!extensions">
-          Loading...
-        </div>
-        <div v-else>
-          <div style="margin: 0.5em;" v-for="ext in extensions">
-            <div class="fancy_checkbox">
-              <input :id="'check_ext_'+ext.name" type="checkbox" :value="ext.name" v-model="script.extensions" />
-              <label :for="'check_ext_'+ext.name"></label>
+      <div class="outer">
+        <div class="left_panel">
+          <h1 v-if="script.name">{{script.name}}</h1>
+          <h1 v-else>Code</h1>
+          <div class="code_editor">
+            <codemirror v-model="script.code" :options="editorOptions"></codemirror>
+          </div>
+          <div v-if="script.id && script.code != orig_code">
+            <button type="button" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
+            <button type="button" class="btn btn-danger btn-small" @click.prevent="undo()"> <i class="fa fa-undo" aria-hidden="true"></i> Undo Changes</button>
+          </div>
+          <div style="margin-top: 1em;" class="fancy_checkbox">
+            <input id="input_send" type="checkbox" v-model="state.current.input.send" />
+            <label for="input_send"></label>
+          </div>
+          <label for="input_send">Send Input</label>
+          <div v-if="state.current.input.send">
+            <div class="code_editor">
+              <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
             </div>
-            <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
-            <div v-if="script.extensions.indexOf(ext.name) > -1">
-              <methods :methods="ext.methods"></methods>
+            <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
+          </div>
+          <div style="margin: 1em 0;">
+            <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
+              <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Code Extensions</span>
+              <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Extensions</span>
+            </a>
+          </div>
+          <div v-if="show_extensions">
+            <div v-if="!extensions">
+              Loading...
+            </div>
+            <div v-else>
+              <div style="margin: 0.5em;" v-for="ext in extensions">
+                <div class="fancy_checkbox">
+                  <input :id="'check_ext_'+ext.name" type="checkbox" :value="ext.name" v-model="script.extensions" />
+                  <label :for="'check_ext_'+ext.name"></label>
+                </div>
+                <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
+                <div v-if="script.extensions.indexOf(ext.name) > -1">
+                  <methods :methods="ext.methods"></methods>
+                </div>
+              </div>
             </div>
           </div>
+          <div style="margin: 1em 0;">
+            <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
+              <span v-if="!running"><i class="fa fa-code" aria-hidden="true"></i> Run</span>
+              <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
+            </button>
+          </div>
         </div>
-      </div>
-      <div style="margin: 1em 0;">
-        <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
-          <span v-if="!running"><i class="fa fa-code" aria-hidden="true"></i> Run</span>
-          <span v-else><i class="fa fa-circle-o-notch fa-spin"></i></i> Running Code</span>
-        </button>
-      </div>
-      <div v-if="last_run">
-        <pre class="monospace" v-if="last_run.output != null">{{last_run.output}}</pre>
-        <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
+        <div class="right_panel">
+          <div v-if="last_run">
+            <h1>Output</h1>
+            <pre v-highlightjs class="json" v-if="last_run.output != null">{{last_run.output}}</pre>
+            <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
+          </div>
+        </div>
+        <div style="clear: both;"></div>
       </div>
       <div v-if="script.id || save_for_later">
         <h2>
@@ -355,4 +363,6 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .extensions_toggle{ text-decoration: none; }
+.left_panel{ width: 60%; box-sizing: border-box;padding: 1em; float: left; }
+.right_panel{ width: 40%; box-sizing: border-box; padding: 1em; float: left; }
 </style>

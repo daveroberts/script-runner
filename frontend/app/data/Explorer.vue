@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1><i class="fa fa-search" aria-hidden="true"></i> Data Explorer</h1>
+    <h1>Data Explorer</h1>
     <h2><i class="fa fa-tags" aria-hidden="true"></i> Tags</h2>
     <div v-if="!tags">
       Loading...

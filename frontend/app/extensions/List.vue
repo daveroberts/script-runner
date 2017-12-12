@@ -6,7 +6,7 @@
     </div>
     <div v-else>
       <div v-for="ext in extensions">
-        <h2><a href="#" class="extension_link" @click.prevent="toggle_ext(ext.name)"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</a></h2>
+        <h2><a href="#" class="extension_link" @click.prevent="toggle_ext(ext.name)"><i :class="['fa', ext.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i> {{ext.name}}</a></h2>
         <div v-if="show_methods(ext.name)">
           <methods :methods="ext.methods"></methods>
         </div>
@@ -61,5 +61,5 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
-.extension_link{ text-decoration: none; color: @font-color; font-size: @font-size-large; }
+.extension_link{ text-decoration: none; color: @font-color; font-size: @font-size-x-large; }
 </style>

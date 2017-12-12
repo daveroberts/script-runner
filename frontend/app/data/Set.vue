@@ -19,6 +19,8 @@
       Loading...
     </div>
     <div v-else>
+      <input type="text" class="form_input" style="width: 15em !important;" v-model="search" />
+      <i class="fa fa-search large base" style="position: relative; left: -1.7em;" aria-hidden="true"></i>
       <table class="table">
         <thead>
           <tr>
@@ -27,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in items">
+          <tr v-for="item in filtered_items">
             <td>
               <pre style="font-size: 10pt;">{{item.value}}</pre>
             </td>
@@ -74,6 +76,7 @@ export default {
   data: function(){
     return {
       state: state,
+      search: "",
       show_add_new: false,
       new_item: "",
       modal: {
@@ -86,6 +89,20 @@ export default {
   },
   computed: {
     set(){ return state.sets.current },
+    filtered_items(){
+      if (state.sets.data == null){ return null }
+      var idx = state.sets.data.findIndex(set => set.name == state.sets.current)
+      if (idx == -1){ return null }
+      var items = state.sets.data[idx].items
+      var matching_items = []
+      var re = new RegExp(`.*${this.search}.*`, 'im')
+      for(var i=0; i<items.length; i++){
+        var str_value = items[i].value
+        if (typeof(items[i].value) == "object"){ str_value = JSON.stringify(items[i].value) }
+        if (str_value.match(re)){ matching_items.push(items[i]) }
+      }
+      return matching_items
+    },
     items(){
       if (state.sets.data == null){ return null }
       var idx = state.sets.data.findIndex(set => set.name == state.sets.current)

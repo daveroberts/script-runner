@@ -5,6 +5,8 @@
       Loading...
     </div>
     <div v-else>
+      <input type="text" class="form_input" style="width: 15em !important;" v-model="search" />
+      <i class="fa fa-search large base" style="position: relative; left: -1.7em;" aria-hidden="true"></i>
       <table class="table">
         <thead>
           <tr>
@@ -13,7 +15,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(value,key) in items">
+          <tr v-for="(value,key) in filtered_items">
             <td class="small" style="width: 30em;">{{key}}</td>
             <td><pre class="small json" v-html="syntax_highlight(value)"></pre></td>
           </tr>
@@ -33,10 +35,26 @@ export default {
   data: function(){
     return {
       state: state,
+      search: ""
     }
   },
   computed: {
     dictionary(){ return state.dictionaries.current },
+    filtered_items(){
+      if (state.dictionaries.data == null){ return null }
+      var idx = state.dictionaries.data.findIndex(dict => dict.name == state.dictionaries.current)
+      if (idx == -1){ return null }
+      var items = state.dictionaries.data[idx].items
+      var matching_items = {}
+      var re = new RegExp(`.*${this.search}.*`, 'im')
+      for(const key in items){
+        var value = items[key]
+        var str_value = value
+        if (typeof(value) == "object"){ str_value = JSON.stringify(value) }
+        if (str_value.match(re)){ matching_items[key] = value }
+      }
+      return matching_items
+    },
     items(){
       if (state.dictionaries.data == null){ return null }
       var idx = state.dictionaries.data.findIndex(dict => dict.name == state.dictionaries.current)

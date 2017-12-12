@@ -5,6 +5,7 @@ source 'https://rubygems.org' do
   gem 'nokogiri' # parse HTML
   gem 'net-sftp' # connect to sftp servers
   gem 'rest-client' # make HTTP calls
+  gem 'mailgun-ruby' # send emails
   gem 'selenium-webdriver' # headless web browsing with Chrome
   #gem 'sinatra-contrib' # used for sinatra/json, but didn't set the encoding
   group :production do

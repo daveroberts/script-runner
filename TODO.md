@@ -1,3 +1,4 @@
+sending emails
 http example - store page and access with http trigger, daily report
 data editing
 data preview mode - show thumbnails, first X characters, etc.
@@ -8,7 +9,7 @@ show data flow diagram; show problems solved; show commands can be complex, not 
 http triggers / http get data
 triggers on other data types
   manually "dequeing" other data types
-sending emails, tweets
 liveupdate of data, esp for queues
 pull off queue manually
 move js modules out of bundle
+sending tweets

@@ -7,3 +7,7 @@
   password = "script_runner"
   connection_limit = 1
   ssl_pem = false
+
+[email]
+  api_key = ""
+  domain = ""

@@ -39,10 +39,10 @@ class DBSeed
   ]
   @set_items = [
     { id: '35fbcda8-169e-4f6c-99c5-ba37790e6feb', name: 'valid_senders', value: 'alice@example.com' },
-    { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'valid_senders', value: 'bob@@example.com' },
+    { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'valid_senders', value: 'bob@example.com' },
     { id: 'e88fa93d-a4b7-4b51-9906-6e961066c7a9', name: 'valid_senders', value: 'candice@example.com' },
     { id: '04b2ebd9-fe0f-4c15-b3aa-0a378c9e8d06', name: 'valid_senders', value: 'daniel@example.com' },
-    { id: '56498833-3beb-49f1-ae3d-20aa4375cada', name: 'hot_topics', value: 'Navy' },
+    { id: '56498833-3beb-49f1-ae3d-20aa4375cada', name: 'hot_topics', value: 'navy' },
     { id: 'bb24aa77-2cee-4282-b196-c57bdd73fbde', name: 'hot_topics', value: 'contract' },
     { id: 'e78851e2-cc72-4bc8-8c84-6883c534d56b', name: 'hot_topics', value: 'awarded' },
   ]

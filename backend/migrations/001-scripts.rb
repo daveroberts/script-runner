@@ -88,6 +88,8 @@ module DBMigrations
         `key` VARCHAR(255) NOT NULL,
         `item` LONGBLOB NOT NULL,
         `item_mime_type` VARCHAR(255) NOT NULL,
+        `preview` LONGBLOB,
+        `preview_mime_type` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         INDEX `id_index` (`id`),
         INDEX `key_index` (`key`),

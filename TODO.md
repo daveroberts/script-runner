@@ -1,6 +1,5 @@
-http example - store page and access with http trigger, daily report
-data editing
 data preview mode - show thumbnails, first X characters, etc.
+data editing
 debug mode - shows debug messages, what's being stored, what's happening, etc.
 test mode - when true, doesn't actually store anything, just "pretends" and stores to memory or elsewhere
 show data flow diagram; show problems solved; show commands can be complex, not primitive; one section of pipeline can be complex, etc.; vs S3, queues can be dynamically named, data sets dynamically created.  LocalDataStorage vs AwsDataStorage

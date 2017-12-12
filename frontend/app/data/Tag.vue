@@ -9,6 +9,7 @@
         <thead>
           <tr>
             <th>Item Key</th>
+            <th>Image Preview</th>
           </tr>
         </thead>
         <tbody>
@@ -16,6 +17,13 @@
             <td>
               <a :href="'/api/data_item/'+item.key">
                 <pre class="small">{{item.key}}</pre>
+              </a>
+            </td>
+            <td>
+              <a :href="'/api/data_item/'+item.key">
+                <span v-if="is_image_mime_type(item.preview_mime_type)">
+                  <img class="image_preview" :src="'/api/data_item_preview/'+item.key" alt="Preview Image" />
+                </span>
               </a>
             </td>
           </tr>
@@ -63,9 +71,14 @@ export default {
     })
   },
   methods: {
+    is_image_mime_type(mime_type){
+      if (!mime_type){ return false }
+      return mime_type.match(/^image\/.*/)
+    }
   }
 }
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
+.image_preview{ border: 1px solid #777; }
 </style>

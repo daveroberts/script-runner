@@ -22,6 +22,18 @@ class App < Sinatra::Application
     end
   end
 
+  get "/data_item_preview/:key/?" do
+    data_item = DataItem.find(params[:key])
+    content_type 'text/plain', charset: 'utf-8'
+    return [404, "data item not found"] if !data_item
+    content_type data_item[:preview_mime_type]
+    if data_item[:preview_mime_type] == 'application/json'
+      return [200, data_item[:preview].to_json]
+    else
+      return [200, data_item[:preview]]
+    end
+  end
+
   get "/sets/?" do
     return SetItem.names.to_json
   end

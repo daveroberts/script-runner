@@ -1,7 +1,9 @@
+require 'mini_magick'
+
 # manages data items in database
 class DataItem
   def self.columns
-    [:id, :key, :item, :item_mime_type, :created_at]
+    [:id, :key, :item, :item_mime_type, :preview, :preview_mime_type, :created_at]
   end
 
   def self.add(item, item_mime_type = "text/plain", tags=[], key=nil)
@@ -15,6 +17,13 @@ class DataItem
       item_mime_type: item_mime_type,
       created_at: Time.now
     }
+    if /^image\/.*/.match(item_mime_type)
+      thumb = MiniMagick::Image.read(db_item)
+      thumb.resize "350x350"
+      data_item_fields[:preview] = thumb.to_blob
+      data_item_fields[:preview_mime_type] = thumb.mime_type
+    else
+    end
     result = DataMapper.insert("data_items", data_item_fields)
     tags.each do |tag|
       tag_fields = {
@@ -34,7 +43,7 @@ class DataItem
 
   def self.by_tags(tags)
     sql = "SELECT
-  di.`id` as di_id, di.`key` as di_key, di.`item_mime_type` as di_item_mime_type, di.`created_at` as di_created_at,
+  di.`id` as di_id, di.`key` as di_key, di.`item_mime_type` as di_item_mime_type, di.`preview_mime_type` as di_preview_mime_type, di.`created_at` as di_created_at,
   #{Tag.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
 FROM data_items di
   LEFT JOIN tags t on di.`key`=t.data_item_key

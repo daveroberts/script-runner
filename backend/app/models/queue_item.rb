@@ -32,7 +32,7 @@ class QueueItem
     items = DataMapper.select(sql, { prefix: 'qi' })
     items.each do |item|
       if item[:item_mime_type] == 'application/json'
-        item[:item] = JSON.parse(item[:item])
+        item[:item] = JSON.parse(item[:item], symbolize_names: true)
       end
     end
     items
@@ -80,7 +80,7 @@ ORDER BY qi.created_at DESC"
     }] }, [key]).first
     return nil if !item
     if item[:item_mime_type] == 'application/json'
-      item[:item] = JSON.parse(item[:item])
+      item[:item] = JSON.parse(item[:item], symbolize_names: true)
     end
     item
   end

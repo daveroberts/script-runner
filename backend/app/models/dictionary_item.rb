@@ -24,7 +24,7 @@ WHERE di.`name`=? AND di.`key` = ?"
       prefix: 'di',
     }, [name, key]).first
     return nil if !item
-    JSON.parse(item[:value])
+    JSON.parse(item[:value], symbolize_names: true)
   end
 
   def self.names
@@ -43,7 +43,7 @@ WHERE di.`name`=?"
     }, name)
     dict = Hash.new
     dictionary_items.each do |di|
-      dict[di[:key]] = JSON.parse(di[:value])
+      dict[di[:key]] = JSON.parse(di[:value], symbolize_names: true)
     end
     return dict
   end

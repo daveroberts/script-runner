@@ -51,8 +51,8 @@ LIMIT ?
     script_runs = []
     rows.each do |row|
       script_run = row
-      script_run[:output] = JSON.parse(row[:output])
-      script_run[:extensions] = JSON.parse(row[:extensions])
+      script_run[:output] = JSON.parse(row[:output], symbolize_names: true)
+      script_run[:extensions] = JSON.parse(row[:extensions], symbolize_names: true)
       script_runs.push(script_run)
     end
     return script_runs

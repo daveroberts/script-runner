@@ -32,7 +32,7 @@ ORDER BY s.`name`"
       ]
     })
     rows.each do |r|
-      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions]):[]
+      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions], symbolize_names: true):[]
     end
     rows
   end
@@ -51,7 +51,7 @@ WHERE t.queue_name = ?"
       ]
     }, name)
     rows.each do |r|
-      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions]):[]
+      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions], symbolize_names: true):[]
     end
     rows
   end
@@ -71,7 +71,7 @@ WHERE s.id = ?
       ]
     }, id).first
     return nil if !row
-    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions]):[]
+    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions], symbolize_names: true):[]
     row
   end
 

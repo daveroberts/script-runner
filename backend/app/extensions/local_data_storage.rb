@@ -42,7 +42,7 @@ class LocalDataStorage
 
   # Retrieve all items in set with `name`
   def set_retrieve(name)
-    SetItem.by_name(name)
+    SetItem.by_name(name).map{|i|i[:value]}
   end
 
   # Check if value exists in a set

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1><i class="fa fa-tag" aria-hidden="true"></i> {{tag}}</h1>
+    <h1><i class="fa fa-tag" aria-hidden="true"></i> Data tagged with `{{tag}}`</h1>
     <div v-bind:class="['modal', modal.show ? 'modal_show' : '']">
       <div class="modal_inner">
         <div class="modal_titlebar">

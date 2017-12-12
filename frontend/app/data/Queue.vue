@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div v-if="scripts">
+    <div v-if="scripts && scripts.length">
       <h2>Scripts</h2>
       <div style="margin-bottom: 2em;">
         <ul v-if="scripts.length">

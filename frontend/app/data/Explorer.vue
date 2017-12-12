@@ -1,12 +1,19 @@
 <template>
   <div>
     <h1>Data Explorer</h1>
-    <h2><i class="fa fa-tags" aria-hidden="true"></i> Tags</h2>
+    <h2><i class="fa fa-tags" aria-hidden="true"></i> Data Storage</h2>
     <div v-if="!tags">
       Loading...
     </div>
     <div v-else v-for="data in tags" class="collection">
       <a :href="'/#/tags/'+data.name" class="collection_item">{{data.name}}</a>
+    </div>
+    <h2><i class="fa fa-list-ol" aria-hidden="true"></i> Queues</h2>
+    <div v-if="!queues">
+      Loading...
+    </div>
+    <div v-else v-for="data in queues" class="collection">
+      <a :href="'/#/queues/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
     <h2><i class="fa fa-object-group" aria-hidden="true"></i> Sets</h2>
     <div v-if="!sets">
@@ -21,13 +28,6 @@
     </div>
     <div v-else v-for="data in dictionaries" class="collection">
       <a :href="'/#/dictionaries/'+data.name" class="collection_item">{{data.name}}</a>
-    </div>
-    <h2><i class="fa fa-list-ol" aria-hidden="true"></i> Queues</h2>
-    <div v-if="!queues">
-      Loading...
-    </div>
-    <div v-else v-for="data in queues" class="collection">
-      <a :href="'/#/queues/'+data.name" class="collection_item">{{data.name}}</a>
     </div>
   </div>
 </template>

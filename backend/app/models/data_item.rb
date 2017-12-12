@@ -78,4 +78,8 @@ WHERE di.`key` = ?"
     data_item
   end
 
+  def self.delete(key)
+    DataMapper.delete("data_items", {key: key})
+  end
+
 end

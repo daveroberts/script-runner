@@ -1,6 +1,20 @@
 <template>
   <div>
     <h1><i class="fa fa-tag" aria-hidden="true"></i> {{tag}}</h1>
+    <div v-bind:class="['modal', modal.show ? 'modal_show' : '']">
+      <div class="modal_inner">
+        <div class="modal_titlebar">
+          {{ modal.title }}
+        </div>
+        <div class="modal_content">
+          <p class="modal_text">{{ modal.text }}</p>
+          <div>
+            <button v-on:click.prevent="confirm_delete()" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete Data Item</button>
+            <button v-on:click.prevent="hide_modal()" class="btn"><i class="fa fa-ban" aria-hidden="true"></i> Don't do anything</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="!items">
       Loading...
     </div>
@@ -10,6 +24,7 @@
           <tr>
             <th>Item Key</th>
             <th>Image Preview</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -26,6 +41,7 @@
                 </span>
               </a>
             </td>
+            <td><a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
           </tr>
         </tbody>
       </table>
@@ -41,6 +57,12 @@ export default {
   data: function(){
     return {
       state: state,
+      modal: {
+        show: false,
+        title: "Delete Item",
+        text: "Are you sure you want to delete this item?"
+      },
+      doomed_item: null
     }
   },
   computed: {
@@ -74,6 +96,28 @@ export default {
     is_image_mime_type(mime_type){
       if (!mime_type){ return false }
       return mime_type.match(/^image\/.*/)
+    },
+    confirm_delete(){
+      fetch(`/api/data_item/${this.doomed_item.key}/`, { method: 'DELETE' }).then(res => {
+        if (res.ok){
+          if (state.tags.data == null){ return }
+          var idx = state.tags.data.findIndex(tag => tag.name == state.tags.current)
+          if (idx == -1){ return }
+          var items = state.tags.data[idx].items
+          idx = items.indexOf(this.doomed_item)
+          if (idx == -1){ return }
+          items.splice(idx, 1)
+          this.modal.show = false
+          this.doomed_item = null
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    hide_modal(){ this.modal.show = false },
+    ask_delete(item){
+      this.doomed_item = item
+      this.modal.show = true
     }
   }
 }

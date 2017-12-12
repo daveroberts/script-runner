@@ -13,11 +13,15 @@ class SetItem
     }
     begin
       rows_added = DataMapper.insert("set_items", fields)
-      return true
+      return fields
     rescue Mysql2::Error => e
       return false if e.to_s.include?("Duplicate entry")
       raise e
     end
+  end
+
+  def self.delete(id)
+    DataMapper.delete("set_items", {id: id})
   end
 
   def self.by_name(name)
@@ -25,10 +29,9 @@ class SetItem
   #{SetItem.columns.map{|c|"si.`#{c}` as si_#{c}"}.join(",")}
 FROM set_items si
 WHERE si.name = ?"
-    set_items = DataMapper.select(sql, {
+    DataMapper.select(sql, {
       prefix: 'si'
     }, name)
-    set_items.map{|si|si[:value]}
   end
 
   def self.has_value?(name, value)

@@ -20,6 +20,16 @@ class DataMapper
     end
   end
 
+  def self.delete(table, conditions)
+    stmt = nil
+    sql = "DELETE FROM #{table} WHERE #{conditions.map{|k,v|"`#{k}` = ?"}.join(" AND ")}"
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      stmt.execute(*conditions.values)
+      return db.affected_rows
+    end
+  end
+
   def self.raw_select(sql, variables = [])
     DB.use do |db|
       stmt = db.prepare(sql)

@@ -22,6 +22,12 @@ class App < Sinatra::Application
     end
   end
 
+  delete "/data_item/:key/?" do
+    result = DataItem.delete(params[:key])
+    return [200, "Item deleted"] if result
+    return [404, "Item not found"]
+  end
+
   get "/data_item_preview/:key/?" do
     data_item = DataItem.find(params[:key])
     content_type 'text/plain', charset: 'utf-8'
@@ -36,6 +42,19 @@ class App < Sinatra::Application
 
   get "/sets/?" do
     return SetItem.names.to_json
+  end
+
+  delete "/set_item/:id/?" do
+    result = SetItem.delete(params[:id])
+    return [200, "Item deleted"] if result
+    return [404, "Item not found"]
+  end
+
+  post "/set_item/:name/?" do
+    new_item = request.body.read
+    item = SetItem.add(params[:name], new_item)
+    return item.to_json if item
+    return [400, "Could not add item"]
   end
 
   get "/sets/:name/?" do

@@ -24,6 +24,14 @@ class QueueItem
     DataMapper.insert("queue_items", fields)
   end
 
+  def self.delete(id)
+    DataMapper.delete("queue_items", {id: id})
+  end
+
+  def self.requeue(id)
+    DataMapper.update("queue_items", {id: id, state: 'NEW'})
+  end
+
   def self.new_items
     sql = "SELECT #{QueueItem.columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
            FROM queue_items qi

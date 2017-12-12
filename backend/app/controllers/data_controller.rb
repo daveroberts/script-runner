@@ -89,4 +89,16 @@ class App < Sinatra::Application
     end
   end
 
+  delete "/queue_item/:id/?" do
+    result = QueueItem.delete(params[:id])
+    return [200, "Item deleted"] if result
+    return [404, "Item not found"]
+  end
+
+  post "/queue_item/:id/requeue/?" do
+    result = QueueItem.requeue(params[:id])
+    return [200, "Item requeued"] if result
+    return [404, "Item not found"]
+  end
+
 end

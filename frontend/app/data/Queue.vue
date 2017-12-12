@@ -1,6 +1,20 @@
 <template>
   <div>
     <h1><i class="fa fa-list-ol" aria-hidden="true"></i> Queue: {{queue}}</h1>
+    <div v-bind:class="['modal', modal.show ? 'modal_show' : '']">
+      <div class="modal_inner">
+        <div class="modal_titlebar">
+          {{ modal.title }}
+        </div>
+        <div class="modal_content">
+          <p class="modal_text">{{ modal.text }}</p>
+          <div>
+            <button v-on:click.prevent="confirm_delete()" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete Item</button>
+            <button v-on:click.prevent="hide_modal()" class="btn"><i class="fa fa-ban" aria-hidden="true"></i> Don't do anything</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="scripts">
       <h2>Scripts</h2>
       <div style="margin-bottom: 2em;">
@@ -21,7 +35,9 @@
           <tr>
             <th>Key</th>
             <th>State</th>
+            <th></th>
             <th>Added At</th>
+            <td></td>
           </tr>
         </thead>
         <tbody v-if="items.length">
@@ -32,7 +48,15 @@
               </a>
             </td>
             <td class="small">{{item.state}}</td>
+            <td class="small">
+              <span v-if="item.state=='DONE'">
+                <a href="#" @click.prevent="requeue(item)"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+              </span>
+            </td>
             <td class="small">{{pretty_date(item.created_at)}}</td>
+            <td class="small">
+              <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            </td>
           </tr>
         </tbody>
         <tbody v-else>
@@ -54,6 +78,12 @@ export default {
   data: function(){
     return {
       state: state,
+      modal: {
+        show: false,
+        title: "Delete Item",
+        text: "Are you sure you want to delete this item?"
+      },
+      doomed_item: null
     }
   },
   computed: {
@@ -105,6 +135,37 @@ export default {
     select(script){
       state.current = JSON.parse(JSON.stringify(initial.current))
       state.current.script = script
+    },
+    confirm_delete(){
+      fetch(`/api/queue_item/${this.doomed_item.id}/`, { method: 'DELETE' }).then(res => {
+        if (res.ok){
+          if (state.queues.data == null){ return null }
+          var idx = state.queues.data.findIndex(queue => queue.name == state.queues.current)
+          if (idx == -1){ return null }
+          var items = state.queues.data[idx].items
+          idx = items.indexOf(this.doomed_item)
+          if (idx == -1){ return }
+          items.splice(idx, 1)
+          this.modal.show = false
+          this.doomed_item = null
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    hide_modal(){ this.modal.show = false },
+    ask_delete(item){
+      this.doomed_item = item
+      this.modal.show = true
+    },
+    requeue(item){
+      fetch(`/api/queue_item/${item.id}/requeue/`, { method: 'POST' }).then(res => {
+        if (res.ok){
+          item.state = 'NEW'
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
   }
 }

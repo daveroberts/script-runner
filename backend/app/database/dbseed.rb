@@ -24,6 +24,8 @@ class DBSeed
     { id: '59805e73-01cd-4185-98a7-f1bb582cae27', script_id: @scripts[2][:id], type: "QUEUE", queue_name: 'numbers' },
     { id: '599bf88f-4a4f-48db-b58e-ded0fa9326f7', script_id: @scripts[9][:id], type: "QUEUE", queue_name: 'gd_pages_raw' },
     { id: '6ea76729-1ff7-44fb-9073-114d19fbe0b9', script_id: @scripts[10][:id], type: "QUEUE", queue_name: 'gd_pages_processed' },
+    { id: '53332d6f-191e-4916-a21a-54722b880332', script_id: @scripts[0][:id], type: "HTTP", http_endpoint: 'simple', http_method: 'GET' },
+    { id: 'b00fe095-a3cf-45f2-9324-c7a5da89fc8b', script_id: @scripts[2][:id], type: "HTTP", http_endpoint: 'number_crunch', http_method: 'POST' },
   ]
   @queue_items = [
   ]
@@ -72,6 +74,8 @@ class DBSeed
         type: trigger[:type],
         every: trigger[:every],
         queue_name: trigger[:queue_name],
+        http_endpoint: trigger[:http_endpoint],
+        http_method: trigger[:http_method],
         active: true,
         created_at: DateTime.now
       }

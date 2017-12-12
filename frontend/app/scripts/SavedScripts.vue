@@ -18,6 +18,7 @@
             <div v-for="trigger in script.triggers">
               <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
               <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
+              <span v-if="trigger.type == 'HTTP'">HTTP endpoint: {{trigger.http_method}} `{{trigger.http_endpoint}}`</span>
             </div>
           </td>
           <td style="text-align: center;"><span v-if="script.active"><i class="success fa fa-check" aria-hidden="true"></i></span></td>

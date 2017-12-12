@@ -120,6 +120,21 @@
                   <input type="text" v-model="trigger.queue_name" />
                 </td>
               </tr>
+              <tr class="form_row" v-if="trigger.type == 'HTTP'">
+                <th class="form_label">HTTP Method</th>
+                <td>
+                  <select v-model="trigger.http_method">
+                    <option v-for="type in method_types" v-bind:value="type">{{type}}</option>
+                  </select>
+                  
+                </td>
+              </tr>
+              <tr class="form_row" v-if="trigger.type == 'HTTP'">
+                <th class="form_label">HTTP Endpoint</th>
+                <td>
+                  <input type="text" v-model="trigger.http_endpoint" />
+                </td>
+              </tr>
               <tr class="form_row" v-if="trigger.type == 'QUEUE' && trigger.queue_name">
                 <th class="form_label"></th>
                 <td>Inspect <a target="_blank" :href="'/#/queues/'+trigger.queue_name">`{{trigger.queue_name}}` queue</a></td>
@@ -218,7 +233,8 @@ export default {
       state: state,
       save_for_later: false,
       orig_code: '',
-      trigger_types: ['CRON', 'QUEUE'],
+      trigger_types: ['CRON', 'QUEUE', 'HTTP'],
+      method_types: ['GET', 'POST'],
       show_extensions: false,
       show_script_details: true,
       running: false,

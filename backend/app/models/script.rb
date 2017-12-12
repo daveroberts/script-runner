@@ -75,6 +75,24 @@ WHERE s.id = ?
     row
   end
 
+  def self.find_by_http_endpoint(endpoint, method)
+    sql = "SELECT
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
+  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+FROM scripts s
+  LEFT JOIN triggers t on s.id=t.script_id
+WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? AND t.http_method = ?"
+    row = DataMapper.select(sql, {
+      prefix: 's',
+      has_many: [
+        { triggers: { prefix: 't' } }
+      ]
+    }, [endpoint, method]).first
+    return nil if !row
+    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions], symbolize_names: true):[]
+    row
+  end
+
   def self.save(script)
     validation_errors = self.validation_errors(script)
     raise InvalidScript, validation_errors if validation_errors
@@ -116,13 +134,15 @@ WHERE s.id = ?
 
   def self.trigger_to_fields(trigger)
     return {
-      id:         trigger[:id],
-      script_id:  trigger[:script_id],
-      type:       trigger[:type],
-      active:     trigger[:active],
-      every:      trigger[:every],
-      queue_name: trigger[:queue_name],
-      created_at: Time.new(trigger[:created_at])
+      id:             trigger[:id],
+      script_id:      trigger[:script_id],
+      type:           trigger[:type],
+      active:         trigger[:active],
+      every:          trigger[:every],
+      queue_name:     trigger[:queue_name],
+      http_endpoint:  trigger[:http_endpoint],
+      http_method:    trigger[:http_method],
+      created_at:     Time.new(trigger[:created_at])
     }
   end
 

@@ -32,6 +32,23 @@ class App < Sinatra::Application
     return [200, "OK"]
   end
 
+  get "/http/:endpoint/?" do
+    script = Script.find_by_http_endpoint(params[:endpoint], 'GET')
+    return [404, "No script found for that trigger"] if !script
+    script_run = Script.run_code(script[:code], nil, script[:extensions], script[:id], script[:triggers][0][:id])
+    return script_run[:output].to_json
+  end
+
+  post "/http/:endpoint/?" do
+    input = nil
+    body = request.body.read
+    input = JSON.parse(body, symbolize_names: true) if !body.blank?
+    script = Script.find_by_http_endpoint(params[:endpoint], 'POST')
+    return [404, "No script found for that trigger"] if !script
+    script_run = Script.run_code(script[:code], input, script[:extensions], script[:id], script[:triggers][0][:id])
+    return script_run[:output].to_json
+  end
+
   post "/run/?" do
     payload = JSON.parse(request.body.read, symbolize_names: true)
     input = nil

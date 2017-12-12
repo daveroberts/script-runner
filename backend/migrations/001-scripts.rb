@@ -53,12 +53,15 @@ module DBMigrations
         `active` BOOLEAN NOT NULL,
         `every` INTEGER,
         `queue_name` VARCHAR(255),
+        `http_endpoint` VARCHAR(255),
+        `http_method` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
         INDEX `type_index` (`type`),
         INDEX `active_index` (`active`),
         INDEX `queue_name_index` (`queue_name`),
+        INDEX `http_endpoint_method_index` (`http_endpoint`, `http_method`),
         INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)

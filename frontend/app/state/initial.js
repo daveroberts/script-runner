@@ -52,6 +52,8 @@ const initial_state = {
       active: true,
       every: 10,
       queue_name: '',
+      http_endpoint: '',
+      http_method: 'GET',
       created_at: null
     }
   }

@@ -1,4 +1,3 @@
-sending emails
 http example - store page and access with http trigger, daily report
 data editing
 data preview mode - show thumbnails, first X characters, etc.

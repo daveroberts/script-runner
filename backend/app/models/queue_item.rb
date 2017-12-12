@@ -11,7 +11,7 @@ class QueueItem
   def self.add(name, item, item_mime_type='application/json', item_key=nil)
     item_key=SecureRandom.uuid if item_key.blank?
     db_item = item
-    db_item = item.to_json if item.class == Hash
+    db_item = item.to_json if item.class == Hash || item.class == Array || item_mime_type == 'application/json'
     fields = {
       id: SecureRandom.uuid,
       queue_name: name,

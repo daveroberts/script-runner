@@ -41,7 +41,8 @@ const initial_state = {
     field_errors: {},
     input: {
       send: false,
-      payload: ""
+      payload: "",
+      mime_type: "JSON"
     },
   },
   list: null,

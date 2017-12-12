@@ -103,7 +103,7 @@ export default {
   },
   created: function(){
     state.queues.current = this.$route.params.name
-    fetch(`/api/queues/${this.$route.params.name}`).then((res)=>{
+    fetch(`/api/queues/${state.queues.current}`).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{
       if (state.queues.data == null){ state.queues.data = [] }
@@ -137,6 +137,8 @@ export default {
       state.current.script = script
     },
     confirm_delete(){
+      var old_state = this.doomed_item.state
+      this.doomed_item.state = "DELETING"
       fetch(`/api/queue_item/${this.doomed_item.id}/`, { method: 'DELETE' }).then(res => {
         if (res.ok){
           if (state.queues.data == null){ return null }
@@ -151,6 +153,7 @@ export default {
         }
       }).catch(err => {
         console.log(err)
+        this.doomed_item.state = old_state
       })
     },
     hide_modal(){ this.modal.show = false },
@@ -159,11 +162,16 @@ export default {
       this.modal.show = true
     },
     requeue(item){
+      var old_state = item.state
+      item.state = "REQUEUEING"
       fetch(`/api/queue_item/${item.id}/requeue/`, { method: 'POST' }).then(res => {
         if (res.ok){
           item.state = 'NEW'
+        } else {
+          item.state = old_state
         }
       }).catch(err => {
+        item.state = old_state
         console.log(err)
       })
     },

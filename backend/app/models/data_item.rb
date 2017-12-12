@@ -9,7 +9,7 @@ class DataItem
   def self.add(item, item_mime_type = "text/plain", tags=[], key=nil)
     key = SecureRandom.uuid if key.blank?
     db_item = item
-    db_item = item.to_json if item.class == Hash
+    db_item = item.to_json if item.class == Hash || item.class == Array || item_mime_type == 'application/json'
     data_item_fields = {
       id: SecureRandom.uuid,
       key: key,

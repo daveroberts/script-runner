@@ -1,6 +1,7 @@
 require 'pry'
 require 'json'
 require 'securerandom'
+require 'digest'
 require_relative './tokenizer.rb'
 require_relative './parser.rb'
 
@@ -36,7 +37,11 @@ module SimpleLanguage
       @input = input
       tokens = SimpleLanguage::Tokenizer.new.tokenize(script)
       program = SimpleLanguage::Parser.new.parse(tokens)
-      run_block(program, {})
+      begin
+        run_block(program, {})
+      rescue Return => ret
+        return ret.value
+      end
     end
 
     def run_block(program, variables)
@@ -214,7 +219,7 @@ module SimpleLanguage
     end
 
     def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','filter','match','len','random', 'uuid', 'input',"int", "now"]
+      system_cmds = ['print','join','push','map','filter','match','len','hash','random', 'uuid', 'input',"int", "now"]
       return system_cmds.include? fun
     end
 
@@ -226,6 +231,8 @@ module SimpleLanguage
         return run_block(args, variables).join
       when "len"
         return exec_cmd(args[0], variables).length
+      when "hash"
+        return Digest::SHA512.hexdigest(exec_cmd(args[0], variables))
       when "uuid"
         return SecureRandom.uuid
       when "now"

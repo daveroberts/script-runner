@@ -12,7 +12,7 @@ end
 class Script
 
   def self.columns
-    [:id, :name, :category, :description, :default_input, :extensions, :code, :active, :created_at]
+    [:id, :name, :category, :description, :default_input, :default_input_mime_type, :extensions, :code, :active, :created_at]
   end
 
   def self.all
@@ -120,15 +120,16 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
 
   def self.script_to_fields(script)
     return {
-      id:            script[:id],
-      name:          script[:name],
-      category:      script[:category],
-      description:   script[:description],
-      default_input: script[:default_input],
-      extensions:    script[:extensions].to_json,
-      code:          script[:code],
-      active:        script[:active],
-      created_at:    Time.new(script[:created_at])
+      id:                      script[:id],
+      name:                    script[:name],
+      category:                script[:category],
+      description:             script[:description],
+      default_input:           script[:default_input],
+      default_input_mime_type: script[:default_input_mime_type],
+      extensions:              script[:extensions].to_json,
+      code:                    script[:code],
+      active:                  script[:active],
+      created_at:              Time.new(script[:created_at])
     }
   end
 
@@ -188,10 +189,11 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
     end
   end
 
-  def self.set_default_input(script_id, payload)
+  def self.set_default_input(script_id, payload, mime_type)
     fields = {
       id: script_id,
-      default_input: payload
+      default_input: payload,
+      default_input_mime_type: mime_type
     }
     DataMapper.update('scripts', fields)
   end

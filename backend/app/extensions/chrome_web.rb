@@ -68,7 +68,6 @@ class ChromeWeb
 
   # pause for n seconds (defaults to 5)
   def wait(n=5)
-    binding.pry
     sleep n
   end
 

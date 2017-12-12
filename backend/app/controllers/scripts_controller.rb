@@ -27,8 +27,9 @@ class App < Sinatra::Application
   end
   
   post "/scripts/:id/set_default_input/?" do
-    payload = request.body.read
-    result = Script.set_default_input(params[:id], payload)
+    body = request.body.read
+    package = JSON.parse(body, symbolize_names: true)
+    result = Script.set_default_input(params[:id], package[:payload], package[:mime_type])
     return [200, "OK"]
   end
 
@@ -42,7 +43,8 @@ class App < Sinatra::Application
   post "/http/:endpoint/?" do
     input = nil
     body = request.body.read
-    input = JSON.parse(body, symbolize_names: true) if !body.blank?
+    input = body if !body.blank?
+    input = JSON.parse(body, symbolize_names: true) if !body.blank? && request.env["CONTENT_TYPE"] == 'application/json'
     script = Script.find_by_http_endpoint(params[:endpoint], 'POST')
     return [404, "No script found for that trigger"] if !script
     script_run = Script.run_code(script[:code], input, script[:extensions], script[:id], script[:triggers][0][:id])
@@ -52,7 +54,8 @@ class App < Sinatra::Application
   post "/run/?" do
     payload = JSON.parse(request.body.read, symbolize_names: true)
     input = nil
-    input = JSON.parse(payload[:input], symbolize_names: true) if payload[:input]
+    input = payload[:input] if !payload[:input].blank?
+    input = JSON.parse(payload[:input], symbolize_names: true) if !payload[:input].blank? && payload[:mime_type] == 'application/json'
     script_run = Script.run_code(payload[:code], input, payload[:extensions], payload[:script_id])
     return script_run.to_json
   end

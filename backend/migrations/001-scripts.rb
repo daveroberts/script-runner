@@ -12,6 +12,7 @@ module DBMigrations
         `category` VARCHAR(255),
         `description` VARCHAR(255),
         `default_input` LONGTEXT,
+        `default_input_mime_type` VARCHAR(255),
         `extensions` TEXT,
         `code` TEXT,
         `active` BOOLEAN NOT NULL,

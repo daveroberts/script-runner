@@ -52,12 +52,14 @@ class LocalDataStorage
 
   # store a `value` in dictionary `name` by `key`
   def dict_store(name, key, value)
-    DictionaryItem.add(name, key, value)
+    DictionaryItem.save(name, key, value)
   end
 
   # lookup a value in dictionary `name` by `key`
   def dict_retrieve(name, key)
-    DictionaryItem.find(name, key)
+    item = DictionaryItem.find(name, key)
+    return nil if !item
+    return item[:value]
   end
 
   # get all values in the dictionary `name`

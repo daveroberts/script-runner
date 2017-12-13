@@ -4,7 +4,13 @@ class DictionaryItem
     [:id, :name, :key, :value]
   end
 
-  def self.add(name, key, value)
+  def self.save(name, key, value)
+    item = DictionaryItem.find(name, key)
+    return DataMapper.update('dictionary_items', {id: item[:id], value: value.to_json}) if item
+    return DictionaryItem.insert(name, key, value)
+  end
+
+  def self.insert(name, key, value)
     fields = {
       id: SecureRandom.uuid,
       name: name,
@@ -24,7 +30,8 @@ WHERE di.`name`=? AND di.`key` = ?"
       prefix: 'di',
     }, [name, key]).first
     return nil if !item
-    JSON.parse(item[:value], symbolize_names: true)
+    item[:value] = JSON.parse(item[:value], symbolize_names: true)
+    return item
   end
 
   def self.names

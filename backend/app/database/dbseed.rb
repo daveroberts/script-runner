@@ -9,7 +9,7 @@ class DBSeed
     { id: '4a990719-1862-4fa2-b5f1-e26c8867faec', name: '01 - Simple Example', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nmap(numbers, (x)->{ x*x })" },
     { id: '6e19474e-5552-4cb3-a15c-b734f1067e75', name: '04 - Numbers - Generate', category: 'queue_example', code: "number = random(1,10)\nqueue('numbers', number)\nnumber" },
     { id: '17c79465-9dc5-45bb-9894-c4553ca06b15', name: '05 - Numbers - Process', category: 'queue_example', default_input: '44', default_input_mime_type: "application/json", code: "number = int(input())\nnumber = number + 100\nnumber" },
-    { id: '0b2d252d-77de-48a4-992d-b094a4b7ae56', name: '07 - Data Retrieval', category: 'data_storage', code: "pages = map(retrieve_by_tag('pages'), (key)->{ retrieve(key) })\n{\n  :countries dict_values('countries'),\n  :pages pages,\n  :urls set_retrieve('urls')\n}" },
+    { id: '0b2d252d-77de-48a4-992d-b094a4b7ae56', name: '07 - Data Retrieval', category: 'data_storage', code: "logs = map(retrieve_by_tag('logs'), (key)->{ retrieve(key) })\n{\n  :countries dict_values('countries'),\n  :logs logs,\n  :topics set_retrieve('hot_topics')\n}" },
     { id: 'eb07e93d-0d30-403d-aaac-ef1f46d32cdf', name: '06 - Data Storage', category: 'data_storage', code: "store('fake log data','text/plain',['logs'])\nset_store('names','Dave')\ndict_store('employees', 'Dave', {:id 4,:name 'Dave'})" },
     { id: 'ec1259c1-c7f4-450c-9037-188eeff597e2', name: '02 - Recursive Function', category: 'language_examples', code: "numbers = [2,4,6,8,10]\nfib = (n)->{\n  if n == 0 {\n    0\n  } elsif n == 1 {\n    1\n  } else {\n    fib(n-1) + fib(n-2)\n  }\n}\nmap(numbers, fib)" },
     { id: 'd6f2a465-6702-444a-bc9d-8157cbd45e20', name: '03 - Other Language Features', category: 'language_examples', default_input: '["Monday","Tuesday","Wednesday"]', default_input_mime_type: "application/json", code: "days = input()\npush(days, 'Thursday')\nforeach day in days {\n  queue('days', day, 'text/plain')\n}\n\n// Count up then down\ncounter = 0\nloop {\n  counter = counter + 1\n  if counter >= 10 { break }\n}\nhigh_value = counter\nwhile counter != 0 {\n  counter = counter - 1\n}\njoin(['Was: ', high_value, ' Counter ended at: ',counter])" },
@@ -43,7 +43,6 @@ class DBSeed
   ]
   @set_items = [
     { id: '35fbcda8-169e-4f6c-99c5-ba37790e6feb', name: 'gd_alert_emails', value: 'dave.a.roberts@gmail.com' },
-    { id: 'a528e5b9-f7dc-44da-96a3-f617338242ae', name: 'gd_alert_emails', value: 'jenmorrowroberts@gmail.com' },
     { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'gd_alert_emails', value: 'bob@example.com' },
     { id: '56498833-3beb-49f1-ae3d-20aa4375cada', name: 'hot_topics', value: 'navy' },
     { id: 'bb24aa77-2cee-4282-b196-c57bdd73fbde', name: 'hot_topics', value: 'contract' },

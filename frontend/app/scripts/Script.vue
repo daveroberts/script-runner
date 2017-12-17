@@ -277,7 +277,9 @@ export default {
     if (state.current.script.code){ this.orig_code = state.current.script.code }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
-      fetch(`/api/scripts/${this.$route.params.id}`).then((res)=>{
+      fetch(`/api/scripts/${this.$route.params.id}`, {
+         credentials: 'include'
+    }).then((res)=>{
         if (res.ok){ return res.json() }
       }).then((script)=>{
         state.current.script = script
@@ -292,11 +294,13 @@ export default {
       })
     }
     if (!state.current.runs) {
-      fetch(`/api/last_10_runs/${this.$route.params.id}`).then((res)=>{
+      fetch(`/api/last_10_runs/${this.$route.params.id}`, {
+         credentials: 'include'
+    }).then( res => {
         if (res.ok){ return res.json() }
-      }).then((runs)=>{
+      }).then( runs => {
         state.current.runs = runs
-      }).catch((err)=>{
+      }).catch( err =>{
         console.log(err)
       })
     }

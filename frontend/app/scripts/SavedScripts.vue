@@ -42,7 +42,9 @@ export default {
     scripts(){ return state.list }
   },
   created: function(){
-    fetch(`/api/scripts/`).then((res)=>{
+    fetch(`/api/scripts/`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((scripts)=>{
       state.list = scripts

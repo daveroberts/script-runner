@@ -64,7 +64,9 @@ export default {
   },
   created: function(){
     state.dictionaries.current = this.$route.params.name
-    fetch(`/api/dictionaries/${this.$route.params.name}`).then((res)=>{
+    fetch(`/api/dictionaries/${this.$route.params.name}`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{
       if (state.dictionaries.data == null){

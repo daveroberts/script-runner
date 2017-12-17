@@ -112,7 +112,9 @@ export default {
   },
   created: function(){
     state.sets.current = this.$route.params.name
-    fetch(`/api/sets/${this.$route.params.name}`).then((res)=>{
+    fetch(`/api/sets/${this.$route.params.name}`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{
       if (state.sets.data == null){ state.sets.data = [] }
@@ -130,7 +132,11 @@ export default {
   },
   methods: {
     add_item(){
-      fetch(`/api/set_item/${state.sets.current}/`, { method: 'POST', body: this.new_item }).then(res => {
+      fetch(`/api/set_item/${state.sets.current}/`, {
+        method: 'POST',
+        credentials: 'include',
+        body: this.new_item
+      }).then(res => {
         console.log(res)
         if (res.ok){ return res.json() }
         throw new Error("Duplicate?")
@@ -151,7 +157,10 @@ export default {
       })
     },
     confirm_delete(){
-      fetch(`/api/set_item/${this.doomed_item.id}/`, { method: 'DELETE' }).then(res => {
+      fetch(`/api/set_item/${this.doomed_item.id}/`, {
+        method: 'DELETE',
+        credentials: 'include'
+      }).then(res => {
         if (res.ok){
           if (state.sets.data == null){ return null }
           var idx = state.sets.data.findIndex(set => set.name == state.sets.current)

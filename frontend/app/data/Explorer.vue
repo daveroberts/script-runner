@@ -48,7 +48,9 @@ export default {
     queues(){ return state.queues.data },
   },
   created: function(){
-    fetch(`/api/tags`).then((res)=>{
+    fetch(`/api/tags`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((tags)=>{
       if (state.tags.data == null){ state.tags.data = [] }
@@ -59,7 +61,9 @@ export default {
     }).catch((err)=>{
       console.log(err)
     })
-    fetch(`/api/sets`).then((res)=>{
+    fetch(`/api/sets`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((sets)=>{
       if (state.sets.data == null){ state.sets.data = [] }
@@ -70,7 +74,9 @@ export default {
     }).catch((err)=>{
       console.log(err)
     })
-    fetch(`/api/dictionaries`).then((res)=>{
+    fetch(`/api/dictionaries`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((dictionaries)=>{
       if (state.dictionaries.data == null){ state.dictionaries.data = [] }
@@ -81,7 +87,9 @@ export default {
     }).catch((err)=>{
       console.log(err)
     })
-    fetch(`/api/queues`).then((res)=>{
+    fetch(`/api/queues`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((queues)=>{
       if (state.queues.data == null){ state.queues.data = [] }

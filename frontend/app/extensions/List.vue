@@ -31,7 +31,9 @@ export default {
   },
   components: { Methods },
   created: function(){
-    fetch(`/api/extensions`).then((res)=>{
+    fetch(`/api/extensions`, {
+      credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then(extensions=>{
       if (!state.extensions.list){ state.extensions.list = [] }

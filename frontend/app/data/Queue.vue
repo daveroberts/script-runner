@@ -103,7 +103,9 @@ export default {
   },
   created: function(){
     state.queues.current = this.$route.params.name
-    fetch(`/api/queues/${state.queues.current}`).then((res)=>{
+    fetch(`/api/queues/${state.queues.current}`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{
       if (state.queues.data == null){ state.queues.data = [] }
@@ -115,7 +117,9 @@ export default {
         queue.items = items
         Vue.set(state.queues.data, idx, queue)
       }
-      fetch(`/api/queue/${state.queues.current}/scripts/`).then(res=>{
+      fetch(`/api/queue/${state.queues.current}/scripts/`, {
+         credentials: 'include'
+    }).then(res=>{
         if (res.ok){ return res.json() }
       }).then(scripts=>{
         var idx = state.queues.data.findIndex(q=> q.name == state.queues.current )
@@ -139,7 +143,10 @@ export default {
     confirm_delete(){
       var old_state = this.doomed_item.state
       this.doomed_item.state = "DELETING"
-      fetch(`/api/queue_item/${this.doomed_item.id}/`, { method: 'DELETE' }).then(res => {
+      fetch(`/api/queue_item/${this.doomed_item.id}/`, {
+        method: 'DELETE',
+        credentials: 'include'
+      }).then(res => {
         if (res.ok){
           if (state.queues.data == null){ return null }
           var idx = state.queues.data.findIndex(queue => queue.name == state.queues.current)
@@ -164,7 +171,10 @@ export default {
     requeue(item){
       var old_state = item.state
       item.state = "REQUEUEING"
-      fetch(`/api/queue_item/${item.id}/requeue/`, { method: 'POST' }).then(res => {
+      fetch(`/api/queue_item/${item.id}/requeue/`, {
+        method: 'POST',
+        credentials: 'include'
+      }).then(res => {
         if (res.ok){
           item.state = 'NEW'
         } else {

@@ -76,7 +76,9 @@ export default {
   },
   created: function(){
     state.tags.current = this.$route.params.name
-    fetch(`/api/tags/${state.tags.current}/`).then((res)=>{
+    fetch(`/api/tags/${state.tags.current}/`, {
+         credentials: 'include'
+    }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{
       if (state.tags.data == null){ state.tags.data = [] }
@@ -98,7 +100,10 @@ export default {
       return mime_type.match(/^image\/.*/)
     },
     confirm_delete(){
-      fetch(`/api/data_item/${this.doomed_item.key}/`, { method: 'DELETE' }).then(res => {
+      fetch(`/api/data_item/${this.doomed_item.key}/`, {
+        method: 'DELETE',
+        credentials: 'include'
+      }).then(res => {
         if (res.ok){
           if (state.tags.data == null){ return }
           var idx = state.tags.data.findIndex(tag => tag.name == state.tags.current)

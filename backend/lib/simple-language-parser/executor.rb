@@ -147,8 +147,8 @@ module SimpleLanguage
           block: command[:block],
           locals: variables.dup
         }
-      elsif command[:type] == :foreach_apply
-        collection = run_block(command[:collection], variables)
+      elsif command[:type] == :for
+        collection = exec_cmd(command[:collection], variables)
         symbol = command[:symbol]
         block = command[:block]
         #locals = variables.dup
@@ -289,6 +289,7 @@ module SimpleLanguage
         elsif chain[:type] == :member
           member = chain[:member]
           params = []
+          locals = variables.dup
           if chains.length > 0 && chains[0][:type] == :function_params
             params = chains[0][:params].map{|p|exec_cmd(p, locals)}
             chains.shift

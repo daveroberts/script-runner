@@ -33,6 +33,8 @@ module SimpleLanguage
     return return_block, rest if return_block
     break_block, rest = make_break(tokens)
     return break_block, rest if break_block
+    next_block, rest = make_next(tokens)
+    return next_block, rest if next_block
     expr, rest = make_expression(tokens.dup)
     return expr, rest if expr
     return nil, tokens
@@ -59,7 +61,7 @@ module SimpleLanguage
     end
     raise Exception, "For block must end with `}`" if !rest[0] || rest[0][:type] != :right_curly
     rest.shift # Right curly
-    return {type: :for, singular: singular, plural: plural, block: block}, rest
+    return {type: :for, symbol: singular, collection: plural, block: block}, rest
   end
 
   def self.make_if(tokens)
@@ -154,8 +156,14 @@ module SimpleLanguage
 
   def self.make_break(tokens)
     rest = tokens.dup
-    return nil, tokens if !rest[0] || rest[0][:type] != :break
+    return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'break'
     return {type: :break}, rest
+  end
+
+  def self.make_next(tokens)
+    rest = tokens.dup
+    return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'next'
+    return {type: :next}, rest
   end
 
   def self.make_assignment(tokens)

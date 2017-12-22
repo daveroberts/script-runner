@@ -149,6 +149,7 @@ module SimpleLanguage
   def self.make_return(tokens)
     rest = tokens.dup
     return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'return'
+    rest.shift #return
     expr, rest = make_expression(rest)
     raise Exception, "return must return something" if !expr
     return {type: :return, payload: expr}, rest
@@ -157,12 +158,14 @@ module SimpleLanguage
   def self.make_break(tokens)
     rest = tokens.dup
     return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'break'
+    rest.shift #break
     return {type: :break}, rest
   end
 
   def self.make_next(tokens)
     rest = tokens.dup
     return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'next'
+    rest.shift #next
     return {type: :next}, rest
   end
 

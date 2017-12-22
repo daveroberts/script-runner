@@ -246,10 +246,10 @@ export default {
       editorOptions: {
         tabSize: 2,
         mode: {
-          name: 'clojure',
+          name: 'jslike',
           json: true
         },
-        theme: 'mdn-like',
+        theme: 'js-like',
         lineNumbers: true,
         line: true,
         smartIndent: false

@@ -215,7 +215,6 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
     #rescue SimpleLanguage::NullPointer => e
     # catch all execptions like this for now
     rescue Exception => e
-      raise e
       error = "#{e.class.to_s} #{e.to_s}"
     end
     script_run = {

@@ -220,23 +220,23 @@ module SimpleLanguage
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left == right
-      elsif command[:type] == :check_less_than_or_equals
+      elsif command[:type] == :less_than_or_equals
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left <= right
-      elsif command[:type] == :check_greater_than_or_equals
+      elsif command[:type] == :greater_than_or_equals
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left >= right
-      elsif command[:type] == :check_less_than
+      elsif command[:type] == :less_than
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left < right
-      elsif command[:type] == :check_greater_than
+      elsif command[:type] == :greater_than
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left > right
-      elsif command[:type] == :check_not_equality
+      elsif command[:type] == :check_not_equals
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left != right
@@ -244,6 +244,10 @@ module SimpleLanguage
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         return left || right
+       elsif command[:type] == :and
+        left = exec_cmd(command[:left], variables)
+        right = exec_cmd(command[:right], variables)
+        return left && right
       elsif command[:type] == :symbol
         val = command[:value]
         output = run_chains(val, command[:chains]||[], variables)
@@ -261,7 +265,8 @@ module SimpleLanguage
       end
     end
 
-    def run_chains(ref, chains, variables)
+    def run_chains(ref, orig_chains, variables)
+      chains = orig_chains.dup
       while chains.length > 0 do
         chain = chains.first
         chains.shift
@@ -303,7 +308,7 @@ module SimpleLanguage
     end
 
       def is_system_command?(fun)
-      system_cmds = ['print','join','push','map','filter','len','md5','sha512','random', 'uuid', 'input',"int", "now"]
+      system_cmds = ['print','join','push','map','filter','len','md5','sha512','random', 'uuid', 'input',"int", "now", "match"]
       return system_cmds.include? fun
     end
 
@@ -339,6 +344,24 @@ module SimpleLanguage
           arr.push(output)
         end
         return arr
+      when "match"
+        regex_str = args[0]
+        str = args[1]
+        match = nil
+        if regex_str.start_with? "/"
+          parts = /\/(.*)\/(.*)/.match(regex_str)
+          regex_str = parts[1]
+          opts_str = parts[2]
+          opts = 0
+          opts = opts | Regexp::IGNORECASE if opts_str.include? "i"
+          opts = opts | Regexp::MULTILINE if opts_str.include? "m"
+          opts = opts | Regexp::EXTENDED if opts_str.include? "x"
+          match = Regexp.new(regex_str, opts).match(str)
+        else
+          match = Regexp.new(regex_str).match(str)
+        end
+        return nil if !match
+        return match.to_a
       when "filter"
         collection = args[0]
         fun = args[1]

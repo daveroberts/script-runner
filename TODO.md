@@ -1,3 +1,62 @@
+"simple message", timestamp
+Evaluated list <long list here> and selected <long list here>
+{
+  summary: "",
+  detail: "",
+  level: debug | info | warning | danger
+  thumbnail_key: "",
+  image_key: "",
+  timestamp: "time",
+  tables: [
+    {
+      title: "",
+      headers: [
+        {
+          name: ""
+          type: string | thumbnail,
+        }
+      ],
+      values: [
+        {
+          value: "",
+          thumbnail_key: "",
+          image_key: "",
+          highlight: null | warning | danger
+        }
+      ]
+    }
+  ]
+}
+
+Queue.add(payload, type = 'JSON', summary = nil, thumbnail_key = nil)
+Queue.next()
+Queue.process(item_id)
+Queue.error(item_id, msg = '')
+Queue.delete(item_id)
+
+Storage.save(payload, type = 'JSON', summary = nil, thumbnail_key = nil, tags = [], key = nil)
+Storage.retrieve(key)
+Storage.get_keys(tags=[], within=nil)
+  within: X minutes, X hours, X days
+Storage.delete(key)
+
+Set.add(set_name, item)
+Set.get_items(set_name)
+Set.has_item(set_name, item)
+Set.remove_item(set_name, item)
+
+Dictionary.add_entry(dictionary_name, name, payload, type = 'JSON', summary = nil, thumbnail_key = nil)
+Dictionary.get_entry(dictionary_name, name)
+Dictionary.get_all_entries(dictionary_name)
+
+Document.new(document_id=nil)
+Document.get(document_id)
+Document.delete(document_id)
+
+doc.set(key, value, type = 'TEXT', summary = nil, thumbnail_key = nil)
+doc.get(key)
+doc.add(key, value, summary = nil, thumbnail_key = nil)
+
 Date functions
 common thread ID and view
 integrate with AWS S3

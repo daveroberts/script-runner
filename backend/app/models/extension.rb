@@ -12,9 +12,6 @@ class Extension
       class_name = class_name.split("_").collect(&:capitalize).join
       clazz = Object.const_get("SimpleLanguage::#{class_name}")
       o = clazz.new
-      info = { icon: 'fa-code', summary: "No _info method found" }
-      info = clazz._info if clazz.respond_to? :_info
-      @extensions[class_name] = info
       method_names = clazz.instance_methods - Object.instance_methods
       method_names = method_names.sort
       method_params = {}
@@ -22,7 +19,22 @@ class Extension
         params = clazz.instance_method(method).parameters.map{|p|p[1]}
         method_params[method] = params
       end
-      @extensions[class_name][:params] = method_params
+      @extensions[class_name] = {
+        methods: method_params
+      }
+      if clazz.respond_to? :_info
+        info = clazz._info
+        info.each do |prop,value|
+          if prop == :methods
+            @extensions[class_name][prop] = value
+          else
+            @extensions[class_name][:methods].each do |method|
+              if value.has_key method
+              end
+            end
+          end
+        end
+      end
     end
     return @extensions
   end

@@ -10,17 +10,13 @@ module LocalStorage
     end
 
     # Add an item to the queue
-    # item: something
+    # item: BLOBABLE
     # options:
-    #   force_type: nil, JSON, TEXT
-    #   summary: something
-    #   summary_type: something else
-    #   thumbnail_key
+    #   summary: JSONABLE
+    #   thumbnail_image_id
     def self.add(item, options = {
       summary: nil,
-      thumbnail_key: nil,
-      summary_type: nil,
-      force_item_type: nil,
+      thumbnail_image_id: nil,
     })
     end
   end

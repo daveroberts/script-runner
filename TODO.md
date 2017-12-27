@@ -1,5 +1,3 @@
-"simple message", timestamp
-Evaluated list <long list here> and selected <long list here>
 {
   summary: "",
   detail: "",
@@ -13,13 +11,13 @@ Evaluated list <long list here> and selected <long list here>
       headers: [
         {
           name: ""
-          type: string | thumbnail,
+          type: JSON | string | image,
         }
       ],
       values: [
         {
           value: "",
-          thumbnail_key: "",
+          thumbnail_image_id: "",
           image_key: "",
           highlight: null | warning | danger
         }
@@ -28,13 +26,16 @@ Evaluated list <long list here> and selected <long list here>
   ]
 }
 
-Queue.add(payload, type = 'JSON', summary = nil, thumbnail_key = nil)
+Queue.add(item, options={
+  summary: nil,
+  thumbnail_image_id: nil,
+})
 Queue.next()
 Queue.process(item_id)
 Queue.error(item_id, msg = '')
 Queue.delete(item_id)
 
-Storage.save(payload, type = 'JSON', summary = nil, thumbnail_key = nil, tags = [], key = nil)
+Storage.save(item, summary = nil, thumbnail_key = nil, tags = [], key = nil)
 Storage.retrieve(key)
 Storage.get_keys(tags=[], within=nil)
   within: X minutes, X hours, X days
@@ -45,7 +46,7 @@ Set.get_items(set_name)
 Set.has_item(set_name, item)
 Set.remove_item(set_name, item)
 
-Dictionary.add_entry(dictionary_name, name, payload, type = 'JSON', summary = nil, thumbnail_key = nil)
+Dictionary.add_entry(dictionary_name, key, value, summary = nil, thumbnail_key = nil)
 Dictionary.get_entry(dictionary_name, name)
 Dictionary.get_all_entries(dictionary_name)
 

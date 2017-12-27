@@ -5,27 +5,16 @@
       Loading...
     </div>
     <div v-else>
-      <div v-for="(classes, module) in extensions">
-        <h2>
-          <a href="#" class="extension_link" @click.prevent="toggle_ext(module)">{{module}}</a>
-        </h2>
-        <div v-if="show_methods(module)">
-          <div v-for="(class_info, klass) in classes">
-            <a href="#" @click.prevent="toggle_ext(module+'::'+klass)"><h3><i :class="['fa', class_info.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i>{{module}}::{{klass}}</h3></a>
-            <div v-if="show_methods(module+'::'+klass)">
-              <methods :prefix="klass" :methods="class_info.class_methods"></methods>
-              <div>Instance Methods</div>
-              <methods :methods="class_info.instance_methods"></methods>
-            </div>
+      <div v-for="(class_info, klass) in extensions">
+      <h2>
+        <a href="#" class="extension_link" @click.prevent="toggle_ext(klass)"><h3><i :class="['fa', class_info.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i>{{klass}}</h3></a>
+      </h2>
+      <div v-if="show_methods(klass)">
+          <div v-if="show_methods(klass)">
+            <methods :class_info="class_info"></methods>
           </div>
         </div>
       </div>
-      <!--div v-for="ext in extensions">
-        <h2><a href="#" class="extension_link" @click.prevent="toggle_ext(ext.name)"><i :class="['fa', ext.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i> {{ext.name}}</a></h2>
-        <div v-if="show_methods(ext.name)">
-          <methods :methods="ext.methods"></methods>
-        </div>
-      </div-->
     </div>
   </div>
 </template>

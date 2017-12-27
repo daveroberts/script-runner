@@ -1,15 +1,15 @@
 require 'securerandom'
 
-module LocalStorage
-  class Document
-    def self._icon
+module SimpleLanguage
+  class DocumentManager
+    def self.icon
       "fa-database"
     end
 
     def initialize(document_id=nil)
     end
 
-    def self.get(document_id)
+    def get(document_id)
     end
 
     def set(key, value, options = {

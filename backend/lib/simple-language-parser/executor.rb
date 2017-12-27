@@ -23,14 +23,21 @@ module SimpleLanguage
 
   class Executor
     def initialize
-      @external_commands = {}
+      @external = {
+        functions: {},
+        values: {}
+      }
     end
 
-    def register(name, instance, function)
-      @external_commands[name] = {
+    def register_function(name, instance, function)
+      @external[:functions][name] = {
         instance: instance,
         function: function
       }
+    end
+
+    def register_external_value(name, value)
+      @external[:values][name] = value
     end
 
     def run(script, input = nil)
@@ -128,11 +135,13 @@ module SimpleLanguage
           params = params.map{|p|exec_cmd(p, variables)}
           ref = run_system_command(name, params, variables)
           chains.shift
-        elsif is_external_command? name
+        elsif is_external_value? name
+          ref = get_external_value(name)
+        elsif is_external_function? name
           raise InvalidParameter, "You must pass arguments to an external command" if chains.length == 0 || chains.first[:type] != :function_params
           params = chains.first[:params]
           params = params.map{|p|exec_cmd(p, variables)}
-          ref = run_external_command(name, params)
+          ref = run_external_function(name, params)
           chains.shift
         else
           raise NullPointer, "#{command[:value]} does not exist" if !variables.has_key? command[:value]
@@ -396,12 +405,20 @@ module SimpleLanguage
       end
     end
 
-    def is_external_command?(fun)
-      return @external_commands.has_key? fun
+    def is_external_function?(fun)
+      return @external[:functions].has_key? fun
     end
 
-    def run_external_command(fun, args)
-      return @external_commands[fun][:instance].send(@external_commands[fun][:function], *args)
+    def run_external_function(fun, args)
+      return @external[:functions][fun][:instance].send(@external[:functions][fun][:function], *args)
+    end
+
+    def is_external_value?(name)
+      return @external[:values].has_key? name
+    end
+
+    def get_external_value(name)
+      return @external[:value][name]
     end
   end
 end

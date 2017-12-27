@@ -1,6 +1,6 @@
 require 'securerandom'
 
-module LocalStorage
+module SimpleLanguage
   class Queue
     def self._icon
       "fa-database"

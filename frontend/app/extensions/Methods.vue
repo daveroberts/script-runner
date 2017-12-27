@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-for="(args, method) in class_info.params">
+      <span class="method_signature" :href="'#method_'+method">{{method}}({{args.join(', ')}})</span></span>
+    </div>
     <table :class="['method_table',ruby?'ruby':'']">
       <thead>
         <tr>
@@ -7,20 +10,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(info, name) in methods">
-          <td><span v-if="info.doc.returns">{{info.doc.returns.name}}</span></td>
+        <tr v-for="(method_info, method) in class_info.params">
+          <td><span v-if="class_info.methods && class_info.methods[method] && class_info.methods[method].returns">{{class_info.methods[method].returns.name}}</span></td>
           <td>
-            <div>
-              <span class="method_signature" :href="'#method_'+name"><span v-if="prefix">{{prefix}}.</span>{{name}}({{info.params.join(', ')}})</span></span>
-            </div>
-            <div class="inline_summary">{{info.summary}}</div>
+            <!--div>
+              <span class="method_signature" :href="'#method_'+name">{{name}}({{info.params.join(', ')}})</span></span>
+            </div-->
+            <!--div class="inline_summary">{{info.summary}}</div-->
           </td>
         </tr>
       </tbody>
     </table>
-    <div v-for="(info, name) in methods">
-      <h2><span v-if="prefix">{{prefix}}.</span>{{name}}</h2>
-      <div class="method_signature" :href="'#method_'+name"><span v-if="prefix">{{prefix}}.</span>{{name}}({{info.params.join(', ')}})</span></div>
+    <!--div v-for="(info, name) in info.methods">
+      <h2>{{name}}</h2>
+      <div class="method_signature" :href="'#method_'+name">{{name}}({{info.params.join(', ')}})</span></div>
       <div v-if="info.doc">
         <div>{{info.doc.summary}}</div>
         <h3>Parameters</h3>
@@ -28,7 +31,7 @@
           <div class="param_line"><span class="param_name">{{param.name}}</span> - <span>{{param.description}}</span></div>
         </div>
       </div>
-    </div>
+    </div-->
   </div>
 </template>
 <script>
@@ -40,7 +43,7 @@ export default {
   },
   computed: {
   },
-  props: [ 'methods', 'prefix' ],
+  props: [ 'class_info' ],
   created: function(){
   },
   methods: {

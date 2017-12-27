@@ -201,6 +201,7 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
   def self.run_code(code, input = nil, extensions = [], script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
     extensions.each do |class_string|
+      binding.pry
       clazz = Object.const_get(class_string)
       o = clazz.new
       methods = clazz.instance_methods - Object.instance_methods

@@ -39,16 +39,17 @@
               Loading...
             </div>
             <div v-else>
-              <div style="margin: 0.5em;" v-for="ext in extensions">
+              <div style="margin: 0.5em" v-for="(class_info, klass) in extensions">
                 <div class="fancy_checkbox">
-                  <input :id="'check_ext_'+ext.name" type="checkbox" :value="ext.name" v-model="script.extensions" />
-                  <label :for="'check_ext_'+ext.name"></label>
+                  <input :id="'check_'+klass" type="checkbox" :value="klass" v-model="script.extensions" />
+                  <label :for="'check_'+klass"></label>
                 </div>
-                <label :for="'check_ext_'+ext.name"><i :class="['fa', ext.icon]" aria-hidden="true"></i> {{ext.name}}</label>
-                <div v-if="script.extensions.indexOf(ext.name) > -1">
-                  <methods :methods="ext.methods"></methods>
+                <label :for="'check_'+klass"><i :class="['fa', class_info.icon]" aria-hidden="true"></i> {{klass}}</label>
+                <div v-if="script.extensions.indexOf(klass) > -1">
+                  <method-summary :params="class_info.params"></method-summary>
                 </div>
               </div>
+              {{extensions}}
             </div>
           </div>
           <div style="margin: 0.5em 0;">
@@ -215,7 +216,7 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
-import Methods from '../extensions/Methods.vue'
+import MethodSummary from '../extensions/MethodSummary.vue'
 import Helpers from '../helpers.js'
 const loadExtensions = (time = new Date()) => {
   fetch(`/api/extensions/`, {
@@ -223,11 +224,7 @@ const loadExtensions = (time = new Date()) => {
   }).then(res => {
     if (res.ok){ return res.json() }
   }).then(extensions => {
-    if (!state.extensions.list){ state.extensions.list = [] }
-    extensions.forEach(ext => {
-      var idx = state.extensions.list.findIndex(e=>e.name==ext.name)
-      if (idx == -1){ state.extensions.list.push(ext) }
-    })
+    state.extensions.list = extensions
   }).catch(err => {
     console.log(err)
   })
@@ -256,7 +253,7 @@ export default {
       }
     }
   },
-  components: { Methods },
+  components: { MethodSummary },
   computed: {
     script(){ return state.current.script },
     runs(){ return state.current.runs },

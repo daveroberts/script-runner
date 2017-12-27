@@ -5,8 +5,10 @@ class Extension
   def self.all
     return @extensions if @extensions
     @extensions = []
-    Dir["./app/extensions/*.rb"].each do |filepath|
-      match = /.*\/(.*)\.rb$/.match(filepath)
+    Dir["./app/extensions/**/*.rb"].each do |filepath|
+      match = /^\.\/app\/extensions\/(?:(.*)\/)?(.*)\.rb$/.match(filepath)
+      binding.pry
+      next
       next if !match
       filename = match[1]
       class_name = filename.split("_").collect(&:capitalize).join

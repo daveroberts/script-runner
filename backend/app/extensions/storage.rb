@@ -13,13 +13,24 @@ module SimpleLanguage
               { name:        "item",
                 description: "any data which you wish to save" },
               { name:        "options",
-                description: "hash of values\nsummary - 'a short description of the item.  Must be parsable as JSON'\nimage_id - 'Used to show preview image'\ntag - 'single string to tag the item'\ntags - 'array of strings to tag the item'\nkey - 'The key to retrieve the item.  If not passed, a random key is assigned and returned'" },
+                description: "optional hash of values\nsummary - 'a short description of the item.  Must be parsable as JSON'\nimage_id - 'Used to show preview image'\ntag - 'single string to tag the item'\ntags - 'array of strings to tag the item'\nkey - 'The key to retrieve the item.  If not passed, a random key is assigned and returned'" },
             ],
             returns: {
               name: "item_id",
               description: "The item's key, which can be used to retrieve the item"
             }
           },
+          retrieve: {
+            summary: "Retrieves an item from storage which was saved with `save`",
+            params: [
+               { name:       "key",
+                description: "Item key returned by save" },
+            ],
+            returns: {
+              name: "item_container",
+              description: "container has:\n:item - 'The requested item'"
+            }
+          }
         },
       }
     end
@@ -32,16 +43,6 @@ module SimpleLanguage
     })
     end
 
-    # {
-    #   "summary": "Retrieves an item from local storage",
-    #   "params": [
-    #   { "name": "key",
-    #     "description": "The key for the item which you want to retireve" }
-    #   ],
-    #   "returns":
-    #     { "name": "item",
-    #       "description": "The stored item" }
-    # }
     def self.retrieve(key)
     end
 

@@ -60,9 +60,12 @@ export default {
 .method_description{ }
 .method_table{ width: 100%; line-height: 1.5em; font-family: serif; }
 .method_table > thead { background-color: #CCCCFF; font-size: @font-size-large; text-align: left; font-weight: bold; }
-.ruby > thead { background-color: #FFCCCC; }
 .method_table, .method_table th, .method_table td{ border: 3px solid black; padding: 0.25em; }
 .param_line{ text-indent: 2em; }
 .param_name{ font-family: monospace; font-size: @font-size-small; }
 .not_a_link{ text-decoration: none; }
+.ruby > thead { background-color: #FFCCCC; }
+.ruby > thead > tr > th > a { color: #700; }
+.ruby, .ruby th, .ruby td{ border: 3px solid #700; }
+.ruby .method_signature{ color: #700; }
 </style>

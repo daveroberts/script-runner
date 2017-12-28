@@ -11,12 +11,12 @@ module SimpleLanguage
           connect: {
             summary: "Establish a connection to an SFTP server",
             params: [
-              { name:        "",
-                description: "" },
-              { name:        "",
-                description: "" },
-              { name:        "",
-                description: "" },
+              { name:        "hostname",
+                description: "hostname of SFTP server" },
+              { name:        "username",
+                description: "username" },
+              { name:        "password",
+                description: "password" },
             ],
             returns: {
               name:        "boolean",

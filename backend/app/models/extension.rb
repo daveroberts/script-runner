@@ -14,25 +14,24 @@ class Extension
       o = clazz.new
       method_names = clazz.instance_methods - Object.instance_methods
       method_names = method_names.sort
-      method_params = {}
+      methods = {}
       method_names.each do |method|
         params = clazz.instance_method(method).parameters.map{|p|p[1]}
-        method_params[method] = params
+        methods[method] = {
+          summary: "",
+          params: params.map{|p|{name: p, description: ""}},
+          returns: nil
+        }
       end
       @extensions[class_name] = {
-        methods: method_params
+        icon: 'fa-code',
+        summary: "",
+        methods: methods
       }
       if clazz.respond_to? :_info
         info = clazz._info
         info.each do |prop,value|
-          if prop == :methods
-            @extensions[class_name][prop] = value
-          else
-            @extensions[class_name][:methods].each do |method|
-              if value.has_key method
-              end
-            end
-          end
+          @extensions[class_name][prop] = value
         end
       end
     end

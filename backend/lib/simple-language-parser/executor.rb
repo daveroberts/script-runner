@@ -418,7 +418,7 @@ module SimpleLanguage
     end
 
     def get_external_value(name)
-      return @external[:value][name]
+      return @external[:values][name]
     end
   end
 end

@@ -5,7 +5,7 @@ module SimpleLanguage
     def self._info
       {
         icon: "fa-database",
-        summary: "",
+        summary: "Provides a way to save data.  Any type of data can be saved.  If you want the data to be processed later, you should use the Queue instead",
         methods: {
           save: {
             summary: "Saves an item to local storage",
@@ -13,17 +13,7 @@ module SimpleLanguage
               { name:        "item",
                 description: "any data which you wish to save" },
               { name:        "options",
-                description: "hash of values" },
-              { name:        "options.summary",
-                description: "a short description of the item.  Must be parsable as JSON" },
-              { name:        "options.image_id",
-                description: "Used to show preview image" },
-              { name:        "options.tag",
-                description: "single string to tag the item" },
-              { name:        "options.tags",
-                description: "array of strings to tag the item" },
-              { name:        "options.key",
-                description:  "The key to retrieve the item.  If not passed, a random key is assigned and returned" }
+                description: "hash of values\nsummary - 'a short description of the item.  Must be parsable as JSON'\nimage_id - 'Used to show preview image'\ntag - 'single string to tag the item'\ntags - 'array of strings to tag the item'\nkey - 'The key to retrieve the item.  If not passed, a random key is assigned and returned'" },
             ],
             returns: {
               name: "item_id",

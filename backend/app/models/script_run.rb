@@ -4,7 +4,7 @@ require './app/database/database.rb'
 class ScriptRun
 
   def self.columns
-    [:id, :script_id, :trigger_id, :queue_name, :queue_item_key, :input, :extensions, :code, :output, :error, :run_at]
+    [:id, :script_id, :trigger_id, :queue_name, :queue_item_id, :http_endpoint, :http_method, :input, :extensions, :code, :output, :error, :run_at]
   end
 
   def self.add(script_run)

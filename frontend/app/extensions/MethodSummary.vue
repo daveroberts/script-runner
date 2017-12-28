@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="(args, method) in params">
-      <span class="method_signature" :href="'#method_'+method">{{method}}({{args.join(', ')}})</span></span>
+    <div v-for="(info, method) in methods">
+      <span class="method_signature">{{method}}({{info.params.map(p=>p.name).join(', ')}})</span><span v-if="info.summary"> - {{info.summary}}</span>
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
   },
   computed: {
   },
-  props: [ 'params' ],
+  props: [ 'methods' ],
   created: function(){
   },
   methods: {

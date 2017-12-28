@@ -201,13 +201,14 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
   def self.run_code(code, input = nil, extensions = [], script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
     executor = SimpleLanguage::Executor.new
     extensions.each do |class_string|
-      binding.pry
-      clazz = Object.const_get(class_string)
+      clazz = Object.const_get("SimpleLanguage::#{class_string}")
       o = clazz.new
-      methods = clazz.instance_methods - Object.instance_methods
-      methods.each do |method|
-        executor.register(method.to_s, o, method)
-      end
+      #methods = clazz.instance_methods - Object.instance_methods
+      #methods.each do |method|
+      #  executor.register(method.to_s, o, method)
+      #end
+      class_alias = class_string.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
+      executor.register_external_value(class_alias, o)
     end
     output = nil
     error = nil

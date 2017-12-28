@@ -46,10 +46,9 @@
                 </div>
                 <label :for="'check_'+klass"><i :class="['fa', class_info.icon]" aria-hidden="true"></i> {{klass}}</label>
                 <div v-if="script.extensions.indexOf(klass) > -1">
-                  <method-summary :params="class_info.params"></method-summary>
+                  <method-summary :methods="class_info.methods"></method-summary>
                 </div>
               </div>
-              {{extensions}}
             </div>
           </div>
           <div style="margin: 0.5em 0;">

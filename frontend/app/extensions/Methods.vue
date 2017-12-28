@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="(args, method) in class_info.params">
-      <span class="method_signature" :href="'#method_'+method">{{method}}({{args.join(', ')}})</span></span>
+    <div v-for="(info, method) in class_info.methods">
+      <span class="method_signature" :href="'#method_'+method"></span></span>
     </div>
     <table :class="['method_table',ruby?'ruby':'']">
       <thead>
@@ -10,28 +10,31 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(method_info, method) in class_info.params">
-          <td><span v-if="class_info.methods && class_info.methods[method] && class_info.methods[method].returns">{{class_info.methods[method].returns.name}}</span></td>
+        <tr v-for="(info, method) in class_info.methods">
+          <td><span v-if="info.returns">{{info.returns.name}}</span></td>
           <td>
-            <!--div>
-              <span class="method_signature" :href="'#method_'+name">{{name}}({{info.params.join(', ')}})</span></span>
-            </div-->
-            <!--div class="inline_summary">{{info.summary}}</div-->
+            <div>
+              <span class="method_signature">
+                {{method}}({{info.params.map(p=>p.name).join(', ')}})
+              </span>
+            </div>
+            <div class="inline_summary">{{info.summary}}</div>
           </td>
         </tr>
       </tbody>
     </table>
-    <!--div v-for="(info, name) in info.methods">
-      <h2>{{name}}</h2>
-      <div class="method_signature" :href="'#method_'+name">{{name}}({{info.params.join(', ')}})</span></div>
-      <div v-if="info.doc">
-        <div>{{info.doc.summary}}</div>
-        <h3>Parameters</h3>
-        <div v-for="param in info.doc.params">
-          <div class="param_line"><span class="param_name">{{param.name}}</span> - <span>{{param.description}}</span></div>
+    <div v-for="(info, method) in class_info.methods">
+      <h2>{{Method}}</h2>
+        <span class="method_signature">
+          {{method}}({{info.params.map(p=>p.name).join(', ')}})
+        </span>
+        <div>{{info.summary}}</div>
+        <div style="font-weight: bold;">Parameters</div>
+        <div v-for="param in info.params">
+          <div class="param_line"><span class="param_name">{{param.name}}</span> - <span style="white-space: pre-wrap;">{{param.description}}</span></div>
         </div>
       </div>
-    </div-->
+    </div>
   </div>
 </template>
 <script>

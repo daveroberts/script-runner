@@ -76,6 +76,7 @@ class DBSeed
         queue_name: trigger[:queue_name],
         http_endpoint: trigger[:http_endpoint],
         http_method: trigger[:http_method],
+        http_content_type: 'application/json',
         active: true,
         created_at: DateTime.now
       }

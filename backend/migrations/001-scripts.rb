@@ -58,6 +58,7 @@ module DBMigrations
         `queue_name` VARCHAR(255),
         `http_endpoint` VARCHAR(255),
         `http_method` VARCHAR(255),
+        `http_content_type` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),

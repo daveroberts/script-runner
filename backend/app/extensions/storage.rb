@@ -20,8 +20,8 @@ module SimpleLanguage
               description: "The item's key, which can be used to retrieve the item"
             }
           },
-          retrieve: {
-            summary: "Retrieves an item from storage which was saved with `save`",
+          get: {
+            summary: "Gets an item from storage which was saved with `save`",
             params: [
                { name:       "key",
                 description: "Item key returned by save" },
@@ -29,6 +29,28 @@ module SimpleLanguage
             returns: {
               name: "item_container",
               description: "container has:\n:item - 'The requested item'"
+            }
+          },
+          all: {
+            summary: "Gets a bunch of item keys",
+            params: [
+               { name:       "by",
+                description: "Conditions for which keys to grab\ntag - ''\nwithin - ''" },
+            ],
+            returns: {
+              name: "array",
+              description: "array of keys"
+            }
+          },
+          remove: {
+            summary: "remove an item from storage",
+            params: [
+               { name:       "key",
+                description: "key of item to remove" }
+            ],
+            returns: {
+              name: "int",
+              description: "number of items removed"
             }
           }
         },
@@ -43,33 +65,13 @@ module SimpleLanguage
     })
     end
 
-    def self.retrieve(key)
+    def self.get(key)
     end
 
-    # {
-    #   "summary": "Retrieves item keys tagged with `tag`",
-    #   "params": [
-    #   { "name": "tag",
-    #     "description": "The tag of the items you wish to retrieve" }
-    #   ],
-    #   "returns":
-    #     { "name": "item_keys",
-    #       "description": "An array of item keys" }
-    # }
-    def self.get_keys_by_tag(tag, withing=nil)
+    def self.all(by={})
     end
 
-    # {
-    #   "summary": "Deletes an item",
-    #   "params": [
-    #   { "name": "key",
-    #     "description": "The key of the item you wish to delete" }
-    #   ],
-    #   "returns":
-    #     { "name": "int",
-    #       "description": "1 if successful, 0 if not" }
-    # }
-    def self.delete(key)
+    def self.remove(key)
     end
   end
 end

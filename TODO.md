@@ -29,37 +29,9 @@ duplicate detection
   ]
 }
 
-Queue.add(item, options={
-  summary: nil,
-  thumbnail_image_id: nil,
-})
-Queue.next()
-Queue.process(item_id)
-Queue.error(item_id, msg = '')
-Queue.delete(item_id)
-
-Storage.save(item, summary = nil, thumbnail_key = nil, tags = [], key = nil)
-Storage.retrieve(key)
-Storage.get_keys(tags=[], within=nil)
-  within: X minutes, X hours, X days
-Storage.delete(key)
-
-Set.add(set_name, item)
-Set.get_items(set_name)
-Set.has_item(set_name, item)
-Set.remove_item(set_name, item)
-
-Dictionary.add_entry(dictionary_name, key, value, summary = nil, thumbnail_key = nil)
-Dictionary.get_entry(dictionary_name, name)
-Dictionary.get_all_entries(dictionary_name)
-
-Document.new(document_id=nil)
-Document.get(document_id)
-Document.delete(document_id)
-
-doc.set(key, value, type = 'TEXT', summary = nil, thumbnail_key = nil)
+doc.set(key, value, summary = nil, image_id = nil)
 doc.get(key)
-doc.add(key, value, summary = nil, thumbnail_key = nil)
+doc.to_json()
 
 Date functions
 Output wrap to next line when browser window small
@@ -92,3 +64,4 @@ triggers on other data types; manually "dequeing" other data types
 pull off queue manually
 move js modules out of bundle
 sending tweets
+investigate monaco editor integration

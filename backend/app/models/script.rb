@@ -135,15 +135,16 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
 
   def self.trigger_to_fields(trigger)
     return {
-      id:             trigger[:id],
-      script_id:      trigger[:script_id],
-      type:           trigger[:type],
-      active:         trigger[:active],
-      every:          trigger[:every],
-      queue_name:     trigger[:queue_name],
-      http_endpoint:  trigger[:http_endpoint],
-      http_method:    trigger[:http_method],
-      created_at:     Time.new(trigger[:created_at])
+      id:                trigger[:id],
+      script_id:         trigger[:script_id],
+      type:              trigger[:type],
+      active:            trigger[:active],
+      every:             trigger[:every],
+      queue_name:        trigger[:queue_name],
+      http_endpoint:     trigger[:http_endpoint],
+      http_method:       trigger[:http_method],
+      http_content_type: trigger[:http_content_type],
+      created_at:        Time.new(trigger[:created_at])
     }
   end
 

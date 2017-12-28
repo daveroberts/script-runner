@@ -42,7 +42,6 @@ const initial_state = {
     input: {
       send: false,
       payload: "",
-      mime_type: "application/json"
     },
   },
   list: null,

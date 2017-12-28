@@ -23,7 +23,7 @@ module SimpleLanguage
             }
           },
           next: {
-            summary: "Pull the next item off of the queue.  Note: Should be processed or failed",
+            summary: "Pull the next item off of the queue and locks it for processing.  Note: Item should be processed or failed",
             params: [
               { name:        "queue_name",
                 description: "retrieve item from this queue" },
@@ -66,6 +66,7 @@ module SimpleLanguage
       summary: nil,
       image_id: nil,
     })
+      QueueItem.add(queue_name, item, options)
     end
 
     def next(queue_name)

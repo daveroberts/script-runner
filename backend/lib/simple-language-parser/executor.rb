@@ -172,7 +172,7 @@ module SimpleLanguage
             break
           end
         end
-      elsif command[:type] == :while_apply
+      elsif command[:type] == :while
         condition = command[:condition]
         block = command[:block]
         while exec_cmd(condition,variables) do
@@ -187,7 +187,7 @@ module SimpleLanguage
           end
         end
         return run_block(command[:false_block], variables)
-      elsif command[:type] == :loop_apply
+      elsif command[:type] == :loop
         block = command[:block]
         loop do
           begin
@@ -298,7 +298,7 @@ module SimpleLanguage
             end
             ref = output
           else
-            binding.pry #todo?
+            raise "`#{ref.class.to_s}` is not a function"
           end
         elsif chain[:type] == :member
           member = chain[:member]

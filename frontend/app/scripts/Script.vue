@@ -5,6 +5,7 @@
         <div class="left_panel">
           <h1 v-if="script.name">{{script.name}}</h1>
           <h1 v-else>Code</h1>
+          <div v-if="!script.id && script.code && runs && runs.length" style="margin: 0;" class="warning">This script has not yet been saved.</div>
           <div class="code_editor">
             <codemirror v-model="script.code" :options="editorOptions"></codemirror>
           </div>
@@ -18,15 +19,10 @@
           </div>
           <label for="input_send">Send Input</label>
           <div v-if="state.current.input.send">
-            <select v-model="state.current.input.mime_type">
-              <option value="application/json">JSON</option>
-              <option value="text/xml">XML</option>
-              <option value="text/plain">Text</option>
-            </select>
             <div class="code_editor">
               <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
             </div>
-            <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload, state.current.input.mime_type)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
+            <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
           </div>
           <div style="margin: 0.5em 0;">
             <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
@@ -181,7 +177,6 @@
         <div v-if="!script.id && !save_for_later">
           <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
         </div>
-        <div v-if="!script.id" style="margin: 0.5em 0;" class="warning">This script has not yet been saved.</div>
       </div>
       <div v-if="script.id || (runs && runs.length)">
         <h2><i class="fa fa-bar-chart" aria-hidden="true"></i> Last 10 Runs</h2>
@@ -274,7 +269,6 @@ export default {
     if (state.current.script.default_input){
       state.current.input.send = true
       state.current.input.payload = state.current.script.default_input
-      state.current.input.mime_type = state.current.script.default_input_mime_type
     }
     if (state.current.script.code){ this.orig_code = state.current.script.code }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
@@ -289,7 +283,6 @@ export default {
         if (state.current.script.default_input){
           state.current.input.send = true
           state.current.input.payload = state.current.script.default_input
-          state.current.input.mime_type = state.current.script.default_input_mime_type
         }
       }).catch((err)=>{
         console.log(err)
@@ -336,15 +329,14 @@ export default {
         console.log(err)
       })
     },
-    save_as_default_input(script_id, payload, mime_type){
+    save_as_default_input(script_id, payload){
       fetch(`/api/scripts/${script_id}/set_default_input`, {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({payload: payload, mime_type: mime_type})
+        body: JSON.stringify(payload)
       }).then(res => {
         if (res.ok){
           state.current.script.default_input = payload
-          state.current.script.default_input_mime_type = mime_type
         }
       }).catch(err => {
         console.log(err)
@@ -359,15 +351,12 @@ export default {
     },
     run(){
       var input = null
-      var mime_type = null
       if (state.current.input.send){
         input = state.current.input.payload
-        mime_type = state.current.input.mime_type
       }
       var payload = {
         code: state.current.script.code,
         input: input,
-        mime_type: mime_type,
         extensions: state.current.script.extensions,
         script_id: state.current.script.id
       }

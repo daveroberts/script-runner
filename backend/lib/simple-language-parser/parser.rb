@@ -25,6 +25,10 @@ module SimpleLanguage
     return assignment, rest if assignment
     for_block, rest = make_for(tokens)
     return for_block, rest if for_block
+    loop_block, rest = make_loop(tokens)
+    return loop_block, rest if loop_block
+    while_block, rest = make_while(tokens)
+    return while_block, rest if while_block
     if_block, rest = make_if(tokens)
     return if_block, rest if if_block
     ternary_block, rest = make_ternary(tokens)
@@ -64,6 +68,23 @@ module SimpleLanguage
     return {type: :for, symbol: singular, collection: plural, block: block}, rest
   end
 
+  def self.make_loop(tokens)
+    rest = tokens.dup
+    return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'loop'
+    rest.shift # loop
+    raise Exception, "loop requires block" if !rest[0] || rest[0][:type] != :left_curly
+    rest.shift # left curly
+    block = []
+    while rest[0] && rest[0][:type] != :right_curly
+      statement, rest = make_statement(rest)
+      raise Exception, "Invalid statement in loop block" if !statement
+      block.push(statement)
+    end
+    raise Exception, "Loop block must end with `}`" if !rest[0] || rest[0][:type] != :right_curly
+    rest.shift # Right curly
+    return {type: :loop, block: block}, rest
+  end
+
   def self.make_if(tokens)
     rest = tokens.dup
     return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'if'
@@ -98,6 +119,24 @@ module SimpleLanguage
       rest.shift # Right curly
     end
     return {type: :if, true_conditions: true_conditions, false_block: false_block}, rest
+  end
+
+  def self.make_while(tokens)
+    rest = tokens.dup
+    return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'while'
+    rest.shift # while
+    condition, rest = make_expression(rest)
+    raise Exception, "while requires block" if !rest[0] || rest[0][:type] != :left_curly
+    rest.shift # left curly
+    block = []
+    while rest[0] && rest[0][:type] != :right_curly
+      statement, rest = make_statement(rest)
+      raise Exception, "Invalid statement in for block" if !statement
+      block.push(statement)
+    end
+    raise Exception, "While block must end with `}`" if !rest[0] || rest[0][:type] != :right_curly
+    rest.shift # Right curly
+    return {type: :while, condition: condition, block: block}, rest
   end
 
   def self.make_function_literal(tokens)

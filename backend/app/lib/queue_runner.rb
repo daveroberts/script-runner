@@ -1,8 +1,8 @@
 class QueueRunner
   def self.run
     scripts = Script.all
-    items = QueueItem.new_items
-    items.each do |item|
+    loop do
+      item = QueueItem.next
       processing_scripts = scripts.select{|s|s[:active]&&s[:triggers].any?{|t|t[:active]&&t[:type]=='QUEUE'&&t[:queue_name]==item[:queue_name]}}
       next if processing_scripts.none?
       result = QueueItem.lock_for_processing(item[:id])

@@ -5,20 +5,21 @@ require 'securerandom'
 class QueueItem
 
   def self.columns
-    [:id, :queue_name, :state, :item_key, :item, :item_mime_type, :created_at]
+    [:id, :queue_name, :state, :item, :summary, :image_id, :created_at]
   end
 
-  def self.add(name, item, item_mime_type='application/json', item_key=nil)
-    item_key=SecureRandom.uuid if item_key.blank?
-    db_item = item
-    db_item = item.to_json if item.class == Hash || item.class == Array || item_mime_type == 'application/json'
+  def self.add(queue_name, item, options={
+    summary: nil,
+    image_id: nil
+  })
+    image_id = options[:image_id]
     fields = {
       id: SecureRandom.uuid,
-      queue_name: name,
+      queue_name: queue_name,
       state: 'NEW',
-      item_key: item_key,
-      item: db_item,
-      item_mime_type: item_mime_type,
+      item: item.to_json,
+      summary: options[:summary] ? options[:summary].to_json : item.to_json,
+      image_id: options[:image_id],
       created_at: Time.now
     }
     DataMapper.insert("queue_items", fields)
@@ -32,28 +33,33 @@ class QueueItem
     DataMapper.update("queue_items", {id: id, state: 'NEW'})
   end
 
-  def self.new_items
-    sql = "SELECT #{QueueItem.columns.map{|c|"qi.#{c} as qi_#{c}"}.join(',')}
-           FROM queue_items qi
-           WHERE qi.state = 'NEW'
-           ORDER BY qi.created_at DESC"
-    items = DataMapper.select(sql, { prefix: 'qi' })
-    items.each do |item|
-      if item[:item_mime_type] == 'application/json'
-        item[:item] = JSON.parse(item[:item], symbolize_names: true)
-      end
+  def self.next(queue_name = nil)
+    item_ids = QueueItem.new_item_ids(queue_name)
+    item_ids.each do |item_id|
+      locked = QueueItem.lock_for_processing(item_id)
+      next if !locked
+      return QueueItem.get(item_id)
     end
-    items
+    return nil
   end
 
-  def self.by_queue_name(name)
+  def self.new_item_ids(queue_name = nil)
+    queue_clause = queue_name ? "AND qi.queue_name = ?" : ""
+    variables = []
+    variables.push(queue_name) if queue_name
+    sql = "SELECT id FROM queue_items WHERE state='NEW' #{queue_clause} ORDER BY created_at ASC"
+    ids = DataMapper.raw_select(sql, variables)
+    return ids.map{|row|row[:id]}
+  end
+
+  def self.by_queue_name(queue_name)
     sql = "
 SELECT
   qi.`id` as qi_id,
   qi.`queue_name` as qi_queue_name,
   qi.`state` as qi_state,
-  qi.`item_key` as qi_item_key,
-  qi.`item_mime_type` as qi_item_mime_type,
+  qi.`summary` as qi_summary,
+  qi.`image_id` as qi_image_id,
   qi.`created_at` as qi_created_at,
   s.`id` as s_id,
   s.name as s_name
@@ -62,12 +68,16 @@ FROM queue_items qi
   LEFT JOIN scripts s on t.script_id=s.id AND s.active=true
 WHERE qi.queue_name = ?
 ORDER BY qi.created_at DESC"
-    DataMapper.select(sql, { prefix: 'qi', has_many: [
+    items = DataMapper.select(sql, { prefix: 'qi', has_many: [
       { scripts: { prefix: 's' } }
-    ] }, [name])
+    ] }, [queue_name])
+    items.each do |item|
+      item[:summary] = JSON.parse(item[:summary], symbolize_names: true)
+    end
+    items
   end
 
-  def self.by_item_key(key)
+  def self.get(id)
     sql = "
 SELECT
   #{QueueItem.columns.map{|c|"qi.`#{c}` as qi_#{c}"}.join(",")},
@@ -76,7 +86,7 @@ SELECT
 FROM queue_items qi
   LEFT JOIN triggers t ON qi.queue_name=t.queue_name AND t.active=true
   LEFT JOIN scripts s on t.script_id=s.id AND s.active=true
-WHERE qi.item_key = ?
+WHERE qi.id = ?
 ORDER BY qi.created_at DESC"
     item = DataMapper.select(sql, { prefix: 'qi', has_many: [{
        triggers: {
@@ -85,11 +95,10 @@ ORDER BY qi.created_at DESC"
            { script: { prefix: 's' } }
          ]
        }
-    }] }, [key]).first
+    }] }, [id]).first
     return nil if !item
-    if item[:item_mime_type] == 'application/json'
-      item[:item] = JSON.parse(item[:item], symbolize_names: true)
-    end
+    item[:item] = JSON.parse(item[:item], symbolize_names: true)
+    item[:summary] = JSON.parse(item[:summary], symbolize_names: true)
     item
   end
 
@@ -100,7 +109,7 @@ ORDER BY qi.created_at DESC"
   end
 
   def self.lock_for_processing(id)
-    sql = "UPDATE queue_items SET state='PROCESSING' WHERE state='NEW' AND id=?"
+    sql = "UPDATE queue_items SET state='PROCESSING', locked_at=NOW() WHERE state='NEW' AND id=?"
     stmt = nil
     results = nil
     DB.use do |db|
@@ -120,5 +129,4 @@ ORDER BY qi.created_at DESC"
       return db.affected_rows
     end
   end
-
 end

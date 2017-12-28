@@ -5,9 +5,9 @@
       Loading...
     </div>
     <div v-else>
-      <div v-for="(class_info, klass) in extensions">
+      <div style="margin-left: 2em;" v-for="(class_info, klass) in extensions">
         <h2>
-          <a href="#" class="extension_link" @click.prevent="toggle_ext(klass)"><h3><i :class="['fa', class_info.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i>{{klass}}</h3></a>
+          <a href="#" class="extension_link" @click.prevent="toggle_ext(klass)"><i :class="['fa', class_info.icon]" style="display: inline-block; width: 1.5em;" aria-hidden="true"></i>{{klass}}</a>
         </h2>
         <div v-if="show_methods(klass)">
           <div v-if="show_methods(klass)" style="margin-left: 2em;">

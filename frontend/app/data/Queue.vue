@@ -33,7 +33,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Key</th>
+            <th>Item</th>
             <th>State</th>
             <th></th>
             <th>Added At</th>
@@ -43,9 +43,7 @@
         <tbody v-if="items.length">
           <tr v-for="item in items">
             <td class="small">
-              <a :href="'/api/queue_item/'+item.item_key">
-                <pre>{{item.item_key}}</pre>
-              </a>
+              <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
             </td>
             <td class="small">{{item.state}}</td>
             <td class="small">

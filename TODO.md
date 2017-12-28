@@ -1,4 +1,6 @@
+show snake case in helpers
 duplicate detection
+  allow dictionary to function as a set
 {
   summary: "",
   detail: "",

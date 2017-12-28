@@ -14,7 +14,7 @@ module SimpleLanguage
     # options:
     #   summary: JSONABLE
     #   thumbnail_image_id
-    def self.add(item, options = {
+    def add(item, options = {
       summary: nil,
       thumbnail_image_id: nil,
     })

@@ -40,8 +40,9 @@ const initial_state = {
     runs: null,
     field_errors: {},
     input: {
-      send: false,
+      type: 'NONE',
       payload: "",
+      queue: ""
     },
   },
   list: null,

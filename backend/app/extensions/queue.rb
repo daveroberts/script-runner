@@ -70,9 +70,7 @@ module SimpleLanguage
     end
 
     def next(queue_name)
-    end
-
-    def return(queue_item_id)
+      QueueItem.next(queue_name)
     end
 
     def process(queue_item_id)

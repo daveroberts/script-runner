@@ -1,5 +1,7 @@
 implement http
   add http accept param
+send input from queue
+replace the word extensions with libraries
 Do something with category on scripts
 test input, not just JSON?
 click images on basic browsing examples

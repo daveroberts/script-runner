@@ -21,8 +21,8 @@ pre{ font-family: monospace; }
 a.nav-item:hover{ background-color: darken(@background, 10%); }
 .nav-item-right{ float: right; border-right: none; border-left: 0.15em solid white; }
 
-#alerts{ position: fixed; top: 3em; left: 50%; transform: translateX(-50%); width: 60%; z-index: 9999; }
-.alert{ opacity: 0; visibility: hidden; transition: visibility 0s linear 0.5s, opacity 0.5s linear; text-align: center; padding: 1em;  margin: 1em; font-size: @font-size-large; box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.8); border-width: 2px; border-style: solid; }
+#alerts{ position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; z-index: 9999; }
+.alert{ opacity: 0; visibility: hidden; transition: visibility 0s linear 0.5s, opacity 0.5s linear; text-align: left; padding: 1em;  margin: 0; font-size: @font-size-large; font-weight: bold; border-top-width: 3px; border-style: solid; }
 .alert-success { background-color: lighten(@success, 35%); border-color: @success; color: darken(@success, 20%); }
 .alert-close{ float: right; }
 .alert-success > .alert-close{  color: darken(@success, 30%); }
@@ -51,6 +51,8 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .btn-icon{ display: inline-block; width: 1.1em; height: 1.1em; text-align: center; line-height: 1.1em; }
 .btn-disabled{ color: lighten(desaturate(@base, 40%), 30%) !important; background-color: white !important; border: 1px solid lighten(desaturate(@base, 40%), 30%); }
 .btn-disabled:hover{ cursor: not-allowed; color: lighten(desaturate(@base, 40%), 30%) !important; background-color: white !important; border: 1px solid lighten(desaturate(@base, 40%), 30%); }
+
+.not_a_link{ text-decoration: none; }
 
 .table{ width: 100%; }
 .table > thead { color: @base; font-size: @font-size-large; border-bottom: 2px solid @base; }
@@ -107,3 +109,19 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .modal_titlebar { background-color: @base; color: white; line-height: 1.25em; font-size: @font-size-large; padding: 0.25em 1em; text-align: center; }
 .modal_content { background-color: white; padding: 0.75em; text-align: center; }
 .modal_text { font-size: @font-size-normal; padding: 0.25em 0; text-align: center; }
+
+.md_radio { margin: 0; }
+.md_radio.md_radio-inline { display: inline-block; }
+.md_radio input[type="radio"] { display: none; }
+.md_radio input[type="radio"]:checked + label:before { border-color: @base; animation: ripple 0.6s ease-out forwards; }
+.md_radio:hover input[type="radio"]:checked + label:before{ border-color: saturate(@base, 50%); }
+.md_radio input[type="radio"]:checked + label:after { transform: scale(1); }
+.md_radio label { display: inline-block; height: 1.5em; line-height: 1.5em; position: relative; padding: 0 1.3em; margin-bottom: 0; cursor: pointer; vertical-align: middle; }
+.md_radio label:before, .md_radio label:after { position: absolute; content: ''; border-radius: 50%; transition: all .1s ease-out; transition-property: transform, border-color; }
+.md_radio label:before { left: 0; top: 3px; width: 20px; height: 20px; border: 3px solid fade(@base, 54%); }
+.md_radio label:after { top: 8px; left: 5px; width: 10px; height: 10px; transform: scale(0);  background: @base; }
+.md_radio:hover label:before { border-color: saturate(@base, 50%) }
+.md_radio:hover label:after { background: saturate(@base, 50%) }
+.md_radio, .md_radio:before, .md_radio:after { box-sizing: border-box; }
+.md_radio input[type="radio"], .md_radio input[type="radio"]:before, .md_radio input[type="radio"]:after { box-sizing: border-box; }
+.md_radio label, .md_radio label:before, .md_radio label:after { box-sizing: border-box; }

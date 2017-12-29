@@ -43,6 +43,10 @@ class QueueItem
     return nil
   end
 
+  def self.process(queue_item_id)
+    xyzzy
+  end
+
   def self.new_item_ids(queue_name = nil)
     queue_clause = queue_name ? "AND qi.queue_name = ?" : ""
     variables = []

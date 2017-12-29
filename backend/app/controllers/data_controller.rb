@@ -52,7 +52,7 @@ class App < Sinatra::Application
   end
 
   get "/sets/:name/?" do
-    return SetItem.by_name(params[:name]).to_json
+    return SetItem.all(params[:name]).to_json
   end
 
   get "/dictionaries/?" do

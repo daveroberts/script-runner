@@ -9,7 +9,7 @@
     <div style="padding: 1em;">
       <div id="alerts">
         <div v-for="alert in alerts">
-          <div v-bind:class="['alert', `alert-${alert.type}`, alert.show?'visible':'']" role="alert">
+          <div v-bind:class="['alert', `alert-${alert.type}`, alert.show?'visible':'alert-gone']" role="alert">
             {{alert.msg}}
             <a href="#" @click.prevent="close_alert(alert)" class="alert-close"><i class="fa fa-times" aria-hidden="true"></i></a>
           </div>

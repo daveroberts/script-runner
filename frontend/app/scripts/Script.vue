@@ -5,47 +5,66 @@
         <div class="left_panel">
           <h1 v-if="script.name">{{script.name}}</h1>
           <h1 v-else>Code</h1>
-          <div v-if="!script.id && script.code && runs && runs.length" style="margin: 0;" class="warning">This script has not yet been saved.</div>
+          <div id="input_section" style="margin-bottom: 0.5em;">
+            <div>
+              <a class="not_a_link" href="#" @click.prevent="show_input = !show_input">
+                <span v-if="!show_input">
+                  <i class="fa fa-caret-right" aria-hidden="true"></i>
+                </span>
+                <span v-else>
+                  <i class="fa fa-caret-down" aria-hidden="true"></i>
+                </span>
+                <span>Libraries and Input</span>
+              </a>
+            </div>
+            <div v-if="show_input" id="input_buttons_and_dials">
+              <div style="margin: 0.5em 0;">
+                <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
+                  <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Select Libraries</span>
+                  <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Libraries</span>
+                </a>
+              </div>
+              <div v-if="show_extensions">
+                <div v-if="!extensions">
+                  Loading...
+                </div>
+                <div v-else>
+                  <div style="margin: 0.5em" v-for="(class_info, klass) in extensions">
+                    <div class="fancy_checkbox">
+                      <input :id="'check_'+klass" type="checkbox" :value="klass" v-model="script.extensions" />
+                      <label :for="'check_'+klass"></label>
+                    </div>
+                    <label :for="'check_'+klass"><i :class="['fa', class_info.icon]" aria-hidden="true"></i> {{klass}}</label>
+                    <div v-if="script.extensions.indexOf(klass) > -1">
+                      <method-summary :methods="class_info.methods"></method-summary>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <select v-model="state.current.input.type">
+                <option value="NONE">No input</option>
+                <option value="MANUAL">Manual input</option>
+                <option value="QUEUE">Pull input from queue</option>
+              </select>
+              <div v-if="state.current.input.type == 'MANUAL'">
+                <div class="code_editor">
+                  <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
+                </div>
+                <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
+              </div>
+              <div v-if="state.current.input.type == 'QUEUE'">
+                <label for="current_input_queue">Queue:</label>
+                <input id="current_input_queue" type="text" v-model="state.current.input.queue" />
+              </div>
+            </div>
+          </div>
           <div class="code_editor">
             <codemirror v-model="script.code" :options="editorOptions"></codemirror>
           </div>
+          <div v-if="!script.id && script.code && runs && runs.length" style="margin: 0;" class="warning">This script has not yet been saved.</div>
           <div v-if="script.id && script.code != orig_code">
             <button type="button" class="btn btn-small" @click.prevent="save()"> <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes</button>
             <button type="button" class="btn btn-danger btn-small" @click.prevent="undo()"> <i class="fa fa-undo" aria-hidden="true"></i> Undo Changes</button>
-          </div>
-          <div style="margin-top: 0.5em;" class="fancy_checkbox">
-            <input id="input_send" type="checkbox" v-model="state.current.input.send" />
-            <label for="input_send"></label>
-          </div>
-          <label for="input_send">Send Test Input</label>
-          <div v-if="state.current.input.send">
-            <div class="code_editor">
-              <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
-            </div>
-            <div v-if="script.id && state.current.input.payload && state.current.input.payload != script.default_input"><button type="button" class="btn btn-small" @click="save_as_default_input(script.id, state.current.input.payload)"><i class="fa fa-save" aria-hidden="true"></i> Save as default test input</button></div>
-          </div>
-          <div style="margin: 0.5em 0;">
-            <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
-              <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Code Extensions</span>
-              <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Extensions</span>
-            </a>
-          </div>
-          <div v-if="show_extensions">
-            <div v-if="!extensions">
-              Loading...
-            </div>
-            <div v-else>
-              <div style="margin: 0.5em" v-for="(class_info, klass) in extensions">
-                <div class="fancy_checkbox">
-                  <input :id="'check_'+klass" type="checkbox" :value="klass" v-model="script.extensions" />
-                  <label :for="'check_'+klass"></label>
-                </div>
-                <label :for="'check_'+klass"><i :class="['fa', class_info.icon]" aria-hidden="true"></i> {{klass}}</label>
-                <div v-if="script.extensions.indexOf(klass) > -1">
-                  <method-summary :methods="class_info.methods"></method-summary>
-                </div>
-              </div>
-            </div>
           </div>
           <div style="margin: 0.5em 0;">
             <button :class="['btn', running?'btn-disabled':'']" :disabled="running" @click="run()">
@@ -107,6 +126,10 @@
                   <input type="text" v-model="script.queue_name" />
                 </td>
               </tr>
+              <tr class="form_row" v-if="script.queue_name">
+                <th class="form_label"></th>
+                <td>Inspect <a target="_blank" :href="'/#/queues/'+script.queue_name">{{script.queue_name}}</a> queue</td>
+              </tr>
               <tr class="form_row">
                 <th class="form_label">HTTP Method</th>
                 <td>
@@ -127,10 +150,6 @@
                 <td>
                   <input type="text" v-model="script.http_content_type" />
                 </td>
-              </tr>
-              <tr class="form_row" v-if="script.queue_name">
-                <th class="form_label"></th>
-                <td>Inspect <a target="_blank" :href="'/#/queues/'+script.queue_name">`{{script.queue_name}}` queue</a></td>
               </tr>
             </tbody>
             <tbody>
@@ -204,6 +223,7 @@ export default {
   data: function(){
     return {
       state: state,
+      show_input: false,
       save_for_later: false,
       orig_code: '',
       method_types: ['GET', 'POST'],
@@ -237,7 +257,7 @@ export default {
       state.current = JSON.parse(JSON.stringify(initial.current))
     }
     if (state.current.script.default_input){
-      state.current.input.send = true
+      state.current.input.type = 'MANUAL'
       state.current.input.payload = state.current.script.default_input
     }
     if (state.current.script.code){ this.orig_code = state.current.script.code }
@@ -251,7 +271,7 @@ export default {
         state.current.script = script
         this.orig_code = state.current.script.code
         if (state.current.script.default_input){
-          state.current.input.send = true
+          state.current.input.type = 'MANUAL'
           state.current.input.payload = state.current.script.default_input
         }
       }).catch((err)=>{
@@ -314,7 +334,7 @@ export default {
     },
     run(){
       var input = null
-      if (state.current.input.send){
+      if (state.current.input.type == 'MANUAL'){
         input = state.current.input.payload
       }
       var payload = {

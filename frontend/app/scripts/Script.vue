@@ -17,7 +17,7 @@
             <input id="input_send" type="checkbox" v-model="state.current.input.send" />
             <label for="input_send"></label>
           </div>
-          <label for="input_send">Send Input</label>
+          <label for="input_send">Send Test Input</label>
           <div v-if="state.current.input.send">
             <div class="code_editor">
               <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
@@ -94,72 +94,43 @@
                 </td>
               </tr>
             </tbody>
-            <tbody class="form_section" v-for="(trigger, index) in script.triggers">
-              <tr class="form_row" v-if="script.triggers.length > 1">
-                <th colspan="2" style="text-align: left;">Trigger #{{index+1}}</th>
-              </tr>
+            <tbody class="form_section">
               <tr class="form_row">
-                <th class="form_label">Type</th>
-                <td>
-                  <span>
-                    <select v-model="trigger.type">
-                      <option v-for="type in trigger_types" v-bind:value="type">{{type}}</option>
-                    </select>
-                    <button type="button" class="btn btn-small btn-danger" @click="remove_trigger(trigger)"><i class="fa fa-minus-circle" aria-hidden="true"></i> remove</button>
-                  </span>
-                </td>
-              </tr>
-              <tr class="form_row" v-if="trigger.type == 'CRON'">
                 <th class="form_label">Every</th>
                 <td>
-                  <span><input type="number" style="width: 4em;" v-model="trigger.every" /> minutes</span>
+                  <span><input type="number" style="width: 4em;" v-model="script.every" /> minutes</span>
                 </td>
               </tr>
-              <tr class="form_row" v-if="trigger.type == 'QUEUE'">
+              <tr class="form_row">
                 <th class="form_label">Queue Name</th>
                 <td>
-                  <input type="text" v-model="trigger.queue_name" />
+                  <input type="text" v-model="script.queue_name" />
                 </td>
               </tr>
-              <tr class="form_row" v-if="trigger.type == 'HTTP'">
+              <tr class="form_row">
                 <th class="form_label">HTTP Method</th>
                 <td>
-                  <select v-model="trigger.http_method">
+                  <select v-model="script.http_method">
                     <option v-for="type in method_types" v-bind:value="type">{{type}}</option>
                   </select>
                   
                 </td>
               </tr>
-              <tr class="form_row" v-if="trigger.type == 'HTTP'">
+              <tr class="form_row">
                 <th class="form_label">HTTP Endpoint</th>
                 <td>
-                  <input type="text" v-model="trigger.http_endpoint" />
+                  <input type="text" v-model="script.http_endpoint" />
                 </td>
               </tr>
-              <tr class="form_row" v-if="trigger.type == 'HTTP'">
+              <tr class="form_row" v-if="script.type == 'HTTP'">
                 <th class="form_label">HTTP Content Type</th>
                 <td>
-                  <input type="text" v-model="trigger.http_content_type" />
+                  <input type="text" v-model="script.http_content_type" />
                 </td>
               </tr>
-              <tr class="form_row" v-if="trigger.type == 'QUEUE' && trigger.queue_name">
+              <tr class="form_row" v-if="script.queue_name">
                 <th class="form_label"></th>
-                <td>Inspect <a target="_blank" :href="'/#/queues/'+trigger.queue_name">`{{trigger.queue_name}}` queue</a></td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr class="form_row">
-                <th></th>
-                <td><button type="button" class="btn btn-small" @click="add_trigger()"><i class="fa fa-plus" aria-hidden="true"></i> Add trigger</button></td>
-              </tr>
-              <tr class="form_row" v-if="script.triggers && script.triggers.length">
-                <th class="form_label"><label for="active">Active?</label></th>
-                <td>
-                  <div class="fancy_checkbox">
-                    <input id="active" type="checkbox" v-model="script.active" />
-                    <label for="active"></label>
-                  </div>
-                </td>
+                <td>Inspect <a target="_blank" :href="'/#/queues/'+script.queue_name">`{{script.queue_name}}` queue</a></td>
               </tr>
             </tbody>
             <tbody>
@@ -235,7 +206,6 @@ export default {
       state: state,
       save_for_later: false,
       orig_code: '',
-      trigger_types: ['CRON', 'QUEUE', 'HTTP'],
       method_types: ['GET', 'POST'],
       show_extensions: false,
       show_script_details: true,
@@ -341,13 +311,6 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-    },
-    add_trigger(){
-      state.current.script.triggers.push(senate.new_trigger())
-    },
-    remove_trigger(trigger){
-      var idx = state.current.script.triggers.indexOf(trigger)
-      if (idx > -1){ state.current.script.triggers.splice(idx, 1) }
     },
     run(){
       var input = null

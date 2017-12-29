@@ -12,23 +12,20 @@ end
 class Script
 
   def self.columns
-    [:id, :name, :category, :description, :default_input, :extensions, :code, :active, :created_at]
+    [:id, :name, :category, :description, :default_input, :extensions, :code, :active, :every, :queue_name, :http_endpoint, :http_method, :http_request_accept, :http_response_content_type, :created_at]
   end
 
   def self.all
     sql = "SELECT
   #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")},
   max(sr.run_at) as s_last_run
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id
   LEFT JOIN script_runs sr on s.id=sr.script_id
-GROUP BY s.id, t.id
+GROUP BY s.id
 ORDER BY s.`name`"
     rows = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
-        { triggers: { prefix: 't' } }
       ]
     })
     rows.each do |r|
@@ -39,15 +36,12 @@ ORDER BY s.`name`"
 
   def self.for_queue(name)
     sql = "SELECT
-  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id
-WHERE t.queue_name = ?"
+WHERE s.queue_name = ?"
     rows = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
-        { triggers: { prefix: 't'  } }
       ]
     }, name)
     rows.each do |r|
@@ -58,16 +52,13 @@ WHERE t.queue_name = ?"
 
   def self.find(id)
     sql = "SELECT
-  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id
 WHERE s.id = ?
     "
     row = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
-        { triggers: { prefix: 't' } }
       ]
     }, id).first
     return nil if !row
@@ -77,15 +68,12 @@ WHERE s.id = ?
 
   def self.find_by_http_endpoint(endpoint, method)
     sql = "SELECT
-  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+  #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM scripts s
-  LEFT JOIN triggers t on s.id=t.script_id
-WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? AND t.http_method = ?"
+WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     row = DataMapper.select(sql, {
       prefix: 's',
       has_many: [
-        { triggers: { prefix: 't' } }
       ]
     }, [endpoint, method]).first
     return nil if !row
@@ -120,37 +108,27 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
 
   def self.script_to_fields(script)
     return {
-      id:                      script[:id],
-      name:                    script[:name],
-      category:                script[:category],
-      description:             script[:description],
-      default_input:           script[:default_input],
-      extensions:              script[:extensions].to_json,
-      code:                    script[:code],
-      active:                  script[:active],
-      created_at:              Time.new(script[:created_at])
-    }
-  end
-
-  def self.trigger_to_fields(trigger)
-    return {
-      id:                trigger[:id],
-      script_id:         trigger[:script_id],
-      type:              trigger[:type],
-      active:            trigger[:active],
-      every:             trigger[:every],
-      queue_name:        trigger[:queue_name],
-      http_endpoint:     trigger[:http_endpoint],
-      http_method:       trigger[:http_method],
-      http_content_type: trigger[:http_content_type],
-      created_at:        Time.new(trigger[:created_at])
+      id:                         script[:id],
+      name:                       script[:name],
+      category:                   script[:category],
+      description:                script[:description],
+      default_input:              script[:default_input],
+      extensions:                 script[:extensions].to_json,
+      code:                       script[:code],
+      active:                     script[:active],
+      every:                      script[:every],
+      queue_name:                 script[:queue_name],
+      http_endpoint:              script[:http_endpoint],
+      http_method:                script[:http_method],
+      http_request_accept:        script[:http_request_accept],
+      http_response_content_type: script[:http_response_content_type],
+      created_at:                 Time.new(script[:created_at])
     }
   end
 
   def self.update(script)
     fields = script_to_fields script
     DataMapper.update('scripts', fields)
-    self.save_triggers(script)
     return script
   end
 
@@ -159,34 +137,7 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
     script[:created_at] = Time.now.to_s unless script[:created_at]
     fields = script_to_fields script
     DataMapper.insert('scripts', fields)
-    self.save_triggers(script)
     return script
-  end
-
-  def self.save_triggers(script)
-    script[:triggers].each do |trigger|
-      trigger[:script_id] = script[:id]
-      trigger[:created_at] = Time.now.to_s unless trigger[:created_at]
-      if trigger[:id]
-        fields = trigger_to_fields(trigger)
-        DataMapper.update("triggers", fields)
-      else
-        trigger[:id] = SecureRandom.uuid unless trigger[:id]
-        fields = trigger_to_fields(trigger)
-        DataMapper.insert("triggers", fields)
-      end
-    end
-    # delete doomed triggers
-    sql = ''
-    if script[:triggers].length > 0
-      sql = "DELETE FROM triggers WHERE script_id=? and id NOT IN (#{script[:triggers].map{|t|"'#{t[:id]}'"}.join(',')})"
-    else
-      sql = "DELETE FROM triggers WHERE script_id=?"
-    end
-    DB.use do |db|
-      stmt = db.prepare(sql)
-      stmt.execute(script[:id])
-    end
   end
 
   def self.set_default_input(script_id, payload)
@@ -197,7 +148,7 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
     DataMapper.update('scripts', fields)
   end
 
-  def self.run_code(code, input = nil, extensions = [], script_id=nil, trigger_id=nil, queue_name=nil, queue_item_key=nil)
+  def self.run_code(code, input = nil, extensions = [], script_id=nil)
     executor = SimpleLanguage::Executor.new
     extensions.each do |class_string|
       clazz = Object.const_get("SimpleLanguage::#{class_string}")
@@ -220,9 +171,6 @@ WHERE t.type='HTTP' AND s.active=true AND t.active=true AND t.http_endpoint = ? 
     end
     script_run = {
       script_id: script_id,
-      trigger_id: trigger_id,
-      queue_name: queue_name,
-      queue_item_key: queue_item_key,
       extensions: extensions,
       input: input,
       code: code,

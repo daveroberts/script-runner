@@ -4,7 +4,7 @@ require './app/database/database.rb'
 class ScriptRun
 
   def self.columns
-    [:id, :script_id, :trigger_id, :queue_name, :queue_item_id, :http_endpoint, :http_method, :input, :extensions, :code, :output, :error, :run_at]
+    [:id, :script_id, :input, :extensions, :code, :output, :error, :run_at]
   end
 
   def self.add(script_run)
@@ -29,10 +29,8 @@ class ScriptRun
 
   def self.last_n(script_id, n)
     sql = "SELECT
-  #{ScriptRun.columns.map{|c|"sr.`#{c}` as sr_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+  #{ScriptRun.columns.map{|c|"sr.`#{c}` as sr_#{c}"}.join(",")}
 FROM script_runs sr
-  LEFT JOIN triggers t on sr.trigger_id=t.script_id
 WHERE sr.script_id = ?
 ORDER BY sr.run_at DESC
 LIMIT ?
@@ -40,7 +38,6 @@ LIMIT ?
     rows = DataMapper.select(sql, {
       prefix: 'sr',
       has_many: [
-        { triggers: { prefix: 't' } }
       ]
     }, [script_id, n])
     script_runs = rows_to_script_runs(rows)

@@ -15,11 +15,19 @@ module DBMigrations
         `extensions` TEXT,
         `code` LONGTEXT,
         `active` BOOLEAN NOT NULL,
+        `every` INTEGER,
+        `queue_name` VARCHAR(255),
+        `http_endpoint` VARCHAR(255),
+        `http_method` VARCHAR(255),
+        `http_request_accept` VARCHAR(255),
+        `http_response_content_type` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
         UNIQUE KEY `name` (`name`),
         INDEX `name_index` (`name`),
+        INDEX `every_index` (`every`),
+        INDEX `queue_name_index` (`queue_name`),
         INDEX `active_index` (`active`),
         INDEX `created_at_index` (`created_at`)
       )"
@@ -28,11 +36,6 @@ module DBMigrations
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255),
-        `trigger_id` VARCHAR(255),
-        `queue_name` VARCHAR(255),
-        `queue_item_id` VARCHAR(255),
-        `http_endpoint` VARCHAR(255),
-        `http_method` VARCHAR(255),
         `input` LONGBLOB,
         `extensions` TEXT,
         `code` LONGTEXT,
@@ -41,32 +44,8 @@ module DBMigrations
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
-        INDEX `trigger_id_index` (`trigger_id`),
         INDEX `script_id_index` (`script_id`),
-        INDEX `queue_index` (`queue_name`, `queue_item_id`),
-        INDEX `http_endpoint_method_index` (`http_endpoint`, `http_method`),
         INDEX `run_at_index` (`run_at`)
-      )"
-      db.query(sql)
-      sql = "CREATE TABLE `triggers` (
-        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        `id` VARCHAR(255) NOT NULL,
-        `script_id` VARCHAR(255) NOT NULL,
-        `type` VARCHAR(255) NOT NULL,
-        `active` BOOLEAN NOT NULL,
-        `every` INTEGER,
-        `queue_name` VARCHAR(255),
-        `http_endpoint` VARCHAR(255),
-        `http_method` VARCHAR(255),
-        `http_content_type` VARCHAR(255),
-        `created_at` DATETIME NOT NULL,
-        UNIQUE KEY `id` (`id`),
-        INDEX `id_index` (`id`),
-        INDEX `type_index` (`type`),
-        INDEX `active_index` (`active`),
-        INDEX `queue_name_index` (`queue_name`),
-        INDEX `http_endpoint_method_index` (`http_endpoint`, `http_method`),
-        INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)
       sql = "CREATE TABLE `queue_items` (

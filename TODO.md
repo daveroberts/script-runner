@@ -1,4 +1,10 @@
+implement http
+  add http accept param
+Do something with category on scripts
+test input, not just JSON?
+click images on basic browsing examples
 show snake case in helpers
+increment operator
 duplicate detection
   allow dictionary to function as a set
 {

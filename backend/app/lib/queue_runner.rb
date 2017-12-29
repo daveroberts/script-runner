@@ -3,6 +3,11 @@ class QueueRunner
     scripts = Script.all
     loop do
       item = QueueItem.next
+      if !item
+        puts "No item found for processing, sleeping for 1 minute"
+        sleep 1*60
+        next
+      end
       processing_scripts = scripts.select{|s|s[:active]&&s[:triggers].any?{|t|t[:active]&&t[:type]=='QUEUE'&&t[:queue_name]==item[:queue_name]}}
       next if processing_scripts.none?
       result = QueueItem.lock_for_processing(item[:id])

@@ -15,11 +15,9 @@
         <tr>
           <td><a :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
           <td>
-            <div v-for="trigger in script.triggers">
-              <span v-if="trigger.type == 'CRON'">every {{trigger.every}} minutes</span>
-              <span v-if="trigger.type == 'QUEUE'">queue `{{trigger.queue_name}}`</span>
-              <span v-if="trigger.type == 'HTTP'">HTTP endpoint: {{trigger.http_method}} `{{trigger.http_endpoint}}`</span>
-            </div>
+            <span v-if="script.every">every {{script.every}} minutes</span>
+            <span v-if="script.queue_name">queue `{{script.queue_name}}`</span>
+            <span v-if="script.http_method">HTTP endpoint: {{script.http_method}} `{{script.http_endpoint}}`</span>
           </td>
           <td style="text-align: center;"><span v-if="script.active"><i class="success fa fa-check" aria-hidden="true"></i></span></td>
           <td>{{pretty_date(script.last_run)}}</td>

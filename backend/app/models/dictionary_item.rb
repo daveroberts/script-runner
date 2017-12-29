@@ -1,7 +1,7 @@
 # manages dictionary items in database
 class DictionaryItem
   def self.columns
-    [:id, :name, :key, :value]
+    [:id, :name, :key, :value, :summary, :image_id, :created_at]
   end
 
   def self.save(name, key, value)
@@ -21,7 +21,7 @@ class DictionaryItem
     DataMapper.insert("dictionary_items", fields)
   end
 
-  def self.find(name, key)
+  def self.lookup(name, key)
     sql = "SELECT
   #{DictionaryItem.columns.map{|c|"di.`#{c}` as di_#{c}"}.join(",")}
 FROM dictionary_items di

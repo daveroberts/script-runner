@@ -25,10 +25,11 @@ CODE
       category: 'queue_example',
       code: <<-CODE,
 number = random(1,10)
-queue('numbers', number)
+queue.add('numbers', number)
 number
 CODE
-      every: 1
+      every: 1,
+      extensions: ['Queue']
     },
     {
       id: '17c79465-9dc5-45bb-9894-c4553ca06b15',
@@ -54,9 +55,10 @@ my_report = {
   created_at: now(),
   body: "The American Dental Association recommends brushing and flossing"
 }
-storage.save(my_report, { summary: my_report[:title], tag: "dental_reports" }
+storage.save(my_report, { summary: my_report[:title], tag: "dental_reports" })
 set.add('alert_emails','somebody_else@example.com')
 dictionary.add('countries', 'IND', {id: '4097ce38-4369-49b6-8521-f7ed2cbe8802', code: 'IND', name: 'India'})
+"Data Stored"
 CODE
       extensions: ["Storage","Set","Dictionary"]
     },
@@ -65,19 +67,20 @@ CODE
        name: '07 - Data Retrieval',
        category: 'data_storage',
        code: <<-CODE,
-reports = storage.all({ tag: "dental_reports" })
-country_ids = []
-foreach report in reports {
+report_keys = storage.all({ tag: "dental_reports" })
+countries = {}
+foreach report_key in report_keys {
+  report = storage.get(report_key)
   country_name = report[:country]
   country_info = dictionary.lookup('countries', country_name)
-  if country_info { push(country_ids, country_info[:id]) }
+  if country_info { countries[country_info[:id]] = country_name }
 }
-
 {
-  country_ids: country_ids,
+  dental_report_countries: countries,
   hot_topics: set.all('hot_topics')
 }
 CODE
+      extensions: ["Storage","Set","Dictionary"]
     },
     {
       id: 'ec1259c1-c7f4-450c-9037-188eeff597e2',

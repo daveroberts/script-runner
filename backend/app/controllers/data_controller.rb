@@ -7,19 +7,13 @@ class App < Sinatra::Application
   end
 
   get "/tags/:name/?" do
-    return DataItem.by_tag(params[:name]).to_json
+    return DataItem.all({ tag: params[:name] }).to_json
   end
 
   get "/data_item/:key/?" do
     data_item = DataItem.find(params[:key])
-    content_type 'text/plain', charset: 'utf-8'
     return [404, "data item not found"] if !data_item
-    content_type data_item[:item_mime_type]
-    if data_item[:item_mime_type] == 'application/json'
-      return [200, data_item[:item].to_json]
-    else
-      return [200, data_item[:item]]
-    end
+    return [200, data_item[:item].to_json]
   end
 
   delete "/data_item/:key/?" do

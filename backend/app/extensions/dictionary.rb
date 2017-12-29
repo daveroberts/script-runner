@@ -62,12 +62,19 @@ module SimpleLanguage
         },
       }
     end
+
     def add(dictionary_name, key, item)
     end
+
     def lookup(dictionary_name, key)
+      item = DictionaryItem.lookup(dictionary_name, key)
+      return nil if !item
+      item[:value]
     end
+
     def remove(dictionary_name, key)
     end
+
     def all(dictionary_name)
     end
   end

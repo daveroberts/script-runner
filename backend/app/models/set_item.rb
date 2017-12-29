@@ -24,7 +24,7 @@ class SetItem
     DataMapper.delete("set_items", {id: id})
   end
 
-  def self.by_name(name)
+  def self.all(name)
     sql = "SELECT
   #{SetItem.columns.map{|c|"si.`#{c}` as si_#{c}"}.join(",")}
 FROM set_items si

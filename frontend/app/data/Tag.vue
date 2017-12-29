@@ -22,8 +22,8 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Item Key</th>
-            <th>Image Preview</th>
+            <th></th>
+            <th>Item</th>
             <th></th>
           </tr>
         </thead>
@@ -31,17 +31,19 @@
           <tr v-for="item in items">
             <td>
               <a :href="'/api/data_item/'+item.key">
-                <pre class="small">{{item.key}}</pre>
-              </a>
-            </td>
-            <td>
-              <a :href="'/api/data_item/'+item.key">
                 <span v-if="is_image_mime_type(item.preview_mime_type)">
                   <img class="image_preview" :src="'/api/data_item_preview/'+item.key" alt="Preview Image" />
                 </span>
               </a>
             </td>
-            <td><a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+            <td>
+              <a :href="'/api/data_item/'+item.key">
+                <pre class="small">{{item.summary}}</pre>
+              </a>
+            </td>
+            <td>
+              <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            </td>
           </tr>
         </tbody>
       </table>

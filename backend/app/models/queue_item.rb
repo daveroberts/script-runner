@@ -64,8 +64,7 @@ SELECT
   s.`id` as s_id,
   s.name as s_name
 FROM queue_items qi
-  LEFT JOIN triggers t ON qi.queue_name=t.queue_name AND t.active=true
-  LEFT JOIN scripts s on t.script_id=s.id AND s.active=true
+  LEFT JOIN scripts s on qi.queue_name=s.queue_name AND s.active=true
 WHERE qi.queue_name = ?
 ORDER BY qi.created_at DESC"
     items = DataMapper.select(sql, { prefix: 'qi', has_many: [
@@ -81,21 +80,15 @@ ORDER BY qi.created_at DESC"
     sql = "
 SELECT
   #{QueueItem.columns.map{|c|"qi.`#{c}` as qi_#{c}"}.join(",")},
-  #{Trigger.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")},
   #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM queue_items qi
-  LEFT JOIN triggers t ON qi.queue_name=t.queue_name AND t.active=true
-  LEFT JOIN scripts s on t.script_id=s.id AND s.active=true
+  LEFT JOIN scripts s on qi.queue_name=s.queue_name AND s.active=true
 WHERE qi.id = ?
 ORDER BY qi.created_at DESC"
-    item = DataMapper.select(sql, { prefix: 'qi', has_many: [{
-       triggers: {
-         prefix: 't',
-         has_one: [
-           { script: { prefix: 's' } }
-         ]
-       }
-    }] }, [id]).first
+    item = DataMapper.select(sql, { prefix: 'qi', has_one: [
+        { script: { prefix: 's' } }
+      ]
+    }, [id]).first
     return nil if !item
     item[:item] = JSON.parse(item[:item], symbolize_names: true)
     item[:summary] = JSON.parse(item[:summary], symbolize_names: true)

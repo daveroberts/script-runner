@@ -60,18 +60,27 @@ module SimpleLanguage
       summary: nil,
       image_id: nil,
       tag: nil,
-      tags: [],
+      tags: nil,
       key: nil,
     })
+      DataItem.save(item, options)
     end
 
-    def self.get(key)
+    def get(key)
+      item = DataItem.get(key)
+      return nil if !item
+      item[:item]
     end
 
-    def self.all(by={})
+    def all(by={
+      tag: nil,
+      within: nil
+    })
+      items = DataItem.all(by)
+      items.map{|item|item[:key]}
     end
 
-    def self.remove(key)
+    def remove(key)
     end
   end
 end

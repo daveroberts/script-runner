@@ -67,6 +67,8 @@ module SimpleLanguage
     def remove(set_name, item)
     end
     def all(set_name)
+      items = SetItem.all(set_name)
+      items.map{|item|item[:value]}
     end
   end
 end

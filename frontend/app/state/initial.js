@@ -39,6 +39,10 @@ const initial_state = {
     },
     runs: null,
     field_errors: {},
+    trace: {
+      id: null,
+      data: null
+    },
     input: {
       type: 'NONE',
       payload: "",

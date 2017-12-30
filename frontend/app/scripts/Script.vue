@@ -75,6 +75,16 @@
         </div>
         <div class="right_panel">
           <div v-if="last_run">
+            <div>
+              <h1>Run Details</h1>
+              <a href="#" @click.prevent="show_run_details = !show_run_details">
+                <span v-if="show_run_details">Hide Run Details</span>
+                <span v-else>Show Run Details</span>
+              </a>
+              <div class="debug_output" v-if="show_run_details" v-for="msg in state.current.trace.data">
+                {{msg.summary}}
+              </div>
+            </div>
             <h1>Output</h1>
             <pre class="json" v-if="last_run.output != null" v-html="syntax_highlight(last_run.output)"></pre>
             <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
@@ -224,6 +234,7 @@ export default {
     return {
       state: state,
       show_input: false,
+      show_run_details: true,
       save_for_later: false,
       orig_code: '',
       method_types: ['GET', 'POST'],
@@ -337,14 +348,30 @@ export default {
       if (state.current.input.type == 'MANUAL'){
         input = state.current.input.payload
       }
+      state.current.trace.id = Math.floor(Math.random() * 999999)
+      state.current.trace.data = null
       var payload = {
         code: state.current.script.code,
         input: input,
         extensions: state.current.script.extensions,
+        trace_id: state.current.trace.id,
         script_id: state.current.script.id
       }
       this.running = true
       state.loading = true
+      //var get_traces_timer = setInterval(() =>{
+      var get_traces_timer = setTimeout(() =>{
+        fetch(`/api/traces/${state.current.trace.id}`, {
+          credentials: "include"
+        }).then(res => {
+          return res.json()
+        }).then(trace_data => {
+          state.current.trace.data = trace_data
+        }).catch(err => {
+          console.log("Error getting trace data")
+          console.log(err)
+        })
+      }, 1000)
       fetch(`/api/run`, {
         method: 'POST',
         credentials: 'include',
@@ -358,10 +385,15 @@ export default {
         if (output.error) {
           senate.flash("Script produced an error", "danger")
         }
+        // wait 2 seconds, then stop grabbing updates
+        setTimeout(() => {
+          clearInterval(get_traces_timer)
+        }, 2000)
       }).catch(err => {
         console.log(err)
         this.running = false
         state.loading = false
+        clearInterval(get_traces_timer)
       })
     }
   }

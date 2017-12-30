@@ -59,13 +59,17 @@ module SimpleLanguage
       }
     end
 
-    def initialize
+    def initialize(trace)
+      @trace = trace
     end
 
     def add(queue_name, item, options = {
       summary: nil,
       image_id: nil,
     })
+      summary = options[:summary]
+      summary = item if !summary
+      @trace.push({ summary: "Adding #{summary} to queue `#{queue_name}`", level: :info, timestamp: Time.now })
       QueueItem.add(queue_name, item, options)
     end
 

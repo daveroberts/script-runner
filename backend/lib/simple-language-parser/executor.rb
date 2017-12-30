@@ -40,8 +40,9 @@ module SimpleLanguage
       @external[:values][name] = value
     end
 
-    def run(script, input = nil)
+    def run(script, input = nil, trace = [])
       @input = input
+      @trace = trace
       tokens = SimpleLanguage::lex(script)
       ast = SimpleLanguage::parse(tokens)
       begin
@@ -67,6 +68,11 @@ module SimpleLanguage
         if command[:to][:type] == :reference
           if command[:to][:chains].length == 0
             variables[command[:to][:value]] = value
+            if value && value.class == Hash && value.has_key?(:type)
+              @trace.push({ summary: "Assigning #{cmd_to_s(value)} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+            else
+              @trace.push({ summary: "Assigning #{value} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+            end
           else
             ref = variables[command[:to][:value]]
             chains = command[:to][:chains].dup
@@ -85,6 +91,7 @@ module SimpleLanguage
               if chain[:type] == :index_of
                 index = exec_cmd(chain[:index], variables)
                 ref[index] = value
+                @trace.push({ summary: "Assigning #{value} to index #{index}", level: :debug, timestamp: Time.now })
               elsif chain[:type] == :member
                 binding.pry #todo
               else
@@ -100,14 +107,17 @@ module SimpleLanguage
       elsif command[:type] == :add
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
+        @trace.push({ summary: "Adding #{left} and #{right}", level: :debug, timestamp: Time.now })
         return left + right
       elsif command[:type] == :subtract
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
+        @trace.push({ summary: "Subtracting #{right} from #{left}", level: :debug, timestamp: Time.now })
         return left - right
       elsif command[:type] == :multiply
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
+        @trace.push({ summary: "Multiplying #{left} and #{right}", level: :debug, timestamp: Time.now })
         return left * right
       elsif command[:type] == :int
         val = command[:value].to_i
@@ -123,6 +133,7 @@ module SimpleLanguage
         opts = opts | Regexp::MULTILINE if opt_str.include? "m"
         regex = Regexp.new(reg_str, opts)
         output = run_chains(regex, command[:chains]||[], variables)
+        @trace.push({ summary: "Regex matching: Regex #{reg_str} matches #{output}", level: :debug, timestamp: Time.now })
         return output
       elsif command[:type] == :reference #:get_value
         name = command[:value]
@@ -162,7 +173,9 @@ module SimpleLanguage
         block = command[:block]
         #locals = variables.dup
         #TODO: outer variables should be altered, inner no
+        @trace.push({ summary: "Running for loop on #{collection.length} items", level: :debug, timestamp: Time.now })
         collection.each do |item|
+          @trace.push({ summary: "Current item: #{item}", level: :debug, timestamp: Time.now })
           variables[symbol] = item
           begin
             run_block(block, variables)
@@ -173,28 +186,37 @@ module SimpleLanguage
           end
         end
       elsif command[:type] == :while
+        @trace.push({ summary: "Starting while loop", level: :debug, timestamp: Time.now })
         condition = command[:condition]
         block = command[:block]
         while exec_cmd(condition,variables) do
           run_block(block,variables)
         end
       elsif command[:type] == :if
+        @trace.push({ summary: "Starting if block", level: :debug, timestamp: Time.now })
         command[:true_conditions].each do |cond|
           predicate = exec_cmd(cond[:condition], variables)
           if predicate
+            @trace.push({ summary: "If condition true: #{cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
             return run_block(cond[:block], variables)
             break
+          else
+            @trace.push({ summary: "If condition false: #{cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
           end
         end
+        @trace.push({ summary: "If matched no conditions, running false block", level: :debug, timestamp: Time.now })
         return run_block(command[:false_block], variables)
       elsif command[:type] == :loop
+        @trace.push({ summary: "Starting loop", level: :debug, timestamp: Time.now })
         block = command[:block]
         loop do
           begin
             run_block(block, variables)
           rescue Break
+            @trace.push({ summary: "Breaking from loop", level: :debug, timestamp: Time.now })
             break
           rescue Next
+            @trace.push({ summary: "Next called on loop", level: :debug, timestamp: Time.now })
             next
           end
         end
@@ -203,7 +225,9 @@ module SimpleLanguage
       elsif command[:type] == :next
         raise Next
       elsif command[:type] == :return
-        raise Return.new(exec_cmd(command[:payload], variables))
+        value = exec_cmd(command[:payload], variables)
+        @trace.push({ summary: "Returning #{value}", level: :debug, timestamp: Time.now })
+        raise Return.new(value)
       elsif command[:type] == :null
         return nil
       elsif command[:type] == :true
@@ -213,6 +237,7 @@ module SimpleLanguage
       elsif command[:type] == :array
         arr = command[:items].map{|i|exec_cmd(i,variables)}
         output = run_chains(arr, command[:chains]||[], variables)
+        @trace.push({ summary: "Created array", level: :debug, timestamp: Time.now })
         return output
       elsif command[:type] == :index_of
         if command.has_key? :symbol
@@ -296,6 +321,7 @@ module SimpleLanguage
             rescue Return => ret
               output = ret.value
             end
+            @trace.push({ summary: "function(#{ref[:params].join(",")}) returned #{output}", level: :debug, timestamp: Time.now })
             ref = output
           else
             raise "`#{ref.class.to_s}` is not a function"
@@ -324,17 +350,28 @@ module SimpleLanguage
     def run_system_command(fun, args, variables)
       case fun
       when "print"
+        args.each do |arg|
+          @trace.push({ summary: "Print: #{arg}", level: :info, timestamp: Time.now })
+        end
         puts(*args)
       when "join"
+        @trace.push({ summary: "Joining: #{args[0]}", level: :debug, timestamp: Time.now })
         return args[0].join(args[1])
       when "len"
+        @trace.push({ summary: "Length of #{args[0]}} is #{args[0].length}", level: :debug, timestamp: Time.now })
         return args[0].length
       when "md5"
-        return Digest::MD5.hexdigest(args[0])
+        value = Digest::MD5.hexdigest(args[0])
+        @trace.push({ summary: "MD5 of #{args[0]} is #{value}", level: :debug, timestamp: Time.now })
+        return value
       when "sha512"
-        return Digest::SHA512.hexdigest(args[0])
+        value = Digest::SHA512.hexdigest(args[0])
+        @trace.push({ summary: "SHA512 of #{args[0]} is #{value}", level: :debug, timestamp: Time.now })
+        return value
       when "uuid"
-        return SecureRandom.uuid
+        value = SecureRandom.uuid
+        @trace.push({ summary: "Generated UUID of #{value}", level: :debug, timestamp: Time.now })
+        return value
       when "now"
         return Time.new
       when "map"
@@ -419,6 +456,34 @@ module SimpleLanguage
 
     def get_external_value(name)
       return @external[:values][name]
+    end
+
+    def cmd_to_s(cmd)
+      if cmd[:type] == :check_equality
+        return "#{cmd_to_s(cmd[:left])} == #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :function
+        return "function"
+      elsif cmd[:type] == :reference
+        return cmd[:value]
+      elsif cmd[:type] == :int
+        return cmd[:value]
+      elsif cmd[:type] == :less_than_or_equals
+        return "#{cmd_to_s(cmd[:left])} <= #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :greater_than_or_equals
+        return "#{cmd_to_s(cmd[:left])} >= #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :less_than
+        return "#{cmd_to_s(cmd[:left])} < #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :greater_than
+        return "#{cmd_to_s(cmd[:left])} > #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :check_not_equals
+        return "#{cmd_to_s(cmd[:left])} != #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :or
+        return "#{cmd_to_s(cmd[:left])} || #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :and
+        return "#{cmd_to_s(cmd[:left])} && #{cmd_to_s(cmd[:right])}"
+      else
+        binding.pry
+      end
     end
   end
 end

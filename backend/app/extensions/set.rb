@@ -60,12 +60,19 @@ module SimpleLanguage
         },
       }
     end
+
     def add(set_name, item)
+      SetItem.add(set_name, item)
     end
+
     def has(set_name, item)
+      SetItem.has_value?(set_name, item)
     end
+
     def remove(set_name, item)
+      raise "not yet implemented"
     end
+
     def all(set_name)
       items = SetItem.all(set_name)
       items.map{|item|item[:value]}

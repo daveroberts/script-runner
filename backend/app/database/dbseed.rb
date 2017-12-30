@@ -67,7 +67,7 @@ CODE
        name: '07 - Data Retrieval',
        category: 'data_storage',
        code: <<-CODE,
-report_keys = storage.all({ tag: "dental_reports" })
+report_keys = storage.by_tag("dental_reports")
 countries = {}
 foreach report_key in report_keys {
   report = storage.get(report_key)

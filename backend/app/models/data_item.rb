@@ -40,8 +40,7 @@ class DataItem
     key
   end
 
-  def self.by_tag(tag, by={
-    within: nil
+  def self.by_tag(tag, since={
   })
     tags = nil
     tags = tag if tag.class == Array

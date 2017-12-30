@@ -13,7 +13,7 @@ class SetItem
     }
     begin
       rows_added = DataMapper.insert("set_items", fields)
-      return fields
+      return true
     rescue Mysql2::Error => e
       return false if e.to_s.include?("Duplicate entry")
       raise e

@@ -31,11 +31,13 @@ module SimpleLanguage
               description: "container has:\n:item - 'The requested item'"
             }
           },
-          all: {
+          by_tag: {
             summary: "Gets a bunch of item keys",
             params: [
-               { name:       "by",
-                description: "Conditions for which keys to grab\ntag - ''\nwithin - ''" },
+               { name:       "tag",
+                description: "Which data items to get" },
+               { name:       "since",
+                description: "Hash with one of the following:\nminutes, hours, days, weeks, months" },
             ],
             returns: {
               name: "array",
@@ -72,15 +74,14 @@ module SimpleLanguage
       item[:item]
     end
 
-    def all(by={
-      tag: nil,
-      within: nil
+    def by_tag(tag, since={
     })
-      items = DataItem.all(by)
+      items = DataItem.by_tag(tag, since)
       items.map{|item|item[:key]}
     end
 
     def remove(key)
+      raise "not implemented"
     end
   end
 end

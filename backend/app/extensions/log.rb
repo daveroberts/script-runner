@@ -23,6 +23,10 @@ module SimpleLanguage
       }
     end
 
+    def initialize(trace)
+      @trace = trace
+    end
+
     def append(log_name, text, level='info')
     end
   end

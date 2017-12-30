@@ -46,6 +46,10 @@ module SimpleLanguage
       }
     end
 
+    def initialize(trace)
+      @trace = trace
+    end
+
     def save(data, summary)
       ImageItem.save(data, summary)
     end

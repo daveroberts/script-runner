@@ -107,14 +107,17 @@ module SimpleLanguage
       }
     end
 
-    def initialize
+    def initialize(trace)
+      @trace = trace
     end
 
     def go_to_url(url)
       begin
         driver.get(url)
+        @trace.push({ summary: "Navigated to #{url}", level: :info, timestamp: Time.now })
         return true
       rescue # usually a bad URL
+        @trace.push({ summary: "Could not navigate to #{url}", level: :warn, timestamp: Time.now })
         return false
       end
     end
@@ -124,6 +127,7 @@ module SimpleLanguage
     end
 
     def fill_in_textbox(element, data)
+      @trace.push({ summary: "Entering `#{data}` into #{element_to_s(element)}", level: :info, timestamp: Time.now })
       element.send_keys(data)
     end
 
@@ -141,6 +145,8 @@ module SimpleLanguage
       driver.save_screenshot(filepath)
       data = File.read(filepath)
       File.delete(filepath)
+      image_id = ImageItem.save(data, "picture")
+      @trace.push({ summary: "Took screenshot", level: :info, image_id: image_id, show_image: true, timestamp: Time.now })
       return data
     end
 
@@ -155,6 +161,15 @@ module SimpleLanguage
     def links()
       anchors = driver.find_elements({ tag_name: 'a'})
       links = anchors.map{|a|a.attribute(:href)}
+      @trace.push({ summary: "Found (#{links.length}) links on the page", level: :info, tables: [{
+        title: "Links Found",
+        headers: [
+          { name: "URL", type: "string" }
+        ],
+        rows: links.map{|l| [{ value: l }] }
+      }],
+      show_tables: false,
+      timestamp: Time.now })
       return links
     end
 
@@ -170,6 +185,11 @@ module SimpleLanguage
       @wd = Selenium::WebDriver.for(:chrome, options: options)
       @wd.manage.window.resize_to(1920, 1080)
       return @wd
+    end
+
+    def element_to_s(element)
+      return "(null)" if !element
+      "#{element.tag_name}##{element.attribute("id")||"(no_id)"} #{element.attribute("class")||"(no_class)".split.map{|c|".#{c}"}.join} [name=#{element.attribute("name")||"(no_name)"}]"
     end
   end
 end

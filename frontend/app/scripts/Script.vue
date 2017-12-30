@@ -77,12 +77,57 @@
           <div v-if="last_run">
             <div>
               <h1>Run Details</h1>
-              <a href="#" @click.prevent="show_run_details = !show_run_details">
+              <!--a href="#" @click.prevent="show_run_details = !show_run_details">
                 <span v-if="show_run_details">Hide Run Details</span>
                 <span v-else>Show Run Details</span>
-              </a>
-              <div class="debug_output" v-if="show_run_details" v-for="msg in state.current.trace.data">
-                {{msg.summary}}
+              </a-->
+              <div v-if="show_run_details">
+                <div class="fancy_checkbox">
+                  <input id="show_run_details_debug" type="checkbox" v-model="show_run_details_debug" />
+                  <label for="show_run_details_debug"></label>
+                </div>
+                <label class="fancy_checkbox_label" for="show_run_details_debug">Include debug messages?</label>
+                <div class="debug_output" v-if="msg.level != 'debug' || show_run_details_debug" v-for="msg in state.current.trace.data">
+                  {{msg.summary}}
+                  <span v-if="msg.tables">
+                    <a href="#" @click.prevent="msg.show_tables = !msg.show_tables">
+                      <span v-if="msg.show_tables">&lt;&lt;</span>
+                      <span v-else>&gt;&gt;</span>
+                    </a>
+                  </span>
+                  <div v-if="msg.show_tables">
+                    <div v-for="table in msg.tables">
+                      <div>{{table.title}}</div>
+                      <table class="mini_table">
+                        <thead>
+                          <tr>
+                            <th v-for="header in table.headers">
+                              {{header.name}}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="row in table.rows">
+                            <td v-for="cell in row">
+                              {{cell.value}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <span v-if="msg.image_id">
+                    <a href="#" @click.prevent="msg.show_image = !msg.show_image">
+                      <span v-if="msg.show_image">&lt;&lt;</span>
+                      <span v-else>&gt;&gt;</span>
+                    </a>
+                  </span>
+                  <div v-if="msg.show_image">
+                    <a target="_blank" :href="'/api/images/'+msg.image_id">
+                      <img class="image_preview" :src="'/api/images/'+msg.image_id+'/thumbnail'" :alt="thumbnail" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
             <h1>Output</h1>
@@ -235,6 +280,7 @@ export default {
       state: state,
       show_input: false,
       show_run_details: true,
+      show_run_details_debug: false,
       save_for_later: false,
       orig_code: '',
       method_types: ['GET', 'POST'],
@@ -359,8 +405,8 @@ export default {
       }
       this.running = true
       state.loading = true
-      //var get_traces_timer = setInterval(() =>{
-      var get_traces_timer = setTimeout(() =>{
+      //var get_traces_timer = setTimeout(() =>{
+      var get_traces_timer = setInterval(() =>{
         fetch(`/api/traces/${state.current.trace.id}`, {
           credentials: "include"
         }).then(res => {

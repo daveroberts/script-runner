@@ -13,9 +13,10 @@ duplicate detection
   summary: "",
   detail: "",
   level: debug | info | warning | danger
-  thumbnail_key: "",
-  image_key: "",
+  image_id: "",
+  show_image: false,
   timestamp: "time",
+  show_tables: false,
   tables: [
     {
       title: "",
@@ -25,13 +26,13 @@ duplicate detection
           type: JSON | string | image,
         }
       ],
-      values: [
-        {
+      rows: [
+        [{
           value: "",
           thumbnail_image_id: "",
           image_key: "",
           highlight: null | warning | danger
-        }
+        }]
       ]
     }
   ]

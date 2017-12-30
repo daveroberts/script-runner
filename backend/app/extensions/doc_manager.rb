@@ -42,7 +42,8 @@ module SimpleLanguage
       }
     end
 
-    def initialize(document_id=nil)
+    def initialize(trace)
+      @trace = trace
     end
 
     def create()

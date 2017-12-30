@@ -82,7 +82,8 @@ module SimpleLanguage
       }
     end
 
-    def initialize
+    def initialize(trace)
+      @trace = trace
     end
 
     def get(url, headers={})

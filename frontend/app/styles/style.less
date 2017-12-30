@@ -59,9 +59,11 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .table th { padding: 0.4em 0 0.2em 0; text-align: left; }
 .table td { padding: 0.7em 0 0.2em 0; font-size: @font-size-normal; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
+.mini_table > thead > tr > th{ text-align: left; font-weight: bold; }
+.mini_table > thead > tr { border-bottom: 0.10em solid #ccc; }
 
 .form_row{ color: @font-color; height: 2.5em; font-size: @font-size-normal; }
-.form_row th,td{ vertical-align: middle; font-size: @font-size-normal; }
+.form_row th, .form_row td{ vertical-align: middle; font-size: @font-size-normal; }
 .form_row input{ font-size: @font-size-normal; }
 .form_input{ font-size: @font-size-normal; }
 .form_label{ min-width: 15em; padding-right: 1em; text-align: right }
@@ -75,6 +77,7 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .fancy_checkbox input[type=checkbox]{ display: none; }
 .fancy_checkbox input[type=checkbox]:checked + label:after { opacity: 1; }
+.fancy_checkbox_label{ display: inline-block; height: 16px; position: relative; top: -3px; }
 .fancy_static_checkbox{ width: 20px; height: 14px; position: relative; display: inline-block; }
 .fancy_static_checkbox div{ cursor: pointer; position: absolute; width: 12px; height: 12px; top: 0; left: 0; }
 .fancy_static_checkbox div:after { content: ''; position: absolute; width: 16px; height: 5px; background: transparent; top: 2px; left: 2px; border: 3px solid @success; border-top: none; border-right: none; transform: rotate(-45deg); }

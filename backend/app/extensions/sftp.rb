@@ -27,8 +27,9 @@ module SimpleLanguage
       }
     end
 
-    def initialize
+    def initialize(trace)
       @sftp = nil
+      @trace = trace
     end
 
     def connect(hostname, username, password)

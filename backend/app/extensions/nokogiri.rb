@@ -96,7 +96,8 @@ module SimpleLanguage
       }
     end
 
-    def initialize
+    def initialize(trace)
+      @trace = trace
     end
 
     def document_from_html(html)

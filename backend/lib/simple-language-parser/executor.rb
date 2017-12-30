@@ -71,7 +71,11 @@ module SimpleLanguage
             if value && value.class == Hash && value.has_key?(:type)
               @trace.push({ summary: "Assigning #{cmd_to_s(value)} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
             else
-              @trace.push({ summary: "Assigning #{value} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              if value.class != String || value.valid_encoding?
+                @trace.push({ summary: "Assigning #{value} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              else
+                @trace.push({ summary: "Assigning binary data to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              end
             end
           else
             ref = variables[command[:to][:value]]
@@ -351,7 +355,7 @@ module SimpleLanguage
       case fun
       when "print"
         args.each do |arg|
-          @trace.push({ summary: "Print: #{arg}", level: :info, timestamp: Time.now })
+          @trace.push({ summary: arg, level: :info, timestamp: Time.now })
         end
         puts(*args)
       when "join"
@@ -423,6 +427,21 @@ module SimpleLanguage
           end
           arr.push(item) if output
         end
+        @trace.push({ summary: "Filtered #{arr.length} out of #{collection.length}", level: :info, tables: [{
+          title: "Matched",
+          headers: [
+            { name: "Item", type: "string" }
+          ],
+          rows: arr.map{|item| [{ value: item }] }
+        },{
+          title: "All",
+          headers: [
+            { name: "Item", type: "string" }
+          ],
+          rows: collection.map{|item| [{ value: item }] }
+        }],
+        show_tables: false,
+        timestamp: Time.now })
         return arr
       when "push"
         collection = args[0]
@@ -481,6 +500,10 @@ module SimpleLanguage
         return "#{cmd_to_s(cmd[:left])} || #{cmd_to_s(cmd[:right])}"
       elsif cmd[:type] == :and
         return "#{cmd_to_s(cmd[:left])} && #{cmd_to_s(cmd[:right])}"
+      elsif cmd[:type] == :true
+        return "true"
+      elsif cmd[:type] == :false
+        return "false"
       else
         binding.pry
       end

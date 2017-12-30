@@ -61,6 +61,10 @@ module SimpleLanguage
       }
     end
 
+    def initialize(trace)
+      @trace = trace
+    end
+
     def add(set_name, item)
       SetItem.add(set_name, item)
     end

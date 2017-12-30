@@ -58,6 +58,11 @@ module SimpleLanguage
         },
       }
     end
+
+    def initialize(trace)
+      @trace = trace
+    end
+
     def save(item, options = {
       summary: nil,
       image_id: nil,

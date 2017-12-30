@@ -63,6 +63,10 @@ module SimpleLanguage
       }
     end
 
+    def initialize(trace)
+      @trace = trace
+    end
+
     def add(dictionary_name, key, item)
     end
 

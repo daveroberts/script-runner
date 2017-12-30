@@ -156,7 +156,7 @@ links = filter(all_links, (link)->{
 })
 pages_scraped = 0
 foreach link in links {
-  if set.has('gd_urls_scraped', link) { next }
+  if set.has('gd_urls_scraped', link) { print("Skipping: "+link) next }
   //chrome.wait(random(5,15))
   made_it = chrome.go_to_url(link)
   if made_it == false { next }

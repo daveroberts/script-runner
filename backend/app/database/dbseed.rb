@@ -135,6 +135,7 @@ chrome.go_to_url('https://duckduckgo.com')
 search_box = chrome.element({:name 'q'})
 chrome.fill_in_textbox(search_box, 'Puppies')
 chrome.submit_form(search_box)
+chrome.click(chrome.element({link_text: 'Images'}))
 raw_data = chrome.screenshot()
 image_id = image.save(raw_data, "Puppy Search Results")
 storage.save("Puppy Page", {

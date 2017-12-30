@@ -23,12 +23,20 @@ module SimpleLanguage
             summary: "Get element from a selector.",
             params: [
               { name:        "selector",
-                description: "A hash, {id: 'sidebar'} or {name: 'search_bar'}" },
+                description: "A hash, {id: 'sidebar'}, {name: 'search_bar'}, {link_text: 'Images'}" },
             ],
             returns: {
               name: "element",
               description: "The element"
             }
+          },
+          click: {
+            summary: "Click something on the page.",
+            params: [
+              { name:        "element",
+                description: "Element returned from `element` method" },
+            ],
+            returns: nil
           },
           fill_in_textbox: {
             summary: "Enter data into a web form.",
@@ -123,7 +131,37 @@ module SimpleLanguage
     end
 
     def element(selector)
-      driver.find_element(selector)
+      begin
+        return driver.find_element(selector)
+      rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        @trace.push({ summary: "No such element found for #{selector}", level: :warn, timestamp: Time.now })
+        return nil
+      end
+    end
+
+    def click(element)
+      if element
+        @trace.push({ summary: "Clicking #{element_to_s(element)}", level: :info, timestamp: Time.now })
+        element.click()
+        sleep 2
+        wait_for_load()
+        sleep 2
+      else
+        @trace.push({ summary: "Tried to click an element which doesn't exist", level: :error, timestamp: Time.now })
+      end
+    end
+
+    def wait_for_load()
+      wait = Selenium::WebDriver::Wait.new(:timeout => 60) # seconds
+      count = 0
+      begin
+        wait.until do
+          state = driver.execute_script('var browserState = document.readyState; return browserState;')
+          puts state
+          state == "complete"
+        end
+      rescue Timeout::Error
+      end
     end
 
     def fill_in_textbox(element, data)

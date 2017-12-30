@@ -12,6 +12,8 @@ module SimpleLanguage
             params: [
              { name:         "data",
                description:  "Raw data for the image" },
+             { name:         "summary",
+               description:  "Description of the image" },
             ],
             returns: {
               name: "int",
@@ -43,10 +45,14 @@ module SimpleLanguage
         },
       }
     end
-    def save(data)
+
+    def save(data, summary)
+      ImageItem.save(data, summary)
     end
+
     def get(image_id)
     end
+
     def remove(image_id)
     end
   end

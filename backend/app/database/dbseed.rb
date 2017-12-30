@@ -136,9 +136,13 @@ search_box = chrome.element({:name 'q'})
 chrome.fill_in_textbox(search_box, 'Puppies')
 chrome.submit_form(search_box)
 raw_data = chrome.screenshot()
-image_id = image.save(raw_data, { tag: 'puppies' })
+image_id = image.save(raw_data, "Puppy Search Results")
+storage.save("Puppy Page", {
+  tag: 'puppies',
+  image_id: image_id
+})
 CODE
-      extensions: ["Chrome", "Image"]
+      extensions: ["Chrome", "Image", "Storage"]
     },
     {
       id: 'e4636472-d285-4934-bbc2-d1e350bc6491',

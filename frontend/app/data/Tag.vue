@@ -22,7 +22,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th></th>
+            <th style="width: 355px;"></th>
             <th>Item</th>
             <th></th>
           </tr>
@@ -30,16 +30,15 @@
         <tbody>
           <tr v-for="item in items">
             <td>
-              <a :href="'/api/data_item/'+item.key">
-                <span v-if="is_image_mime_type(item.preview_mime_type)">
-                  <img class="image_preview" :src="'/api/data_item_preview/'+item.key" alt="Preview Image" />
-                </span>
+              <a v-if="item.image_id" :href="'/api/images/'+item.image_id">
+                <img class="image_preview" :src="'/api/images/'+item.image_id+'/thumbnail'" :alt="item.summary" />
               </a>
             </td>
             <td>
-              <a :href="'/api/data_item/'+item.key">
+              <a v-if="item.key" :href="'/api/data_item/'+item.key">
                 <pre class="small">{{item.summary}}</pre>
               </a>
+              <pre  v-else class="small">{{item.summary}}</pre>
             </td>
             <td>
               <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
@@ -79,7 +78,7 @@ export default {
   created: function(){
     state.tags.current = this.$route.params.name
     fetch(`/api/tags/${state.tags.current}/`, {
-         credentials: 'include'
+      credentials: 'include'
     }).then((res)=>{
       if (res.ok){ return res.json() }
     }).then((items)=>{

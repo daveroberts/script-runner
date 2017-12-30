@@ -7,9 +7,9 @@
 .cm-s-js-like .CodeMirror-linenumber { color: #aaa; padding-left: 8px; }
 .cm-s-js-like .CodeMirror-cursor { border-left: 2px solid #222; }
 
-.cm-s-js-like .cm-keyword { color: #22A800; }
+.cm-s-js-like .cm-keyword { color: #6c00ff; }
 .cm-s-js-like .cm-atom { color: #000CFF; }
-.cm-s-js-like .cm-number { color: red; }
+.cm-s-js-like .cm-number { color: green; }
 .cm-s-js-like .cm-def { color: #8DA6CE; }
 .cm-s-js-like span.cm-variable-2, .cm-s-js-like span.cm-tag { color: #690; }
 .cm-s-js-like span.cm-variable-3, .cm-s-js-like span.cm-def, .cm-s-js-like span.cm-type { color: #07a; }
@@ -20,7 +20,7 @@
 
 .cm-s-js-like .cm-operator { color: #ff9300; }
 .cm-s-js-like .cm-comment { color:#777; font-weight:normal; font-style: italic; }
-.cm-s-js-like .cm-string { color:#6c00ff; }
+.cm-s-js-like .cm-string { color:red; }
 .cm-s-js-like .cm-string-2 { color:#e55400; } /*?*/
 .cm-s-js-like .cm-meta { color: #000; } /*?*/
 .cm-s-js-like .cm-builtin { color: #9B7536; } /*?*/

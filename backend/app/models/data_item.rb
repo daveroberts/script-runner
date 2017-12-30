@@ -14,7 +14,6 @@ class DataItem
     tags: nil,
     key: nil
   })
-    raise Exception, "tag or tags, choose one" if options[:tag] && options[:tags]
     key = options[:key] ? options[:key] : SecureRandom.uuid
     fields = {
       key: key,
@@ -25,6 +24,7 @@ class DataItem
     }
     result = DataMapper.insert("data_items", fields)
     if options[:tag] || options[:tags]
+      raise Exception, "tag or tags, choose one" if options[:tag] && options[:tags]
       tags = options[:tags] if options[:tags]
       tags = [options[:tag]] if options[:tag]
       tags.each do |tag|
@@ -40,31 +40,26 @@ class DataItem
     key
   end
 
-  def self.all(by={
-    tag: nil,
+  def self.by_tag(tag, by={
     within: nil
   })
     tags = nil
-    tags = by[:tags] if by[:tags]
-    tags = [by[:tag]] if by[:tag]
-    tags_clause = ""
-    tags_clause = "t.name IN (#{tags.map{|t|"'#{t}'"}.join(",")})" if tags
-    di_columns = DataItem.columns
-    di_columns.delete(:item)
-    sql = "SELECT
-  #{di_columns.map{|c|"di.`#{c}` as di_#{c}"}.join(",")},
-  #{Tag.columns.map{|c|"t.`#{c}` as t_#{c}"}.join(",")}
+    tags = tag if tag.class == Array
+    tags = [tag]
+sql = <<~SQL
+SELECT
+  image_id,
+  summary,
+  `key`,
+  di.created_at
 FROM data_items di
-  LEFT JOIN tags t on di.`key`=t.data_item_key
-WHERE 1 AND #{tags_clause}
-ORDER BY di.created_at DESC
-    "
-    DataMapper.select(sql, {
-      prefix: 'di',
-      has_many: [
-        { tags: { prefix: 't' } }
-      ]
-    })
+LEFT JOIN tags t on di.`key` = t.data_item_key
+WHERE
+  t.name IN (#{tags.map{|t|"'#{t}'"}.join(",")})
+ORDER BY t.created_at
+SQL
+    results = DataMapper.raw_select(sql)
+    results
   end
 
   def self.get(key)

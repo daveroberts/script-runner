@@ -87,16 +87,12 @@ module DBMigrations
       sql = "CREATE TABLE `tags` (
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
-        `data_item_key` VARCHAR(255),
-        `image_id` VARCHAR(255),
         `name` VARCHAR(255) NOT NULL,
+        `data_item_key` VARCHAR(255),
         `created_at` DATETIME NOT NULL,
         INDEX `id_index` (`id`),
-        INDEX `name_index` (`name`),
         INDEX `data_item_key_index` (`data_item_key`),
-        INDEX `name_data_item_key_index` (`name`,`data_item_key`),
-        INDEX `image_id_index` (`image_id`),
-        INDEX `name_image_id_index` (`name`,`image_id`),
+        INDEX `name_index` (`name`),
         INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)
@@ -135,12 +131,14 @@ module DBMigrations
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
         `data` LONGBLOB NOT NULL,
+        `summary` VARCHAR(255) NOT NULL,
         `full_image_id` VARCHAR(255),
         `x_resolution` INT NOT NULL,
         `y_resolution` INT NOT NULL,
         `created_at` DATETIME NOT NULL,
         INDEX `id_index` (`id`),
         INDEX `full_image_id_index` (`full_image_id`),
+        INDEX `summary_index` (`summary`),
         INDEX `resolution_index` (`x_resolution`, `y_resolution`),
         INDEX `created_at_index` (`created_at`)
       )"

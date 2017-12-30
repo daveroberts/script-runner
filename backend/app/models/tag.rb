@@ -1,7 +1,7 @@
 # manages tags in database
 class Tag
   def self.columns
-    [:id, :data_item_key, :name, :created_at]
+    [:id, :tagged_id, :tagged_type, :name, :created_at]
   end
 
   def self.names

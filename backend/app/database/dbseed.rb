@@ -151,7 +151,9 @@ CODE
       code: <<-CODE,
 chrome.go_to_url('https://www.gd.com')
 all_links = chrome.links()
-links = filter(all_links, (link)->{match(link, '^https:\/\/www\.gd\.com\/news\/press-releases\/.*$')})
+links = filter(all_links, (link)->{
+  match('^https://www.gd.com/news/press-releases/.*$', link)
+})
 pages_scraped = 0
 foreach link in links {
   if set.has('gd_urls_scraped', link) { next }
@@ -159,7 +161,7 @@ foreach link in links {
   made_it = chrome.go_to_url(link)
   if made_it == false { next }
   screenshot = chrome.screenshot()
-  image_id = image.save(raw_data, { tag: 'gd' })
+  image_id = image.save(screenshot, link)
   page = {
     url: link,
     html: chrome.html(),

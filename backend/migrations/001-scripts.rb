@@ -56,7 +56,7 @@ module DBMigrations
         `item` LONGBLOB NOT NULL,
         `summary` VARCHAR(2048) NOT NULL,
         `image_id` VARCHAR(255),
-        `locked_at` DATETIME NOT NULL,
+        `locked_at` DATETIME,
         `created_at` DATETIME NOT NULL,
         INDEX `id_index` (`id`),
         INDEX `queue_name_index` (`queue_name`),

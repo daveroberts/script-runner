@@ -30,15 +30,14 @@
         <tbody>
           <tr v-for="item in items">
             <td>
-              <a v-if="item.image_id" :href="'/api/images/'+item.image_id">
+              <a target="_blank" v-if="item.image_id" :href="'/api/images/'+item.image_id">
                 <img class="image_preview" :src="'/api/images/'+item.image_id+'/thumbnail'" :alt="item.summary" />
               </a>
             </td>
             <td>
-              <a v-if="item.key" :href="'/api/data_item/'+item.key">
-                <pre class="small">{{item.summary}}</pre>
+              <a target="_blank" :href="'/api/data_item/'+item.key">
+                <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
               </a>
-              <pre  v-else class="small">{{item.summary}}</pre>
             </td>
             <td>
               <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
@@ -54,6 +53,7 @@ import Vue from 'vue'
 import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
+import Helpers from '../helpers.js'
 export default {
   data: function(){
     return {
@@ -95,6 +95,7 @@ export default {
       console.log(err)
     })
   },
+  mixins: [Helpers],
   methods: {
     is_image_mime_type(mime_type){
       if (!mime_type){ return false }

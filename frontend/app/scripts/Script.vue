@@ -5,47 +5,26 @@
         <div class="left_panel">
           <h1 v-if="script.name">{{script.name}}</h1>
           <h1 v-else>Code</h1>
-          <div id="input_section" style="margin-bottom: 0.5em;">
+          <div id="input_section" style="margin-bottom: 0.25em;">
             <div>
               <a class="not_a_link" href="#" @click.prevent="show_input = !show_input">
+                <span>Script Test Input</span>
                 <span v-if="!show_input">
                   <i class="fa fa-caret-right" aria-hidden="true"></i>
                 </span>
                 <span v-else>
                   <i class="fa fa-caret-down" aria-hidden="true"></i>
                 </span>
-                <span>Libraries and Input</span>
               </a>
             </div>
             <div v-if="show_input" id="input_buttons_and_dials">
-              <div style="margin: 0.5em 0;">
-                <a class="extensions_toggle base" href="#" @click.prevent="toggle_extensions_pane()">
-                  <span v-if="!show_extensions"><i class="fa fa-caret-right" aria-hidden="true"></i> Select Libraries</span>
-                  <span v-else><i class="fa fa-caret-down" aria-hidden="true"></i> Hide Libraries</span>
-                </a>
+              <div style="margin: 0.25em 0;">
+                <select v-model="state.current.input.type">
+                  <option value="NONE">No input</option>
+                  <option value="MANUAL">Typed input</option>
+                  <option value="QUEUE">Pull input from queue</option>
+                </select>
               </div>
-              <div v-if="show_extensions">
-                <div v-if="!extensions">
-                  Loading...
-                </div>
-                <div v-else>
-                  <div style="margin: 0.5em" v-for="(class_info, klass) in extensions">
-                    <div class="fancy_checkbox">
-                      <input :id="'check_'+klass" type="checkbox" :value="klass" v-model="script.extensions" />
-                      <label :for="'check_'+klass"></label>
-                    </div>
-                    <label :for="'check_'+klass"><i :class="['fa', class_info.icon]" aria-hidden="true"></i> {{klass}}</label>
-                    <div v-if="script.extensions.indexOf(klass) > -1">
-                      <method-summary :methods="class_info.methods"></method-summary>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <select v-model="state.current.input.type">
-                <option value="NONE">No input</option>
-                <option value="MANUAL">Manual input</option>
-                <option value="QUEUE">Pull input from queue</option>
-              </select>
               <div v-if="state.current.input.type == 'MANUAL'">
                 <div class="code_editor">
                   <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
@@ -82,11 +61,15 @@
                 <span v-else>Show Run Details</span>
               </a-->
               <div v-if="show_run_details">
-                <div class="fancy_checkbox">
-                  <input id="show_run_details_debug" type="checkbox" v-model="show_run_details_debug" />
-                  <label for="show_run_details_debug"></label>
-                </div>
-                <label class="fancy_checkbox_label" for="show_run_details_debug">Include debug messages?</label>
+                <!--div>
+                  <div class="fancy_checkbox">
+                    <input id="show_run_details_debug" type="checkbox" v-model="show_run_details_debug" />
+                    <label for="show_run_details_debug"></label>
+                  </div>
+                  <label class="fancy_checkbox_label" for="show_run_details_debug">Show low level debug messages?</label>
+                </div-->
+                <input type="checkbox" name="show_run_details_switch" id="show_run_details_switch" v-model="show_run_details_debug">
+                <label class="small" for="show_run_details_switch">Show low level debug details</label>
                 <div class="debug_output" v-if="msg.level != 'debug' || show_run_details_debug" v-for="msg in state.current.trace.data">
                   {{msg.summary}}
                   <span v-if="msg.tables">
@@ -140,14 +123,14 @@
       <div v-if="script.id || save_for_later">
         <h2>
           <a href="#" style="text-decoration: none;" @click.prevent="show_script_details = !show_script_details">
+            <span><i class="fa fa-pencil" aria-hidden="true"></i> Edit Script</span>
             <span style="display: inline-block; width: 0.5em;" v-if="show_script_details"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
             <span style="display: inline-block; width: 0.5em;" v-else><i class="fa fa-caret-right" aria-hidden="true"></i></span>
-            <span><i class="fa fa-info-circle" aria-hidden="true"></i> Script Details</span>
           </a>
-        </h2>
+        </h2>        
         <form v-if="show_script_details" @submit.prevent="save()">
           <table>
-            <tbody>
+            <tbody class="form_section">
               <tr class="form_row">
                 <th :class="['form_label', errors.name?'error-form-label':'']">Name</th>
                 <td>
@@ -170,12 +153,39 @@
             </tbody>
             <tbody class="form_section">
               <tr class="form_row">
-                <th class="form_label">Every</th>
+                <th class="form_label">Run script on a timer</th>
                 <td>
-                  <span><input type="number" style="width: 4em;" v-model="script.every" /> minutes</span>
+                  <div class="onoffswitch">
+                    <input type="checkbox" name="trigger_cron_switch" class="onoffswitch-checkbox" id="trigger_cron_switch" v-model="script.trigger_cron">
+                    <label class="onoffswitch-label" for="trigger_cron_switch"></label>
+                  </div>
                 </td>
               </tr>
+              <tr v-if="script.trigger_cron" class="form_row">
+                <th class="form_label">Every</th>
+                <td>
+                  <span><input type="number" style="width: 4em;" v-model="script.cron_every" /> minutes</span>
+                </td>
+              </tr>
+              <tr class="form_row" v-if="script.trigger_cron">
+                <th class="form_label">Last Auto Run</th>
+                <td>
+                  <span v-if="script.cron_last_run">{{pretty_date(script.cron_last_run)}}</span>
+                  <span v-else>Script has never been triggered</span>
+                </td>
+              </tr>
+            </tbody>
+            <tbody class="form_section">
               <tr class="form_row">
+                <th class="form_label">Run script when item added to queue</th>
+                <td>
+                  <div class="onoffswitch">
+                    <input type="checkbox" name="trigger_queue_switch" class="onoffswitch-checkbox" id="trigger_queue_switch" v-model="script.trigger_queue">
+                    <label class="onoffswitch-label" for="trigger_queue_switch"></label>
+                  </div>
+                </td>
+              </tr>
+              <tr class="form_row" v-if="script.trigger_queue">
                 <th class="form_label">Queue Name</th>
                 <td>
                   <input type="text" v-model="script.queue_name" />
@@ -185,7 +195,18 @@
                 <th class="form_label"></th>
                 <td>Inspect <a target="_blank" :href="'/#/queues/'+script.queue_name">{{script.queue_name}}</a> queue</td>
               </tr>
+            </tbody>
+            <tbody class="form_section">
               <tr class="form_row">
+                <th class="form_label">Run script via HTTP</th>
+                <td>
+                  <div class="onoffswitch">
+                    <input type="checkbox" name="trigger_http_switch" class="onoffswitch-checkbox" id="trigger_http_switch" v-model="script.trigger_http">
+                    <label class="onoffswitch-label" for="trigger_http_switch"></label>
+                  </div>
+                </td>
+              </tr>
+              <tr class="form_row" v-if="script.trigger_http">
                 <th class="form_label">HTTP Method</th>
                 <td>
                   <select v-model="script.http_method">
@@ -194,16 +215,22 @@
                   
                 </td>
               </tr>
-              <tr class="form_row">
+              <tr class="form_row" v-if="script.trigger_http">
                 <th class="form_label">HTTP Endpoint</th>
                 <td>
                   <input type="text" v-model="script.http_endpoint" />
                 </td>
               </tr>
-              <tr class="form_row" v-if="script.type == 'HTTP'">
-                <th class="form_label">HTTP Content Type</th>
+              <tr class="form_row" v-if="script.trigger_http && script.http_method == 'POST'">
+                <th class="form_label">HTTP Request Content Type</th>
                 <td>
-                  <input type="text" v-model="script.http_content_type" />
+                  <input type="text" placeholder="application/json" v-model="script.http_request_content_type" />
+                </td>
+              </tr>
+              <tr class="form_row" v-if="script.trigger_http">
+                <th class="form_label">HTTP Response Content Type</th>
+                <td>
+                  <input type="text" placeholder="application/json" v-model="script.http_response_content_type" />
                 </td>
               </tr>
             </tbody>
@@ -220,7 +247,7 @@
       </div>
       <div v-if="script.code && runs && runs.length">
         <div v-if="!script.id && !save_for_later">
-          <button class="btn" @click="set_save_for_later()"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
+          <button class="btn" @click="save_for_later = true; show_script_details = true"><i class="fa fa-save" aria-hidden="true"></i> Save Script</button>
         </div>
       </div>
       <div v-if="script.id || (runs && runs.length)">
@@ -285,7 +312,7 @@ export default {
       orig_code: '',
       method_types: ['GET', 'POST'],
       show_extensions: false,
-      show_script_details: true,
+      show_script_details: false,
       running: false,
       editorOptions: {
         tabSize: 2,
@@ -350,7 +377,6 @@ export default {
   mixins: [Helpers],
   methods: {
     toggle_extensions_pane(){ this.show_extensions = !this.show_extensions },
-    set_save_for_later(){ this.save_for_later=true; },
     undo(){ state.current.script.code = this.orig_code },
     save(){
       var status = null
@@ -368,6 +394,7 @@ export default {
           state.current.script = data.script
           this.orig_code = state.current.script.code
           this.$router.replace(`/scripts/${state.current.script.id}`)
+          this.show_script_details = false
         } else if (status == 400){
           senate.flash(data.message, "warning")
           Vue.set(state.current, 'field_errors', data.field_errors)

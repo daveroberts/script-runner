@@ -6,8 +6,8 @@ a:visited{ color: darken(@background, 20%) }
 h1{ font-size: @font-size-xx-large; color: darken(@background, 20%); margin: 0.5em 0 0.5em; }
 h2{ font-size: @font-size-x-large; color: darken(@background, 20%); margin-top: 0.5em; margin-bottom: 0.5em;}
 h3{ font-size: @font-size-large; color: darken(@background, 20%); margin-top: 0.5em; margin-bottom: 0.5em;}
-input{ color: black; }
-input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 30em; }
+input{ color: black; outline: 0; }
+input[type="text"]{ border: 1px solid #999; height: 1.7em; }
 pre{ font-family: monospace; }
 
 .small{ font-size: @font-size-small; }
@@ -62,12 +62,14 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .mini_table > thead > tr > th{ text-align: left; font-weight: bold; }
 .mini_table > thead > tr { border-bottom: 0.10em solid #ccc; }
 
-.form_row{ color: @font-color; height: 2.5em; font-size: @font-size-normal; }
-.form_row th, .form_row td{ vertical-align: middle; font-size: @font-size-normal; }
-.form_row input{ font-size: @font-size-normal; }
-.form_input{ font-size: @font-size-normal; }
-.form_label{ min-width: 15em; padding-right: 1em; text-align: right }
-.form_section { }
+.form_row{ color: @font-color; height: 2.5em; }
+.form_row th, .form_row td{ vertical-align: middle; padding: 0.25em 0.5em; }
+.form_row input{ font-size: @font-size-normal; padding: 0.25em; }
+.form_input{ font-size: @font-size-normal; width: 30em; }
+.form_label{ min-width: 15em; padding-right: 1em; text-align: right; }
+.form_section { border-width: 1px 0; border-style: solid; border-color: #DDD; }
+.form_section:before{ content: ''; display: block; height: 1em; }
+.form_section:after{ content: ''; display: block; height: 1em; }
 .form_section .form_row{ height: 2em; }
 
 .fancy_checkbox{ width: 16px; height: 16px; margin-right: 5px; position: relative; display: inline-block; }
@@ -129,3 +131,13 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .md_radio, .md_radio:before, .md_radio:after { box-sizing: border-box; }
 .md_radio input[type="radio"], .md_radio input[type="radio"]:before, .md_radio input[type="radio"]:after { box-sizing: border-box; }
 .md_radio label, .md_radio label:before, .md_radio label:after { box-sizing: border-box; }
+
+@switch_width: 3em;
+@switch_height: 1.25em;
+.onoffswitch { position: relative; width: @switch_width; -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none; }
+.onoffswitch-checkbox { display: none; }
+.onoffswitch-label { display: block; overflow: hidden; cursor: pointer; height: @switch_height; padding: 0; line-height: @switch_height; border: 0.1em solid #FFFFFF; border-radius: @switch_height; background-color: #9E9E9E; transition: background-color 0.2s ease-in; }
+.onoffswitch-label:before { content: ""; display: block; width: @switch_height; margin: 0; background: #FFFFFF; position: absolute; top: 0; bottom: 0; right: (@switch_width - @switch_height); border: 0.1em solid #9E9E9E; border-radius: @switch_height; transition: all 0.2s ease-in 0s; }
+.onoffswitch-checkbox:checked + .onoffswitch-label { background-color: @base; }
+.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before { border-color: @base; }
+.onoffswitch-checkbox:checked + .onoffswitch-label:before { right: 0; }

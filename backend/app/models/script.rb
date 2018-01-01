@@ -14,7 +14,7 @@ class Script
   @@traces = {}
 
   def self.columns
-    [:id, :name, :category, :description, :default_input, :extensions, :code, :active, :every, :queue_name, :http_endpoint, :http_method, :http_request_accept, :http_response_content_type, :created_at]
+    [:id, :name, :category, :description, :default_input, :code, :trigger_cron, :cron_every, :cron_last_run, :cron_locked_at, :trigger_queue, :queue_name, :trigger_http, :http_method, :http_endpoint, :http_request_content_type, :http_response_content_type, :created_at]
   end
 
   def self.all
@@ -30,9 +30,6 @@ ORDER BY s.`name`"
       has_many: [
       ]
     })
-    rows.each do |r|
-      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions], symbolize_names: true):[]
-    end
     rows
   end
 
@@ -46,9 +43,6 @@ WHERE s.queue_name = ?"
       has_many: [
       ]
     }, name)
-    rows.each do |r|
-      r[:extensions] = r[:extensions]?JSON.parse(r[:extensions], symbolize_names: true):[]
-    end
     rows
   end
 
@@ -64,7 +58,6 @@ WHERE s.id = ?
       ]
     }, id).first
     return nil if !row
-    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions], symbolize_names: true):[]
     row
   end
 
@@ -79,7 +72,6 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       ]
     }, [endpoint, method]).first
     return nil if !row
-    row[:extensions] = row[:extensions]?JSON.parse(row[:extensions], symbolize_names: true):[]
     row
   end
 
@@ -115,10 +107,11 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       category:                   script[:category],
       description:                script[:description],
       default_input:              script[:default_input],
-      extensions:                 script[:extensions].to_json,
       code:                       script[:code],
       active:                     script[:active],
-      every:                      script[:every],
+      cron_every:                 script[:cron_every],
+      cron_last_run:              script[:cron_last_run],
+      cron_locked_at:             script[:cron_locked_at],
       queue_name:                 script[:queue_name],
       http_endpoint:              script[:http_endpoint],
       http_method:                script[:http_method],
@@ -155,14 +148,14 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     @@traces[trace_id.to_i]
   end
 
-  def self.run_code(code, input = nil, extensions = [], trace_id = nil, script_id=nil)
+  def self.run_code(code, input = nil, trace_id = nil, script_id=nil)
     trace = nil
     if trace_id
       @@traces[trace_id] = []
       trace = @@traces[trace_id]
     end
     executor = SimpleLanguage::Executor.new
-    extensions.each do |class_string|
+    Extension.all.keys.each do |class_string|
       clazz = Object.const_get("SimpleLanguage::#{class_string}")
       o = clazz.new(trace)
       #methods = clazz.instance_methods - Object.instance_methods
@@ -184,7 +177,6 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     end
     script_run = {
       script_id: script_id,
-      extensions: extensions,
       input: input,
       code: code,
       output: output,

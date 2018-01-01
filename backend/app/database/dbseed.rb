@@ -14,6 +14,7 @@ class DBSeed
 numbers = [2,4,6,8,10]
 map(numbers, (x)->{ x*x })
 CODE
+     trigger_http: true,
       http_endpoint: "simple",
       http_method: "GET",
       http_request_accept: nil,
@@ -28,8 +29,8 @@ number = random(1,10)
 queue.add('numbers', number)
 number
 CODE
-      every: 1,
-      extensions: ['Queue']
+      trigger_cron: true,
+      cron_every: 1,
     },
     {
       id: '17c79465-9dc5-45bb-9894-c4553ca06b15',
@@ -42,6 +43,7 @@ number = input()
 number = square(number)
 number
 CODE
+      trigger_queue: true,
       queue_name: 'numbers'
     },
     {
@@ -60,7 +62,6 @@ set.add('alert_emails','somebody_else@example.com')
 dictionary.add('countries', 'IND', {id: '4097ce38-4369-49b6-8521-f7ed2cbe8802', code: 'IND', name: 'India'})
 "Data Stored"
 CODE
-      extensions: ["Storage","Set","Dictionary"]
     },
     {
        id: '0b2d252d-77de-48a4-992d-b094a4b7ae56',
@@ -80,7 +81,6 @@ foreach report_key in report_keys {
   hot_topics: set.all('hot_topics')
 }
 CODE
-      extensions: ["Storage","Set","Dictionary"]
     },
     {
       id: 'ec1259c1-c7f4-450c-9037-188eeff597e2',
@@ -124,7 +124,6 @@ while counter != 0 {
 }
 join(['Was: ', high_value, ' Counter ended at: ',counter])
 CODE
-      extensions: ["Queue"]
     },
     {
       id: '54ef5a07-a515-4bfb-8113-f1daf7810648',
@@ -146,7 +145,6 @@ foreach topic in hot_topics {
   })
 }
 CODE
-      extensions: ["Chrome", "Image", "Storage", "Set"]
     },
     {
       id: 'e4636472-d285-4934-bbc2-d1e350bc6491',
@@ -178,7 +176,6 @@ foreach link in links {
 }
 pages_scraped
 CODE
-      extensions: ["Chrome", "Set", "Image", "Storage", "Queue"]
     },
     {
       id: '7fd0301f-c011-4e37-a5a5-02361ad15bbc',
@@ -202,7 +199,7 @@ page = {
 storage.save(page, { tag: 'gd_pages_processed', summary: page[:title] })
 queue.add('gd_pages_processed', page, { summary: page[:title] })
 CODE
-      extensions: ["Nokogiri", "Storage", "Queue"],
+      trigger_queue: true,
       queue_name: 'gd_pages_raw'
     },
     {
@@ -242,7 +239,7 @@ email.send(
 )
 hot_topics
 CODE
-      extensions: ["Email", "Set", "Storage"],
+      trigger_queue: true,
       queue_name: "gd_pages_processed"
     }
   ]
@@ -268,17 +265,13 @@ CODE
   def self.seed
     puts 'Seeding database'
     @scripts.each do |script|
-      extensions = script[:extensions].to_json
-      extensions = [].to_json if !script[:extensions]
       values = {
         id: script[:id],
         name: script[:name],
         category: script[:category],
         description: "Sample description",
         default_input: script[:default_input],
-        extensions: extensions,
         code: script[:code],
-        active: true,
         created_at: DateTime.now
       }
       DataMapper.insert("scripts", values)

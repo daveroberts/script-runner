@@ -29,13 +29,22 @@ const initial_state = {
     script: {
       id: null,
       name: "",
+      category: "",
       description: "",
       default_input: null,
-      extensions: [],
       code: "",
-      active: true,
+      trigger_cron: false,
+      cron_every: 0,
+      cron_last_run: null,
+      cron_locked_at: null,
+      trigger_queue: false,
+      queue_name: "",
+      trigger_http: false,
+      http_method: 'GET',
+      http_endpoint: '',
+      http_request_content_type: '',
+      http_response_content_type: '',
       created_at: null,
-      triggers: []
     },
     runs: null,
     field_errors: {},
@@ -49,19 +58,7 @@ const initial_state = {
       queue: ""
     },
   },
-  list: null,
-  blank: {
-    trigger: {
-      script_id: null,
-      type: 'CRON',
-      active: true,
-      every: 10,
-      queue_name: '',
-      http_endpoint: '',
-      http_method: 'GET',
-      created_at: null
-    }
-  }
+  list: null
 }
 
 export default initial_state

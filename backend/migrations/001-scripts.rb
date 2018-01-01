@@ -12,23 +12,28 @@ module DBMigrations
         `category` VARCHAR(255),
         `description` VARCHAR(255),
         `default_input` LONGTEXT,
-        `extensions` TEXT,
         `code` LONGTEXT,
-        `active` BOOLEAN NOT NULL,
-        `every` INTEGER,
+        `trigger_cron` BOOLEAN NOT NULL DEFAULT false,
+        `cron_every` INTEGER,
+        `cron_last_run` DATETIME,
+        `cron_locked_at` DATETIME,
+        `trigger_queue` BOOLEAN NOT NULL DEFAULT false,
         `queue_name` VARCHAR(255),
-        `http_endpoint` VARCHAR(255),
+        `trigger_http` BOOLEAN NOT NULL DEFAULT false,
         `http_method` VARCHAR(255),
-        `http_request_accept` VARCHAR(255),
-        `http_response_content_type` VARCHAR(255),
+        `http_endpoint` VARCHAR(255),
+        `http_request_content_type` VARCHAR(255) DEFAULT 'application/json',
+        `http_response_content_type` VARCHAR(255) DEFAULT 'application/json',
         `created_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
         UNIQUE KEY `name` (`name`),
         INDEX `name_index` (`name`),
-        INDEX `every_index` (`every`),
+        INDEX `trigger_cron_index` (`trigger_cron`),
+        INDEX `trigger_queue_index` (`trigger_queue`),
+        INDEX `trigger_http_index` (`trigger_http`),
         INDEX `queue_name_index` (`queue_name`),
-        INDEX `active_index` (`active`),
+        INDEX `next_cron_index` (`trigger_cron`,`cron_last_run`,`cron_locked_at`),
         INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)
@@ -37,7 +42,6 @@ module DBMigrations
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255),
         `input` LONGBLOB,
-        `extensions` TEXT,
         `code` LONGTEXT,
         `output` LONGBLOB,
         `error` TEXT,
@@ -65,9 +69,8 @@ module DBMigrations
         INDEX `state_index` (`state`),
         INDEX `queue_name_state_index` (`queue_name`, `state`),
         INDEX `queue_name_created_at_index` (`queue_name`, `created_at`),
-        INDEX `queue_name_locked_at_index` (`queue_name`, `locked_at`),
         INDEX `created_at_index` (`created_at`),
-        INDEX `locked_at_index` (`locked_at`)
+        INDEX `next_queue_item_index` (`state`,`locked_at`)
       )"
       db.query(sql)
       sql = "CREATE TABLE `data_items` (

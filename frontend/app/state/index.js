@@ -19,5 +19,4 @@ export const close_alert = (id) => {
   if (idx > -1){ state.alerts.splice(idx, 1) }
 }
 
-export const new_script = () => JSON.parse(JSON.stringify(initial.blank.script))
-export const new_trigger = () => JSON.parse(JSON.stringify(initial.blank.trigger))
+export const new_script = () => JSON.parse(JSON.stringify(initial.current.script))

@@ -5,6 +5,7 @@ replace the word extensions with libraries
 Do something with category on scripts
 test input, not just JSON?
 click images on basic browsing examples
+trim off beginning slash on http endpoint on save
 show snake case in helpers
 increment operator
 duplicate detection

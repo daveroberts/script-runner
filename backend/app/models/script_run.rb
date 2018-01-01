@@ -4,7 +4,7 @@ require './app/database/database.rb'
 class ScriptRun
 
   def self.columns
-    [:id, :script_id, :input, :extensions, :code, :output, :error, :run_at]
+    [:id, :script_id, :input, :code, :output, :error, :run_at]
   end
 
   def self.add(script_run)
@@ -18,8 +18,6 @@ class ScriptRun
     self.columns.each do |col|
       if col == :output
         fields[:output] = script_run[:output].to_json
-      elsif col == :extensions
-        fields[:extensions] = script_run[:extensions].to_json
       else
         fields[col] = script_run[col]
       end
@@ -49,7 +47,6 @@ LIMIT ?
     rows.each do |row|
       script_run = row
       script_run[:output] = JSON.parse(row[:output], symbolize_names: true)
-      script_run[:extensions] = JSON.parse(row[:extensions], symbolize_names: true)
       script_runs.push(script_run)
     end
     return script_runs

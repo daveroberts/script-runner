@@ -15,7 +15,7 @@
         <tr>
           <td><a :href="'/#/scripts/'+script.id" @click="select(script)" class="script_link">{{script.name}}</a></td>
           <td>
-            <span v-if="script.every">every {{script.every}} minutes</span>
+            <span v-if="script.cron_every">every {{script.cron_every}} minutes</span>
             <span v-if="script.queue_name">queue `{{script.queue_name}}`</span>
             <span v-if="script.http_method">HTTP endpoint: {{script.http_method}} `{{script.http_endpoint}}`</span>
           </td>

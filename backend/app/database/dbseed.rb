@@ -131,19 +131,22 @@ CODE
       name: '08 - Basic Browsing',
       category: 'web',
       code: <<-CODE,
-chrome.go_to_url('https://duckduckgo.com')
-search_box = chrome.element({:name 'q'})
-chrome.fill_in_textbox(search_box, 'Puppies')
-chrome.submit_form(search_box)
-chrome.click(chrome.element({link_text: 'Images'}))
-raw_data = chrome.screenshot()
-image_id = image.save(raw_data, "Puppy Search Results")
-storage.save("Puppy Page", {
-  tag: 'puppies',
+hot_topics = set.all('hot_topics')
+foreach topic in hot_topics {
+  chrome.go_to_url('https://duckduckgo.com')
+  search_box = chrome.element({:name 'q'})
+  chrome.fill_in_textbox(search_box, topic)
+  chrome.submit_form(search_box)
+  chrome.click(chrome.element({link_text: 'Images'}))
+  raw_data = chrome.screenshot()
+  image_id = image.save(raw_data, topic)
+  storage.save(topic + " Images", {
+  tag: topic,
   image_id: image_id
-})
+  })
+}
 CODE
-      extensions: ["Chrome", "Image", "Storage"]
+      extensions: ["Chrome", "Image", "Storage", "Set"]
     },
     {
       id: 'e4636472-d285-4934-bbc2-d1e350bc6491',
@@ -259,7 +262,7 @@ CODE
     { id: '35fbcda8-169e-4f6c-99c5-ba37790e6feb', name: 'alert_emails', value: 'dave.a.roberts@gmail.com' },
     { id: '8bf81b0b-2714-4fec-ada7-986f5af15a3d', name: 'alert_emails', value: 'bob@example.com' },
     { id: '56498833-3beb-49f1-ae3d-20aa4375cada', name: 'hot_topics', value: 'navy' },
-    { id: 'bb24aa77-2cee-4282-b196-c57bdd73fbde', name: 'hot_topics', value: 'contract' },
+    { id: 'bb24aa77-2cee-4282-b196-c57bdd73fbde', name: 'hot_topics', value: 'puppies' },
     { id: 'e78851e2-cc72-4bc8-8c84-6883c534d56b', name: 'hot_topics', value: 'awarded' },
   ]
   def self.seed

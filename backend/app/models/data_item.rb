@@ -55,7 +55,7 @@ FROM data_items di
 LEFT JOIN tags t on di.`key` = t.data_item_key
 WHERE
   t.name IN (#{tags.map{|t|"'#{t}'"}.join(",")})
-ORDER BY t.created_at
+ORDER BY t.created_at DESC
 SQL
     results = DataMapper.raw_select(sql)
     results

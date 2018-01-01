@@ -27,7 +27,7 @@ module SimpleLanguage
       }
     end
 
-    def initialize(trace)
+    def initialize(trace=[])
       @sftp = nil
       @trace = trace
     end

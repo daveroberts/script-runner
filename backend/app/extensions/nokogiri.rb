@@ -96,7 +96,7 @@ module SimpleLanguage
       }
     end
 
-    def initialize(trace)
+    def initialize(trace=[])
       @trace = trace
     end
 

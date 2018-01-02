@@ -45,6 +45,7 @@ module DBMigrations
         `code` LONGTEXT,
         `output` LONGBLOB,
         `error` TEXT,
+        `seconds_running` INTEGER NOT NULL,
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),

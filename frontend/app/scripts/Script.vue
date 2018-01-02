@@ -107,7 +107,7 @@
                   </span>
                   <div v-if="msg.show_image">
                     <a target="_blank" :href="'/api/images/'+msg.image_id">
-                      <img class="image_preview" :src="'/api/images/'+msg.image_id+'/thumbnail'" :alt="thumbnail" />
+                      <img class="image_preview" :src="'/api/images/'+msg.image_id+'/thumbnail'" alt="thumbnail" />
                     </a>
                   </div>
                 </div>
@@ -260,12 +260,13 @@
             <thead>
               <tr>
                 <th>Output</th>
+                <th>Runtime (seconds)</th>
                 <th style="text-align: right;">Run</th>
               </tr>
             </thead>
             <tbody v-if="runs.length == 0">
               <tr>
-                <td colspan="2" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
+                <td colspan="3" style="text-align: center; font-style: italic; padding: 1em;">Script has not yet been run</td>
               </tr>
             </tbody>
             <tbody v-else>
@@ -274,6 +275,7 @@
                   <pre class="json" v-if="run.output != null" v-html="syntax_highlight(run.output)"></pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
                 </td>
+                <td>{{run.seconds_running}}</td>
                 <td style="text-align: right;" class="small">{{pretty_date(run.run_at)}}</td>
               </tr>
             </tbody>

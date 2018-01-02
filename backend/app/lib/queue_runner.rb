@@ -3,7 +3,7 @@ class QueueRunner
     loop do
       item = QueueItem.next
       if !item
-        puts "#{Time.now} No queue items found for processing"
+        puts "#{Time.now} No more queue items found for processing"
         puts "#{Time.now} Sleeping for 60 seconds"
         sleep 1*60
         next
@@ -14,10 +14,10 @@ class QueueRunner
       script_run = Script.run_code(script[:code], item[:item], nil, script[:id])
       if script_run[:error]
         result = QueueItem.error_processing(item[:id])
-        puts "#{Time.now} Finished with error. script_run_id #{script_run[:id]} item: #{item[:id]}"
+        puts "#{Time.now} Finished with error. script: #{script[:id]} script_run_id #{script_run[:id]} item: #{item[:id]} running time (seconds): #{script_run[:seconds_running]}"
       else
         result = QueueItem.finish_processing(item[:id])
-        puts "#{Time.now} Finished without error. script_run_id #{script_run[:id]} item: #{item[:id]}"
+        puts "#{Time.now} Finished without error. script: #{script[:id]} script_run_id #{script_run[:id]} item: #{item[:id]} running time (seconds): #{script_run[:seconds_running]}"
       end
     end
   end

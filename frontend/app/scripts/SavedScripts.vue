@@ -8,7 +8,7 @@
           <th>Name</th>
           <th>Triggered</th>
           <th style="text-align: center;">Active</th>
-          <th>Last Run</th>
+          <th>Last Run <a href="#" @click.prevent="refresh_last_run_times()"><i class="fa fa-refresh" aria-hidden="true"></i></a></th>
         </tr>
       </thead>
       <tbody class="script" v-for="script in scripts">
@@ -32,26 +32,34 @@
 <script>
 import initial from '../state/initial.js'
 import state from '../state/state.js'
+import * as senate from '../state'
 import Helpers from '../helpers.js'
+const loadScripts = () => {
+  return new Promise((resolve, reject)=>{
+    fetch(`/api/scripts/`, {
+      credentials: 'include'
+    }).then((res)=>{
+      if (res.ok){ return res.json() }
+    }).then((scripts)=>{
+      state.list = scripts
+      resolve()
+    }).catch((err)=>{
+      console.log(err)
+      reject()
+    })
+  })
+}
 export default {
   data: function(){
     return {
-      state: state,
+      state: state
     }
   },
   computed: {
     scripts(){ return state.list }
   },
   created: function(){
-    fetch(`/api/scripts/`, {
-         credentials: 'include'
-    }).then((res)=>{
-      if (res.ok){ return res.json() }
-    }).then((scripts)=>{
-      state.list = scripts
-    }).catch((err)=>{
-      console.log(err)
-    })
+    loadScripts()
   },
   mixins: [Helpers],
   methods: {
@@ -61,6 +69,11 @@ export default {
     },
     new_script(){
       state.current = JSON.parse(JSON.stringify(initial.current))
+    },
+    refresh_last_run_times(){
+      loadScripts()
+        .then(() => senate.flash("Refreshed"))
+        .catch(err => senate.flash("Could not refresh", "warning"))
     }
   }
 }

@@ -218,6 +218,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     end
     output = nil
     error = nil
+    t0 = Time.now
     begin
       output = executor.run(code, input, trace)
     #rescue SimpleLanguage::NullPointer => e
@@ -226,11 +227,13 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       #raise e
       error = "#{e.class.to_s} #{e.to_s}"
     end
+    t1 = Time.now
     script_run = {
       script_id: script_id,
       input: input,
       code: code,
       output: output,
+      seconds_running: (t1-t0).to_i,
       error: error,
       run_at: Time.now
     }

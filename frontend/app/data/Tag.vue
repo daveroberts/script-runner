@@ -22,24 +22,26 @@
       <table class="table">
         <thead>
           <tr>
-            <th style="width: 355px;"></th>
-            <th>Item</th>
+            <th colspan="3">Item</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in items">
+            <td style="width: 1.5em;">
+              <a target="_blank" :href="'/api/data_item/'+item.key">
+                <i class="fa fa-file-text-o"></i>
+              </a>
+            </td>
             <td>
+              <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
+            </td>
+            <td style="width: 355px;">
               <a target="_blank" v-if="item.image_id" :href="'/api/images/'+item.image_id">
                 <img class="image_preview" :src="'/api/images/'+item.image_id+'/thumbnail'" :alt="item.summary" />
               </a>
             </td>
-            <td>
-              <a target="_blank" :href="'/api/data_item/'+item.key">
-                <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
-              </a>
-            </td>
-            <td>
+            <td style="width: 1.5em;">
               <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
             </td>
           </tr>
@@ -85,7 +87,7 @@ export default {
       if (state.tags.data == null){ state.tags.data = [] }
       var idx = state.tags.data.findIndex(t=> t.name == state.tags.current )
       if (idx == -1){
-        state.tags.data.push({name: state.tags.current, items: items})
+        state.tags.data.push({name: state.tags.current, total: 0, items: items})
       } else {
         var tag = state.tags.data[idx]
         tag.items = items

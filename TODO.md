@@ -1,4 +1,5 @@
 add all token types to token_to_s
+totals on all data explorer names
 add queue item id back to script runs to show errors on queue vue
 combo box on queue name inputs
 live update / refresh button on queue monitoring page

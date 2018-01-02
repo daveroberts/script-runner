@@ -6,7 +6,14 @@ class Tag
 
   def self.names
     sql = "SELECT DISTINCT t.name FROM tags t ORDER BY t.name ASC"
+    sql = "
+SELECT
+  t.name,
+  count(t.id) as total
+FROM tags t
+GROUP BY t.name
+ORDER BY t.name
+"
     tags = DataMapper.raw_select(sql)
-    tags.map{|t|t[:name]}
   end
 end

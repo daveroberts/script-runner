@@ -5,9 +5,14 @@
     <div v-if="!tags">
       Loading...
     </div>
-    <div v-else v-for="data in tags" class="collection">
-      <a :href="'/#/tags/'+data.name" class="collection_item">{{data.name}}</a>
-    </div>
+    <table v-else class="collection mini_table">
+      <tbody>
+        <tr v-for="tag in tags">
+          <td>{{tag.total}}</td>
+          <td><a :href="'/tags/'+tag.name">{{tag.name}}</a></td>
+        </tr>
+      </tbody>
+    </table>
     <h2><i class="fa fa-list-ol" aria-hidden="true"></i> Queues</h2>
     <div v-if="!queues">
       Loading...
@@ -55,8 +60,13 @@ export default {
     }).then((tags)=>{
       if (state.tags.data == null){ state.tags.data = [] }
       tags.forEach(tag =>{
-        var idx = state.tags.data.findIndex(t=>t.name==tag)
-        if (idx == -1){ state.tags.data.push({name: tag, items: null}) }
+        var idx = state.tags.data.findIndex(t=>t.name==tag.name)
+        if (idx == -1){ state.tags.data.push({name: tag.name, total: tag.total, items: null}) }
+        else {
+          var entry = state.tags.data[idx]
+          entry.total = tag.total
+          Vue.set(state.tags.data, idx, entry)
+        }
       })
     }).catch((err)=>{
       console.log(err)
@@ -107,7 +117,5 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../styles/variables.less';
-.collection{ text-indent: 1.5em; padding: 0.3em; }
-.collection_item{ text-decoration: none; font-size: @font-size-normal; }
-.collection_item:hover{ text-decoration: underline; }
+.collection{ margin-left: 1.5em; }
 </style>

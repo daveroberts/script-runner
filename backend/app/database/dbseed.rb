@@ -41,6 +41,7 @@ CODE
 square = (x) -> {x*x}
 number = input()
 number = square(number)
+storage.save(number, {tag: 'squares'})
 number
 CODE
       trigger_queue: true,

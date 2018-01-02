@@ -17,11 +17,22 @@ pre{ font-family: monospace; }
 .success{ color: @success }
 .base{ color: @base; }
 
-.nav-bar{ background-color: @background; color: @color; line-height: 2em; }
-.nav-item{ color: @color !important; text-decoration: none; display: inline-block; padding: 0 1em; border-right: 0.15em solid white; }
+// Light Menu
+@nav_bg: white;
+@nav_fg: @base;
+@nav_hl: #ffd381;
+// Dark Menu
+//@nav_bg: @base;
+//@nav_fg: white;
+//@nav_hl: #e19200;
+
+@nav_border: 0.1em solid @nav_fg;
+@nav_font_size: @font-size-large;
+.nav-bar{ background-color: @nav_bg; color: @nav_fg; line-height: 2em; border-bottom: @nav_border; margin-bottom: 1em; font-size: @nav_font_size; }
+.nav-item{ color: @nav_fg !important; text-decoration: none; display: inline-block; padding: 0 1em; border-right: @nav_border; margin: 0; }
 .nav-item:focus{ outline: none; }
-a.nav-item:hover{ background-color: darken(@background, 10%); }
-.nav-item-right{ float: right; border-right: none; border-left: 0.15em solid white; }
+a.nav-item:hover{ background-color: @nav_hl; }
+.nav-item-right{ float: right; border-right: none; border-left: @nav_border; }
 
 #alerts{ position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; z-index: 9999; }
 .alert{ opacity: 0; visibility: hidden; transition: visibility 0s linear 0.5s, opacity 0.5s linear; text-align: left; padding: 1em;  margin: 0; font-size: @font-size-large; font-weight: bold; border-top-width: 3px; border-style: solid; }
@@ -57,12 +68,15 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .not_a_link{ text-decoration: none; }
 
 .table{ width: 100%; }
-.table > thead { color: @base; font-size: @font-size-large; border-bottom: 2px solid @base; }
+.table > thead { color: @base; font-size: @font-size-large; }
+.table > thead > tr { border-bottom: 2px solid @base; }
 .table th { padding: 0.4em 0 0.2em 0; text-align: left; }
 .table td { padding: 0.7em 0 0.2em 0; font-size: @font-size-normal; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
 .mini_table > thead > tr > th{ text-align: left; font-weight: bold; }
+.mini_table > thead > tr > th:last-child, .mini_table > tbody > tr > th:last-child{ text-align: right; }
 .mini_table > thead > tr { border-bottom: 0.10em solid #ccc; }
+.mini_table > thead > tr > td, .mini_table > tbody > tr > td { padding: 0.3em; }
 
 .form_row{ color: @font-color; height: 2.5em; }
 .form_row th, .form_row td{ vertical-align: middle; padding: 0.25em 0.5em; }
@@ -143,3 +157,9 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .onoffswitch-checkbox:checked + .onoffswitch-label { background-color: @base; }
 .onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before { border-color: @base; }
 .onoffswitch-checkbox:checked + .onoffswitch-label:before { right: 0; }
+
+.tooltip { position: relative; }
+.tooltip .tooltiptext { opacity: 0; transition: opacity 0.3s; visibility: hidden; background-color: darken(@base, 20%); color: white; text-align: center; border-radius: 6px; padding: 0.7em; position: absolute; top: 0; z-index: 9999; min-width: 10em; pointer-events: none;  }
+.tooltip .tooltiptext-left{ right: 100%; top: 50%; margin-top: -50%; }
+.tooltip .tooltiptext-bottom{ top: 100%; transform: translateY(0.3em); left: 0; min-width: 25em; }
+.tooltip:hover .tooltiptext{ visibility: visible; opacity: 0.92; }

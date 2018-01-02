@@ -54,8 +54,8 @@
         </div>
         <div class="right_panel">
           <div>
-            <div>
-              <h1>Run Details</h1>
+            <div v-if="state.current.trace.data">
+              <h1>Current run details</h1>
               <!--a href="#" @click.prevent="show_run_details = !show_run_details">
                 <span v-if="show_run_details">Hide Run Details</span>
                 <span v-else>Show Run Details</span>
@@ -114,7 +114,7 @@
               </div>
             </div>
             <div v-if="last_run">
-              <h1>Output</h1>
+              <h1>Last Run Output</h1>
               <pre class="json" v-if="last_run.output != null" v-html="syntax_highlight(last_run.output)"></pre>
               <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
             </div>
@@ -258,12 +258,12 @@
           Loading...
         </div>
         <div v-else>
-          <table class="table">
+          <table class="table script_run_table">
             <thead>
               <tr>
+                <th>Timestamp</th>
+                <th>Runtime</th>
                 <th>Output</th>
-                <th>Runtime (seconds)</th>
-                <th style="text-align: right;">Run</th>
               </tr>
             </thead>
             <tbody v-if="runs.length == 0">
@@ -272,13 +272,19 @@
               </tr>
             </tbody>
             <tbody v-else>
-              <tr v-for="run in runs">
+              <tr v-for="run in runs" :class="run.error?'run_row_error':''">
+                <td style="width: 14em;" class="small">{{pretty_date(run.run_at)}}</td>
+                <td style="width: 7em;">
+                  <span class="tooltip">
+                    <span v-if="run.milliseconds_running > 1000">{{run.milliseconds_running / 1000}}s</span>
+                    <span v-else>&lt;1s</span>
+                    <span class="tooltiptext tooltiptext-bottom">{{run.milliseconds_running}}ms</span>
+                  </span>
+                </td>
                 <td style="font-size: 10pt;">
                   <pre class="json" v-if="run.output != null" v-html="syntax_highlight(run.output)"></pre>
                   <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
                 </td>
-                <td>{{run.seconds_running}}</td>
-                <td style="text-align: right;" class="small">{{pretty_date(run.run_at)}}</td>
               </tr>
             </tbody>
           </table>
@@ -481,4 +487,7 @@ export default {
 .extensions_toggle{ text-decoration: none; }
 .left_panel{ width: 60%; box-sizing: border-box; padding-right: 0.5em; float: left; }
 .right_panel{ width: 40%; box-sizing: border-box; padding-left: 0.5em; float: left; }
+.script_run_table > tbody > tr > td{ padding: 0.5em; }
+.run_row_error{ background-color: #ffdada; border: 1px solid red; }
+.run_row_error > td{ border-top: 1px solid red; } /* To override the bottom border from row above */
 </style>

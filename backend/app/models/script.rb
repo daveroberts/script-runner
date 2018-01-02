@@ -240,7 +240,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       success: success,
       error: error,
       error_stack_trace: stack_trace,
-      seconds_running: (t1-t0).to_i,
+      milliseconds_running: (1000*(t1-t0)).to_i,
       run_at: Time.now
     }
     ScriptRun.add(script_run)

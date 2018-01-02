@@ -47,7 +47,7 @@ module DBMigrations
         `success` BOOLEAN NOT NULL,
         `error` TEXT,
         `error_stack_trace` TEXT,
-        `seconds_running` INTEGER NOT NULL,
+        `milliseconds_running` INTEGER NOT NULL,
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),

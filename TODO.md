@@ -1,4 +1,6 @@
 add all token types to token_to_s
+some way to analyze then interact with the data, what to do for failures, etc.
+hadoop?  oh boy
 totals on all data explorer names
 add queue item id back to script runs to show errors on queue vue
 combo box on queue name inputs

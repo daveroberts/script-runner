@@ -219,6 +219,7 @@ module SimpleLanguage
 
     def driver
       return @wd if @wd
+      @trace.push({ summary: "Starting Chrome", level: :info, timestamp: Time.now })
       options = Selenium::WebDriver::Chrome::Options.new(args: ['headless'])
       @wd = Selenium::WebDriver.for(:chrome, options: options)
       @wd.manage.window.resize_to(1920, 1080)

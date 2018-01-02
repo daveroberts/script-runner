@@ -13,6 +13,7 @@ class DataMapper
   def self.update(table, values)
     stmt = nil
     sql = "UPDATE #{table} SET #{values.keys.map{|key|"`#{key}`=?"}.join(",")} WHERE id = ?"
+    puts sql
     DB.use do |db|
       stmt = db.prepare(sql)
       stmt.execute(*values.values, values[:id])

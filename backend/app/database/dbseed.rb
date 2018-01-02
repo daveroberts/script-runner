@@ -272,6 +272,15 @@ CODE
         description: "Sample description",
         default_input: script[:default_input],
         code: script[:code],
+        trigger_cron: script[:trigger_cron]||false,
+        cron_every: script[:cron_every],
+        trigger_queue: script[:trigger_queue]||false,
+        queue_name: script[:queue_name],
+        trigger_http: script[:trigger_http]||false,
+        http_method: script[:http_method],
+        http_endpoint: script[:http_endpoint],
+        http_request_content_type: script[:http_request_content_type],
+        http_response_content_type: script[:http_response_content_type],
         created_at: DateTime.now
       }
       DataMapper.insert("scripts", values)

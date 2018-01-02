@@ -43,7 +43,56 @@ WHERE s.queue_name = ?"
       has_many: [
       ]
     }, name)
-    rows
+    return nil if rows.length == 0
+    rows.first
+  end
+
+  def self.next_cron_script
+    script_ids = Script.overdue_cron_script_ids
+    script_ids.each do |script_id|
+      locked = Script.lock_cron_script(script_id)
+      next if !locked
+      return Script.find(script_id)
+    end
+    return nil
+  end
+
+  def self.mark_cron_as_run(script_id)
+    sql = "UPDATE scripts SET cron_last_run=NOW(), cron_locked_at=NULL WHERE id=? AND cron_locked_at IS NOT NULL"
+    stmt = nil
+    results = nil
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      results = stmt.execute(script_id)
+      return db.affected_rows
+    end
+  end
+
+  def self.overdue_cron_script_ids
+    sql = "
+SELECT
+  s.id
+FROM scripts s
+WHERE
+  s.trigger_cron = TRUE AND
+  s.cron_locked_at IS NULL AND
+  (s.cron_last_run IS NULL OR
+   (s.cron_last_run + INTERVAL s.cron_every MINUTE) < NOW())
+ORDER BY s.cron_last_run
+"
+    rows = DataMapper.raw_select(sql)
+    rows.map{|r|r[:id]}
+  end
+
+  def self.lock_cron_script(script_id)
+    sql = "UPDATE scripts SET cron_locked_at=NOW() WHERE id=? AND cron_locked_at IS NULL"
+    stmt = nil
+    results = nil
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      results = stmt.execute(script_id)
+      return db.affected_rows
+    end
   end
 
   def self.find(id)
@@ -108,16 +157,18 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       description:                script[:description],
       default_input:              script[:default_input],
       code:                       script[:code],
-      active:                     script[:active],
+      trigger_cron:               script[:trigger_cron],
       cron_every:                 script[:cron_every],
-      cron_last_run:              script[:cron_last_run],
-      cron_locked_at:             script[:cron_locked_at],
+      cron_last_run:              script[:cron_last_run]?Time.new(script[:cron_last_run]):nil,
+      cron_locked_at:             script[:cron_locked_at]?Time.new(script[:cron_locked_at]):nil,
+      trigger_queue:              script[:trigger_queue],
       queue_name:                 script[:queue_name],
-      http_endpoint:              script[:http_endpoint],
+      trigger_http:               script[:trigger_http],
       http_method:                script[:http_method],
-      http_request_accept:        script[:http_request_accept],
+      http_endpoint:              script[:http_endpoint],
+      http_request_content_type:  script[:http_request_content_type],
       http_response_content_type: script[:http_response_content_type],
-      created_at:                 Time.new(script[:created_at])
+      created_at:                 script[:created_at]?Time.new(script[:created_at]):nil
     }
   end
 
@@ -149,7 +200,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
   end
 
   def self.run_code(code, input = nil, trace_id = nil, script_id=nil)
-    trace = nil
+    trace = []
     if trace_id
       @@traces[trace_id] = []
       trace = @@traces[trace_id]

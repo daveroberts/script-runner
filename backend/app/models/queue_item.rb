@@ -33,8 +33,9 @@ class QueueItem
     DataMapper.update("queue_items", {id: id, state: 'NEW'})
   end
 
+  # Locks the next item ready for processing
   def self.next(queue_name = nil)
-    item_ids = QueueItem.new_item_ids(queue_name)
+    item_ids = QueueItem.items_ready_for_processing(queue_name)
     item_ids.each do |item_id|
       locked = QueueItem.lock_for_processing(item_id)
       next if !locked
@@ -44,14 +45,28 @@ class QueueItem
   end
 
   def self.process(queue_item_id)
-    xyzzy
+    sql = "UPDATE queue_items SET state='DONE', locked_at=NULL WHERE id=? AND locked_at IS NOT NULL"
+    stmt = nil
+    results = nil
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      results = stmt.execute(id)
+      return db.affected_rows
+    end
   end
 
-  def self.new_item_ids(queue_name = nil)
+  def self.items_ready_for_processing(queue_name = nil)
     queue_clause = queue_name ? "AND qi.queue_name = ?" : ""
     variables = []
     variables.push(queue_name) if queue_name
-    sql = "SELECT id FROM queue_items WHERE state='NEW' #{queue_clause} ORDER BY created_at ASC"
+    sql = "
+SELECT
+  qi.id
+FROM queue_items qi
+  LEFT JOIN scripts s on s.trigger_queue=TRUE AND s.queue_name=qi.queue_name
+WHERE
+  qi.state='NEW' #{queue_clause}
+ORDER BY qi.created_at ASC"
     ids = DataMapper.raw_select(sql, variables)
     return ids.map{|row|row[:id]}
   end
@@ -68,7 +83,7 @@ SELECT
   s.`id` as s_id,
   s.name as s_name
 FROM queue_items qi
-  LEFT JOIN scripts s on qi.queue_name=s.queue_name AND s.active=true
+  LEFT JOIN scripts s on qi.queue_name=s.queue_name
 WHERE qi.queue_name = ?
 ORDER BY qi.created_at DESC"
     items = DataMapper.select(sql, { prefix: 'qi', has_many: [
@@ -86,7 +101,7 @@ SELECT
   #{QueueItem.columns.map{|c|"qi.`#{c}` as qi_#{c}"}.join(",")},
   #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM queue_items qi
-  LEFT JOIN scripts s on qi.queue_name=s.queue_name AND s.active=true
+  LEFT JOIN scripts s on qi.queue_name=s.queue_name
 WHERE qi.id = ?
 ORDER BY qi.created_at DESC"
     item = DataMapper.select(sql, { prefix: 'qi', has_one: [
@@ -116,8 +131,19 @@ ORDER BY qi.created_at DESC"
     end
   end
 
+  def self.error_processing(id)
+    sql = "UPDATE queue_items SET state='ERROR', locked_at=NULL WHERE state='PROCESSING' AND id=?"
+    stmt = nil
+    results = nil
+    DB.use do |db|
+      stmt = db.prepare(sql)
+      results = stmt.execute(id)
+      return db.affected_rows
+    end
+  end
+
   def self.finish_processing(id)
-    sql = "UPDATE queue_items SET state='DONE' WHERE state='PROCESSING' AND id=?"
+    sql = "UPDATE queue_items SET state='DONE', locked_at=NULL WHERE state='PROCESSING' AND id=?"
     stmt = nil
     results = nil
     DB.use do |db|

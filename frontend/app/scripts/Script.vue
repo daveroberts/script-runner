@@ -147,7 +147,7 @@
               <tr class="form_row">
                 <th class="form_label">Description</th>
                 <td>
-                  <input type="text" v-model="script.description" />
+                  <textarea style="width: 100%; box-sizing: border-box;" v-model="script.description"></textarea>
                 </td>
               </tr>
             </tbody>

@@ -1,3 +1,5 @@
+combo box on queue name inputs
+better error capturing.  Capture stack
 implement http
   add http accept param
 send input from queue

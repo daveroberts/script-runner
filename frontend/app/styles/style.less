@@ -73,10 +73,13 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .table th { padding: 0.4em 0 0.2em 0; text-align: left; }
 .table td { padding: 0.7em 0 0.2em 0; font-size: @font-size-normal; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
-.mini_table > thead > tr > th{ text-align: left; font-weight: bold; }
+.mini_table > thead > tr > th{ text-align: left; font-weight: bold; padding: 0.3em; }
 .mini_table > thead > tr > th:last-child, .mini_table > tbody > tr > th:last-child{ text-align: right; }
-.mini_table > thead > tr { border-bottom: 0.10em solid #ccc; }
+.mini_table > thead > tr { border-bottom: 0.10em solid #bbb; }
+.mini_table > tbody > tr { border-bottom: 0.10em solid #eee; }
 .mini_table > thead > tr > td, .mini_table > tbody > tr > td { padding: 0.3em; }
+.mini_table a{ text-decoration: none; }
+.mini_table a:hover{ text-decoration: underline; }
 
 .form_row{ color: @font-color; height: 2.5em; }
 .form_row th, .form_row td{ vertical-align: middle; padding: 0.25em 0.5em; }

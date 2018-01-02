@@ -115,9 +115,22 @@ ORDER BY qi.created_at DESC"
   end
 
   def self.names
-    sql = "SELECT DISTINCT qi.queue_name FROM queue_items qi ORDER BY qi.queue_name ASC"
-    queues = DataMapper.raw_select(sql)
-    queues.map{|q|q[:queue_name]}
+    sql ="
+SELECT
+  qi.queue_name,
+  qi.state,
+  count(qi.id) as total
+FROM queue_items qi
+GROUP BY qi.queue_name, qi.state
+ORDER BY qi.queue_name ASC
+"
+    rows = DataMapper.raw_select(sql)
+    queues = {}
+    rows.each do |row|
+      queues[row[:queue_name]] = {} if !queues.has_key?(row[:queue_name])
+      queues[row[:queue_name]][row[:state]] = row[:total]
+    end
+    queues
   end
 
   def self.lock_for_processing(id)

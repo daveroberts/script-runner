@@ -6,10 +6,16 @@
       Loading...
     </div>
     <table v-else class="collection mini_table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Total</th>
+        </tr>
+      </thead>
       <tbody>
         <tr v-for="tag in tags">
+          <td><a :href="'/#/tags/'+tag.name">{{tag.name}}</a></td>
           <td>{{tag.total}}</td>
-          <td><a :href="'/tags/'+tag.name">{{tag.name}}</a></td>
         </tr>
       </tbody>
     </table>
@@ -17,8 +23,26 @@
     <div v-if="!queues">
       Loading...
     </div>
-    <div v-else v-for="data in queues" class="collection">
-      <a :href="'/#/queues/'+data.name" class="collection_item">{{data.name}}</a>
+    <table v-else class="collection mini_table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Processed</th>
+          <th>Waiting</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="info in queues">
+          <td><a :href="'/#/queues/'+info.name" class="collection_item">{{info.name}}</a></td>
+          <td>{{info.counts.DONE||0}}</td>
+          <td>{{info.counts.NEW||0}}</td>
+          <td>{{info.counts.ERROR||0}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-else v-for="info in queues" class="collection">
+      
     </div>
     <h2><i class="fa fa-object-group" aria-hidden="true"></i> Sets</h2>
     <div v-if="!sets">
@@ -103,9 +127,15 @@ export default {
       if (res.ok){ return res.json() }
     }).then((queues)=>{
       if (state.queues.data == null){ state.queues.data = [] }
-      queues.forEach(queue =>{
+      Object.keys(queues).forEach( queue =>{
+        var info = queues[queue]
         var idx = state.queues.data.findIndex(q=>q.name==queue)
-        if (idx == -1){ state.queues.data.push({name: queue, scripts: null, items: null}) }
+        if (idx == -1){ state.queues.data.push({name: queue, counts: info, scripts: null, items: null}) }
+        else {
+          var entry = state.queues.data[idx]
+          entry.counts = info
+          Vue.set(state.queues.data, idx, entry)
+        }
       })
     }).catch((err)=>{
       console.log(err)

@@ -102,7 +102,7 @@ export default {
       if (state.queues.data == null){ state.queues.data = [] }
       var idx = state.queues.data.findIndex(q=> q.name == state.queues.current )
       if (idx == -1){
-        state.queues.data.push({name: state.queues.current, script: null, items: items})
+        state.queues.data.push({name: state.queues.current, counts: null, script: null, items: items})
       } else {
         var queue = state.queues.data[idx]
         queue.items = items

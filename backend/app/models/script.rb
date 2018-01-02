@@ -218,14 +218,18 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     end
     output = nil
     error = nil
+    stack_trace = nil
     t0 = Time.now
+    success = false
     begin
       output = executor.run(code, input, trace)
+      success = true
     #rescue SimpleLanguage::NullPointer => e
     # catch all execptions like this for now
     rescue Exception => e
       #raise e
       error = "#{e.class.to_s} #{e.to_s}"
+      stack_trace = e.backtrace.join("\n")
     end
     t1 = Time.now
     script_run = {
@@ -233,8 +237,10 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       input: input,
       code: code,
       output: output,
-      seconds_running: (t1-t0).to_i,
+      success: success,
       error: error,
+      error_stack_trace: stack_trace,
+      seconds_running: (t1-t0).to_i,
       run_at: Time.now
     }
     ScriptRun.add(script_run)

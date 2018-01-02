@@ -183,16 +183,16 @@ CODE
       category: 'web',
       code: <<-CODE,
 raw_page = input()
-doc = nokogiri.document_from_html(raw_page[:html])
-title = nokogiri.text_from_css(doc, '.pane-node-title > h1:nth-child(1)')
-date = nokogiri.text_from_css(doc, '.view-mode-full > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)')
-body = text_from_css(doc, '.field-name-body > div:nth-child(1) > div:nth-child(1)')
+doc = source_parser.document_from_html(raw_page[:html])
+title = source_parser.text_from_css(doc, '.pane-node-title > h1:nth-child(1)')
+date = source_parser.text_from_css(doc, '.view-mode-full > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)')
+body = source_parser.text_from_css(doc, '.field-name-body > div:nth-child(1) > div:nth-child(1)')
 scraped_date = raw_page[:scraped_at]
 url = raw_page[:url]
 page = {
   url: url,
   title: title,
-  article_date date,
+  article_date: date,
   scraped_date: scraped_date,
   body: body
 }
@@ -234,7 +234,7 @@ report = {
 storage.save(report, { tags: hot_topics })
 email.send(
   set.all('alert_emails'),
-  "ALERT: Article flagged: " + page[:title]
+  "ALERT: Article flagged: " + page[:title],
   page[:title] + " contains " + hot_topics.join(", ")
 )
 hot_topics

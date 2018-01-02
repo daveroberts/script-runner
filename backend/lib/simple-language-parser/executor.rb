@@ -43,8 +43,8 @@ module SimpleLanguage
     def run(script, input = nil, trace = [])
       @input = input
       @trace = trace
-      tokens = SimpleLanguage::lex(script)
-      ast = SimpleLanguage::parse(tokens)
+      tokens = Tokenizer.lex(script)
+      ast = Parser.parse(tokens)
       begin
         run_block(ast, {})
       rescue Return => ret
@@ -69,7 +69,7 @@ module SimpleLanguage
           if command[:to][:chains].length == 0
             variables[command[:to][:value]] = value
             if value && value.class == Hash && value.has_key?(:type)
-              @trace.push({ summary: "Assigning #{cmd_to_s(value)} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              @trace.push({ summary: "Assigning #{Executor.cmd_to_s(value)} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
             else
               if value.class != String || value.valid_encoding?
                 @trace.push({ summary: "Assigning #{value} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
@@ -201,11 +201,11 @@ module SimpleLanguage
         command[:true_conditions].each do |cond|
           predicate = exec_cmd(cond[:condition], variables)
           if predicate
-            @trace.push({ summary: "If condition true: #{cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
+            @trace.push({ summary: "If condition true: #{Executor.cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
             return run_block(cond[:block], variables)
             break
           else
-            @trace.push({ summary: "If condition false: #{cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
+            @trace.push({ summary: "If condition false: #{Executor.cmd_to_s(cond[:condition])}", level: :debug, timestamp: Time.now })
           end
         end
         @trace.push({ summary: "If matched no conditions, running false block", level: :debug, timestamp: Time.now })
@@ -477,7 +477,7 @@ module SimpleLanguage
       return @external[:values][name]
     end
 
-    def cmd_to_s(cmd)
+    def self.cmd_to_s(cmd)
       if cmd[:type] == :check_equality
         return "#{cmd_to_s(cmd[:left])} == #{cmd_to_s(cmd[:right])}"
       elsif cmd[:type] == :function
@@ -504,6 +504,10 @@ module SimpleLanguage
         return "true"
       elsif cmd[:type] == :false
         return "false"
+      elsif cmd[:type] == :identifier
+        return cmd[:value]
+      elsif cmd[:type] == :null
+        return "null"
       else
         binding.pry
       end

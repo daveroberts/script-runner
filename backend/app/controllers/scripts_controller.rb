@@ -10,7 +10,7 @@ class App < Sinatra::Application
     return Script.find(params[:id]).to_json
   end
 
-  get "/queue/:name/scripts/?" do
+  get "/queue/:name/script/?" do
     return Script.for_queue(params[:name]).to_json
   end
 

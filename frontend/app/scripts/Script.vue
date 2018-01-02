@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="right_panel">
-          <div v-if="last_run">
+          <div>
             <div>
               <h1>Run Details</h1>
               <!--a href="#" @click.prevent="show_run_details = !show_run_details">
@@ -113,9 +113,11 @@
                 </div>
               </div>
             </div>
-            <h1>Output</h1>
-            <pre class="json" v-if="last_run.output != null" v-html="syntax_highlight(last_run.output)"></pre>
-            <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
+            <div v-if="last_run">
+              <h1>Output</h1>
+              <pre class="json" v-if="last_run.output != null" v-html="syntax_highlight(last_run.output)"></pre>
+              <pre class="monospace error" v-if="last_run.error">{{last_run.error}}</pre>
+            </div>
           </div>
         </div>
         <div style="clear: both;"></div>

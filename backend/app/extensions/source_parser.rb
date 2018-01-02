@@ -1,7 +1,7 @@
 require 'nokogiri'
 
 module SimpleLanguage
-  class Nokogiri
+  class SourceParser
     def self._info
       {
         icon: "fa-html5",

@@ -44,12 +44,15 @@ module DBMigrations
         `input` LONGBLOB,
         `code` LONGTEXT,
         `output` LONGBLOB,
+        `success` BOOLEAN NOT NULL,
         `error` TEXT,
+        `error_stack_trace` TEXT,
         `seconds_running` INTEGER NOT NULL,
         `run_at` DATETIME NOT NULL,
         UNIQUE KEY `id` (`id`),
         INDEX `id_index` (`id`),
         INDEX `script_id_index` (`script_id`),
+        INDEX `success_index` (`success`),
         INDEX `run_at_index` (`run_at`)
       )"
       db.query(sql)

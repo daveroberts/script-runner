@@ -1,4 +1,10 @@
 combo box on queue name inputs
+live update / refresh button on queue monitoring page
+refresh button on last run for saved scripts page
+log cron runner and queue runner to file
+script run store duration.  show duration and script ID in logs
+multi-threading the runners
+benchmarking performance on one and multiple nodes
 better error capturing.  Capture stack
 implement http
   add http accept param

@@ -112,7 +112,15 @@ module SimpleLanguage
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
         @trace.push({ summary: "Adding #{left} and #{right}", level: :debug, timestamp: Time.now })
-        return left + right
+        begin
+          return left + right
+        rescue TypeError => e
+          if e.to_s.include?("no implicit conversion of Integer into String")
+            return left.to_s + right.to_s
+          else
+            raise e
+          end
+        end
       elsif command[:type] == :subtract
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)

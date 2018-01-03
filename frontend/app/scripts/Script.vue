@@ -5,26 +5,17 @@
         <div class="left_panel">
           <h1 v-if="script.name">{{script.name}}</h1>
           <h1 v-else>Code</h1>
-          <div id="input_section" style="margin-bottom: 0.25em;">
-            <div>
-              <a class="not_a_link" href="#" @click.prevent="show_input = !show_input">
-                <span>Script Test Input</span>
-                <span v-if="!show_input">
-                  <i class="fa fa-caret-right" aria-hidden="true"></i>
-                </span>
-                <span v-else>
-                  <i class="fa fa-caret-down" aria-hidden="true"></i>
-                </span>
-              </a>
-            </div>
-            <div v-if="show_input" id="input_buttons_and_dials">
-              <div style="margin: 0.25em 0;">
-                <select v-model="state.current.input.type">
-                  <option value="NONE">No input</option>
-                  <option value="MANUAL">Typed input</option>
-                  <option value="QUEUE">Pull input from queue</option>
-                </select>
+          <div v-if="script.code.indexOf('input()') != -1" id="input_section" style="margin-bottom: 2em;">
+            <h2>Test Input</h2>
+            <div id="input_buttons_and_dials">
+              <div class="md_radio">
+                <input type="radio" id="manual_input" value="MANUAL" v-model="state.current.input.type">
+                <label for="manual_input">Direct input below</label>
               </div>
+              <div class="md_radio">
+                <input type="radio" id="queue_input" value="QUEUE" v-model="state.current.input.type">
+                <label for="queue_input">Pull input from a queue</label>
+             </div>
               <div v-if="state.current.input.type == 'MANUAL'">
                 <div class="code_editor">
                   <codemirror v-model="state.current.input.payload" :options="editorOptions"></codemirror>
@@ -316,7 +307,6 @@ export default {
   data: function(){
     return {
       state: state,
-      show_input: false,
       show_run_details: true,
       show_run_details_debug: false,
       save_for_later: false,
@@ -352,9 +342,9 @@ export default {
       state.current = JSON.parse(JSON.stringify(initial.current))
     }
     if (state.current.script.default_input){
-      state.current.input.type = 'MANUAL'
       state.current.input.payload = state.current.script.default_input
     }
+    if (state.current.script.queue_name) { state.current.input.queue = state.current.script.queue_name }
     if (state.current.script.code){ this.orig_code = state.current.script.code }
     if (!state.current.script || (state.current.script.id != this.$route.params.id) && this.$route.params.id != 'new') {
       state.current = JSON.parse(JSON.stringify(initial.current))
@@ -431,14 +421,15 @@ export default {
     },
     run(){
       var input = null
-      if (state.current.input.type == 'MANUAL'){
-        input = state.current.input.payload
-      }
+      var queue = null
+      if (state.current.input.type == 'MANUAL'){ input = state.current.input.payload }
+      else if (state.current.input.type == 'QUEUE'){ queue = state.current.input.queue }
       state.current.trace.id = Math.floor(Math.random() * 999999)
       state.current.trace.data = null
       var payload = {
         code: state.current.script.code,
         input: input,
+        queue: queue,
         extensions: state.current.script.extensions,
         trace_id: state.current.trace.id,
         script_id: state.current.script.id
@@ -450,7 +441,7 @@ export default {
         fetch(`/api/traces/${state.current.trace.id}`, {
           credentials: "include"
         }).then(res => {
-          return res.json()
+          if (res.ok){ return res.json() }
         }).then(trace_data => {
           state.current.trace.data = trace_data
         }).catch(err => {
@@ -465,16 +456,19 @@ export default {
       }).then(res => {
         this.running = false
         state.loading = false
-        return res.json()
-      }).then(output => {
-        state.current.runs.unshift(output)
-        if (output.error) {
-          senate.flash("Script produced an error", "danger")
-        }
         // wait 2 seconds, then stop grabbing updates
         setTimeout(() => {
           clearInterval(get_traces_timer)
         }, 2000)
+        if (res.status == 204) { senate.flash("No items ready to process in queue", "warning") }
+        else if (res.ok){ return res.json() }
+      }).then(output => {
+        if (output){
+          state.current.runs.unshift(output)
+          if (output.error) {
+            senate.flash("Script produced an error", "danger")
+          }
+        }
       }).catch(err => {
         console.log(err)
         this.running = false

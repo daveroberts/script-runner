@@ -25,7 +25,7 @@ CODE
       name: '04 - Numbers - Generate',
       category: 'queue_example',
       code: <<-CODE,
-number = random(1,10)
+number = random(1,20)
 queue.add('numbers', number)
 number
 CODE

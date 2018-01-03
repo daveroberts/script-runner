@@ -13,7 +13,7 @@ class CronRunner
       if script_run[:error]
         puts "#{Time.now} Finished with error. script: #{script[:id]} script_run_id #{script_run[:id]} running time (seconds): #{script_run[:seconds_running]}"
       else
-        puts "#{Time.now} Finished without error. script: #{script[:id]} script_run_id #{script_run[:id]} running time (seconds): #{script_run[:seconds_running]}"
+        puts "#{Time.now} Finished successfully. script: #{script[:id]} script_run_id #{script_run[:id]} running time (seconds): #{script_run[:seconds_running]}"
       end
       Script.mark_cron_as_run(script[:id])
     end

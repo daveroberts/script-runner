@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1><i class="fa fa-list-ol" aria-hidden="true"></i> Queue: {{queue}}</h1>
+    <h1><i class="fa fa-list-ol" aria-hidden="true"></i> Queue: {{queue}} <a href="#" @click.prevent="refresh()"><i class="fa fa-refresh" aria-hidden="true"></i></a></h1>
     <div v-bind:class="['modal', modal.show ? 'modal_show' : '']">
       <div class="modal_inner">
         <div class="modal_titlebar">
@@ -65,6 +65,29 @@ import state from '../state/state.js'
 import * as senate from '../state'
 import initial from '../state/initial.js'
 import Helpers from '../helpers.js'
+const loadQueueItems = () => {
+  return new Promise((resolve, reject) => {
+    fetch(`/api/queues/${state.queues.current}`, {
+         credentials: 'include'
+    }).then( res => {
+      if (res.ok){ return res.json() }
+    }).then( items => {
+      if (state.queues.data == null){ state.queues.data = [] }
+      var idx = state.queues.data.findIndex(q => q.name == state.queues.current )
+      if (idx == -1){
+        state.queues.data.push({name: state.queues.current, counts: null, script: null, items: items})
+      } else {
+        var queue = state.queues.data[idx]
+        queue.items = items
+        Vue.set(state.queues.data, idx, queue)
+      }
+      resolve()
+    }).catch( err => {
+      console.log(err)
+      reject()
+    })
+  })
+}
 export default {
   data: function(){
     return {
@@ -74,7 +97,8 @@ export default {
         title: "Delete Item",
         text: "Are you sure you want to delete this item?"
       },
-      doomed_item: null
+      doomed_item: null,
+      refresh_timer: null
     }
   },
   computed: {
@@ -94,25 +118,12 @@ export default {
   },
   created: function(){
     state.queues.current = this.$route.params.name
-    fetch(`/api/queues/${state.queues.current}`, {
-         credentials: 'include'
-    }).then((res)=>{
-      if (res.ok){ return res.json() }
-    }).then((items)=>{
-      if (state.queues.data == null){ state.queues.data = [] }
-      var idx = state.queues.data.findIndex(q=> q.name == state.queues.current )
-      if (idx == -1){
-        state.queues.data.push({name: state.queues.current, counts: null, script: null, items: items})
-      } else {
-        var queue = state.queues.data[idx]
-        queue.items = items
-        Vue.set(state.queues.data, idx, queue)
-      }
+    loadQueueItems().then( () => {
       fetch(`/api/queue/${state.queues.current}/script/`, {
-         credentials: 'include'
-    }).then(res=>{
+        credentials: 'include'
+      }).then( res => {
         if (res.ok){ return res.json() }
-      }).then(script=>{
+      }).then( script => {
         var idx = state.queues.data.findIndex(q=> q.name == state.queues.current )
         if (idx == -1){ return }
         var queue = state.queues.data[idx]
@@ -121,12 +132,17 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
-    }).catch((err)=>{
-      console.log(err)
     })
+    this.refresh_timer = setInterval(loadQueueItems, 5000)
+  },
+  beforeDestroy: function(){
+    if (this.refresh_timer){ clearInterval(this.refresh_timer) }
   },
   mixins: [Helpers],
   methods: {
+    refresh(){
+      loadQueueItems().then(() => { senate.flash("Refreshed") })
+    },
     select(script){
       state.current = JSON.parse(JSON.stringify(initial.current))
       state.current.script = script

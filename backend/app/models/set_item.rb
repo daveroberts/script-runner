@@ -44,9 +44,21 @@ WHERE si.name = ? AND si.value=?"
   end
 
   def self.names
-    sql = "SELECT DISTINCT s.name FROM set_items s ORDER BY s.name ASC"
-    sets = DataMapper.raw_select(sql)
-    sets.map{|s|s[:name]}
+    sql = "
+SELECT
+  si.name,
+  count(si.id) as total
+FROM set_items si
+GROUP BY si.name
+ORDER BY si.name ASC
+"
+    row = DataMapper.raw_select(sql)
+    sets = {}
+    rows = DataMapper.raw_select(sql)
+    rows.each do |row|
+      sets[row[:name]] = row[:total]
+    end
+    sets
   end
 
 end

@@ -518,7 +518,7 @@ module SimpleLanguage
     end
     
     def self.token_to_s(cmd)
-      if cmd[:type] == :identifier
+      if cmd.has_key?(:value)
         return "`#{cmd[:value]}`"
       else
         binding.pry

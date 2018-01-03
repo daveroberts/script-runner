@@ -74,7 +74,7 @@ export default {
       }
       var idx = state.dictionaries.data.findIndex(d=> d.name == state.dictionaries.current )
       if (idx == -1){
-        state.dictionaries.data.push({name: state.dictionaries.current, items: items})
+        state.dictionaries.data.push({name: state.dictionaries.current, total: null, items: items})
       } else {
         var dict = state.dictionaries.data[idx]
         dict.items = items

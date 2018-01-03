@@ -34,30 +34,49 @@
       </thead>
       <tbody>
         <tr v-for="info in queues">
-          <td><a :href="'/#/queues/'+info.name" class="collection_item">{{info.name}}</a></td>
+          <td><a :href="'/#/queues/'+info.name">{{info.name}}</a></td>
           <td>{{info.counts.DONE||0}}</td>
           <td>{{info.counts.NEW||0}}</td>
           <td>{{info.counts.ERROR||0}}</td>
         </tr>
       </tbody>
     </table>
-    <div v-else v-for="info in queues" class="collection">
-      
-    </div>
     <h2><i class="fa fa-object-group" aria-hidden="true"></i> Sets</h2>
     <div v-if="!sets">
       Loading...
     </div>
-    <div v-else v-for="data in sets" class="collection">
-      <a :href="'/#/sets/'+data.name" class="collection_item">{{data.name}}</a>
-    </div>
+    <table v-else class="collection mini_table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="info in sets">
+          <td><a :href="'/#/sets/'+info.name">{{info.name}}</a></td>
+          <td>{{info.total||0}}</td>
+        </tr>
+      </tbody>
+    </table>
     <h2><i class="fa fa-key" aria-hidden="true"></i> Dictionaries</h2>
     <div v-if="!dictionaries">
       Loading...
     </div>
-    <div v-else v-for="data in dictionaries" class="collection">
-      <a :href="'/#/dictionaries/'+data.name" class="collection_item">{{data.name}}</a>
-    </div>
+    <table v-else class="collection mini_table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="info in dictionaries">
+          <td><a :href="'/#/dictionaries/'+info.name">{{info.name}}</a></td>
+          <td>{{info.total||0}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 <script>
@@ -99,11 +118,17 @@ export default {
          credentials: 'include'
     }).then((res)=>{
       if (res.ok){ return res.json() }
-    }).then((sets)=>{
+    }).then( sets => {
       if (state.sets.data == null){ state.sets.data = [] }
-      sets.forEach(set =>{
+      Object.keys(sets).forEach( set =>{
+        var total = sets[set]
         var idx = state.sets.data.findIndex(s=>s.name==set)
-        if (idx == -1){ state.sets.data.push({name: set, items: null}) }
+        if (idx == -1){ state.sets.data.push({name: set, total: total, items: null}) }
+        else {
+          var entry = state.sets.data[idx]
+          entry.total = total
+          Vue.set(state.sets.data, idx, entry)
+        }
       })
     }).catch((err)=>{
       console.log(err)
@@ -115,8 +140,13 @@ export default {
     }).then((dictionaries)=>{
       if (state.dictionaries.data == null){ state.dictionaries.data = [] }
       dictionaries.forEach(dictionary =>{
-        var idx = state.dictionaries.data.findIndex(d=>d.name==dictionary)
-        if (idx == -1){ state.dictionaries.data.push({name: dictionary, items: null}) }
+        var idx = state.dictionaries.data.findIndex(d=>d.name==dictionary.name)
+        if (idx == -1){ state.dictionaries.data.push({name: dictionary.name, total: dictionary.total, items: null}) }
+        else{
+          var entry = state.dictionaries.data[idx]
+          entry.total = total
+          Vue.set(state.dictionaries.data, idx, entry)
+        }
       })
     }).catch((err)=>{
       console.log(err)

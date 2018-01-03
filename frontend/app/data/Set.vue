@@ -120,7 +120,7 @@ export default {
       if (state.sets.data == null){ state.sets.data = [] }
       var idx = state.sets.data.findIndex(set=> set.name == state.sets.current )
       if (idx == -1){
-        state.sets.data.push({name: state.sets.current, items: items})
+        state.sets.data.push({name: state.sets.current, total: null, items: items})
       } else {
         var set = state.sets.data[idx]
         set.items = items

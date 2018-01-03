@@ -40,6 +40,18 @@ WHERE di.`name`=? AND di.`key` = ?"
     dictionaries.map{|d|d[:name]}
   end
 
+  def self.names
+    sql = "
+SELECT
+  di.name,
+  count(di.id) as total
+FROM dictionary_items di
+GROUP BY di.name
+ORDER BY di.name ASC
+"
+    dictionaries = DataMapper.raw_select(sql)
+  end
+
   def self.values(name)
     sql = "SELECT
   #{DictionaryItem.columns.map{|c|"di.`#{c}` as di_#{c}"}.join(",")}

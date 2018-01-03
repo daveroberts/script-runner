@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="nav-bar">
-      <router-link class="nav-item" to="/scripts" exact><i class="fa fa-puzzle-piece" aria-hidden="true"></i> Scripts</router-link><router-link class="nav-item" to="/data-explorer" exact><i class="fa fa-search" aria-hidden="true"></i> Data Explorer</router-link><router-link class="nav-item" to="/extensions" exact><i class="fa fa-cogs" aria-hidden="true"></i> Extensions</router-link>
+      <router-link class="nav-item" to="/scripts" exact><i class="fa fa-th-large" aria-hidden="true"></i> Scripts</router-link><router-link class="nav-item" to="/data-explorer" exact><i class="fa fa-search" aria-hidden="true"></i> Data Explorer</router-link><router-link class="nav-item" to="/extensions" exact><i class="fa fa-cogs" aria-hidden="true"></i> Extensions</router-link>
     </div>
     <div v-if="loading" class="progress-line"></div>
     <div style="padding: 1em;">

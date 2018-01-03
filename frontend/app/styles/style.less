@@ -7,7 +7,7 @@ h1{ font-size: @font-size-xx-large; color: darken(@background, 10%) !important; 
 h2{ font-size: @font-size-x-large; color: darken(@background, 10%) !important; margin-top: 0.5em; margin-bottom: 0.5em;}
 h3{ font-size: @font-size-large; color: darken(@background, 10%) !important; margin-top: 0.5em; margin-bottom: 0.5em;}
 h1 > a:visited, h3 > a:visited, h2 > a:visited{ color: inherit;}
-input{ color: black; outline: 0; }
+input{ color: black; outline: 0; width: 20em; }
 input[type="text"]{ border: 1px solid #999; height: 1.7em; }
 textarea{ border: 1px solid #999; height: 5em; color: black; }
 pre{ font-family: monospace; }
@@ -135,18 +135,17 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .modal_content { background-color: white; padding: 0.75em; text-align: center; }
 .modal_text { font-size: @font-size-normal; padding: 0.25em 0; text-align: center; }
 
-.md_radio { margin: 0; }
-.md_radio.md_radio-inline { display: inline-block; }
+.md_radio { margin: 0; height: 2em; }
 .md_radio input[type="radio"] { display: none; }
 .md_radio input[type="radio"]:checked + label:before { border-color: @base; animation: ripple 0.6s ease-out forwards; }
-.md_radio:hover input[type="radio"]:checked + label:before{ border-color: saturate(@base, 50%); }
+.md_radio:hover input[type="radio"]:checked + label:before{ border-color: @base; }
 .md_radio input[type="radio"]:checked + label:after { transform: scale(1); }
-.md_radio label { display: inline-block; height: 1.5em; line-height: 1.5em; position: relative; padding: 0 1.3em; margin-bottom: 0; cursor: pointer; vertical-align: middle; }
+.md_radio label { display: inline-block; height: 2em; line-height: 2em; position: relative; padding: 0 2em; margin-bottom: 0; cursor: pointer; vertical-align: middle; }
 .md_radio label:before, .md_radio label:after { position: absolute; content: ''; border-radius: 50%; transition: all .1s ease-out; transition-property: transform, border-color; }
 .md_radio label:before { left: 0; top: 3px; width: 20px; height: 20px; border: 3px solid fade(@base, 54%); }
 .md_radio label:after { top: 8px; left: 5px; width: 10px; height: 10px; transform: scale(0);  background: @base; }
-.md_radio:hover label:before { border-color: saturate(@base, 50%) }
-.md_radio:hover label:after { background: saturate(@base, 50%) }
+.md_radio:hover label:before { border-color: @base }
+.md_radio:hover label:after { background: @base }
 .md_radio, .md_radio:before, .md_radio:after { box-sizing: border-box; }
 .md_radio input[type="radio"], .md_radio input[type="radio"]:before, .md_radio input[type="radio"]:after { box-sizing: border-box; }
 .md_radio label, .md_radio label:before, .md_radio label:after { box-sizing: border-box; }

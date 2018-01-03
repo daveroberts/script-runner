@@ -53,7 +53,7 @@ const initial_state = {
       data: null
     },
     input: {
-      type: 'NONE',
+      type: 'MANUAL',
       payload: "",
       queue: ""
     },

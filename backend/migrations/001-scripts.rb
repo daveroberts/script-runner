@@ -41,6 +41,7 @@ module DBMigrations
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `id` VARCHAR(255) NOT NULL,
         `script_id` VARCHAR(255),
+        `queue_item_id` VARCHAR(255),
         `input` LONGBLOB,
         `code` LONGTEXT,
         `output` LONGBLOB,

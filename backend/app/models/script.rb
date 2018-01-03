@@ -199,7 +199,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     @@traces[trace_id.to_i]
   end
 
-  def self.run_code(code, input = nil, trace_id = nil, script_id=nil)
+  def self.run_code(code, input = nil, trace_id = nil, script_id=nil, queue_item_id=nil)
     trace = []
     if trace_id
       @@traces[trace_id] = []
@@ -234,6 +234,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     t1 = Time.now
     script_run = {
       script_id: script_id,
+      queue_item_id: queue_item_id,
       input: input,
       code: code,
       output: output,

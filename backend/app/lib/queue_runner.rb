@@ -11,7 +11,7 @@ class QueueRunner
       script = Script.for_queue(item[:queue_name])
       raise "No script found for queue item: #{item[:id]}" if !script
       puts "#{Time.now} Running script: #{script[:id]} : #{script[:name]} on item: #{item[:id]}"
-      script_run = Script.run_code(script[:code], item[:item], nil, script[:id])
+      script_run = Script.run_code(script[:code], item[:item], nil, script[:id], item[:id])
       if script_run[:error]
         result = QueueItem.error_processing(item[:id])
         puts "#{Time.now} Finished with error. script: #{script[:id]} script_run_id #{script_run[:id]} item: #{item[:id]} running time (seconds): #{script_run[:seconds_running]}"

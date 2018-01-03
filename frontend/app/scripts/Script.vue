@@ -283,7 +283,8 @@
                 </td>
                 <td style="font-size: 10pt;">
                   <pre class="json" v-if="run.output != null" v-html="syntax_highlight(run.output)"></pre>
-                  <pre class="monospace error" v-if="run.error">{{run.error}}</pre>
+                  <div v-if="run.error"><pre class="monospace error"><a href="#" class="not_a_link" @click.prevent="toggle_run_error(run)"><span v-if="run.show_error_trace">&lt;&lt;</span><span v-else>&gt;&gt;</span></a> {{run.error}}</pre></div>
+                  <div v-if="run.show_error_trace" style="margin-top: 1em; white-space: pre-wrap;" class="error monospace">{{run.error_stack_trace}}</div>
                 </td>
               </tr>
             </tbody>
@@ -386,7 +387,9 @@ export default {
   },
   mixins: [Helpers],
   methods: {
-    toggle_extensions_pane(){ this.show_extensions = !this.show_extensions },
+    toggle_run_error(run){
+      Vue.set(run, "show_error_trace", !run.show_error_trace)
+    },
     undo(){ state.current.script.code = this.orig_code },
     save(){
       var status = null

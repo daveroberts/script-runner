@@ -338,7 +338,7 @@ module SimpleLanguage
             params = chains[0][:params].map{|p|exec_cmd(p, locals)}
             chains.shift
           end
-          ref = ref.send(member, *params)
+          ref = ref.__send__(member, *params)
         else
           binding.pry #todo?
         end

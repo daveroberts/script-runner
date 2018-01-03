@@ -16,8 +16,8 @@ module SimpleLanguage
                 description: "Subject of email" },
               { name:        "body",
                 description: "Body of email" },
-              { name:        "to",
-                description: "Optional.  Email address sending the email.  Must match the email providers domain.  defaults to system@domain" },
+              { name:        "from",
+                description: "Optional.  Email address sending the email.  Must match the email providers domain.  defaults to default_sender from your config" },
             ],
             returns: {
               name: "boolean",
@@ -32,11 +32,11 @@ module SimpleLanguage
       @trace = trace
     end
 
-    def send_email(to, subject, body, from=nil)
+    def send(to, subject, body, from=nil)
       config = Config.get[:email]
       mg_client = Mailgun::Client.new config[:api_key]
       message_params =  {
-        from:     from,
+        from:     from||config[:default_sender],
         to:       to,
         subject:  subject,
         text:     body

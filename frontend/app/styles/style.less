@@ -12,8 +12,8 @@ input[type="text"]{ border: 1px solid #999; height: 1.7em; }
 textarea{ border: 1px solid #999; height: 5em; color: black; }
 pre{ font-family: monospace; }
 
-.small{ font-size: @font-size-small; }
-.large{ font-size: @font-size-large; }
+.small{ font-size: @font-size-small !important; }
+.large{ font-size: @font-size-large !important; }
 .success{ color: @success }
 .base{ color: @base; }
 
@@ -45,7 +45,7 @@ a.nav-item:hover{ background-color: @nav_hl; }
 .alert-warning > .alert-close{  color: @warn-fg; }
 .visible{ visibility: visible; opacity: 0.93; transition-delay: 0s; }
 
-.error{ font-size: @font-size-small; color: @danger !important; }
+.error{ font-size: @font-size-normal; color: @danger !important; }
 .error-input{ border: 1px solid @danger !important; }
 .error-form-label{ color: @danger !important; }
 .warning{ text-align: center; font-style: italic; background-color: @warn-bg; color: @warn-fg; padding: 0.2em; border: 1px solid @warn-fg; }
@@ -108,7 +108,7 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .code_editor{ border: 1px solid #666; }
 .CodeMirror{ height: auto !important; }
 
-.json{ font-family: monospace; }
+.json{ font-family: monospace; white-space: pre-wrap; }
 .json .key{ color: #4e3a00; }
 .json .string{ color: green; }
 .json .number{ color: red; }

@@ -38,14 +38,14 @@
             <td class="small">
               <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
             </td>
-            <td class="small">{{item.state}}</td>
-            <td class="small">
+            <td style="width: 8em;" class="small">{{item.state}}</td>
+            <td style="width: 1.5em;" class="small">
               <span v-if="item.state=='DONE' || item.state=='ERROR'">
                 <a href="#" @click.prevent="requeue(item)"><i class="fa fa-refresh" aria-hidden="true"></i></a>
               </span>
             </td>
-            <td class="small">{{pretty_date(item.created_at)}}</td>
-            <td class="small">
+            <td style="width: 12em;" class="small">{{pretty_date(item.created_at)}}</td>
+            <td style="width: 1.5em;" class="small">
               <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
             </td>
           </tr>

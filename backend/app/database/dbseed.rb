@@ -141,8 +141,8 @@ foreach topic in hot_topics {
   raw_data = chrome.screenshot()
   image_id = image.save(raw_data, topic)
   storage.save(topic + " Images", {
-  tag: topic,
-  image_id: image_id
+    tag: topic,
+    image_id: image_id
   })
 }
 CODE
@@ -168,6 +168,7 @@ foreach link in links {
   page = {
     url: link,
     html: chrome.html(),
+    image_id: image_id,
     scraped_at: now()
   }
   storage.save(page, { tag: 'gd_pages_raw', summary: page[:url], image_id: image_id })
@@ -195,9 +196,10 @@ page = {
   title: title,
   article_date: date,
   scraped_date: scraped_date,
-  body: body
+  body: body,
+  image_id: image_id
 }
-storage.save(page, { tag: 'gd_pages_processed', summary: page[:title] })
+storage.save(page, { tag: 'gd_pages_processed', summary: page[:title], image_id: page[:image_id] })
 queue.add('gd_pages_processed', page, { summary: page[:title] })
 CODE
       trigger_queue: true,
@@ -232,7 +234,7 @@ report = {
   url: url,
   title: title
 }
-storage.save(report, { tags: hot_topics })
+storage.save(report, { tags: hot_topics, image_id: page[:image_id] })
 email.send(
   set.all('alert_emails'),
   "ALERT: Article flagged: " + page[:title],

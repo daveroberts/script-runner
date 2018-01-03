@@ -15,5 +15,6 @@ source 'https://rubygems.org' do
   group :development do
     gem 'rerun' # Restart app server when files change
     gem 'pry' # Set breakpoints in Ruby code; Ruby console
+    gem 'pry-stack_explorer'
   end
 end

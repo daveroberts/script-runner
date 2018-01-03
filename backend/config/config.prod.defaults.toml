@@ -10,4 +10,5 @@
 
 [email]
   api_key = ""
-  domain = ""
+  domain = "example.com"
+  default_sender = "system@example.com"

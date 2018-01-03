@@ -28,20 +28,20 @@
         </thead>
         <tbody>
           <tr v-for="item in items">
-            <td style="width: 1.5em;">
+            <td style="width: 1.5em; vertical-align: middle;">
               <a target="_blank" :href="'/api/data_item/'+item.key">
                 <i class="fa fa-file-text-o"></i>
               </a>
             </td>
-            <td>
+            <td style="vertical-align: middle;">
               <pre class="json" v-html="syntax_highlight(item.summary)"></pre>
             </td>
-            <td style="width: 355px;">
+            <td style="width: 355px; vertical-algin: middle;">
               <a target="_blank" v-if="item.image_id" :href="'/api/images/'+item.image_id">
                 <img class="image_preview" :src="'/api/images/'+item.image_id+'/thumbnail'" :alt="item.summary" />
               </a>
             </td>
-            <td style="width: 1.5em;">
+            <td style="width: 1.5em; vertical-align: middle;">
               <a href="#" @click.prevent="ask_delete(item)"><i class="fa fa-trash" aria-hidden="true"></i></a>
             </td>
           </tr>

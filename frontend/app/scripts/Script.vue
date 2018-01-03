@@ -438,7 +438,7 @@ export default {
         fetch(`/api/traces/${state.current.trace.id}`, {
           credentials: "include"
         }).then(res => {
-          return res.json()
+          if (res.ok){ return res.json() }
         }).then(trace_data => {
           state.current.trace.data = trace_data
         }).catch(err => {
@@ -453,16 +453,19 @@ export default {
       }).then(res => {
         this.running = false
         state.loading = false
-        return res.json()
-      }).then(output => {
-        state.current.runs.unshift(output)
-        if (output.error) {
-          senate.flash("Script produced an error", "danger")
-        }
         // wait 2 seconds, then stop grabbing updates
         setTimeout(() => {
           clearInterval(get_traces_timer)
         }, 2000)
+        if (res.status == 204) { senate.flash("No items ready to process in queue", "warning") }
+        else if (res.ok){ return res.json() }
+      }).then(output => {
+        if (output){
+          state.current.runs.unshift(output)
+          if (output.error) {
+            senate.flash("Script produced an error", "danger")
+          }
+        }
       }).catch(err => {
         console.log(err)
         this.running = false

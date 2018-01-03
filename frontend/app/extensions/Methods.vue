@@ -64,7 +64,7 @@ export default {
 <style lang="less" scoped>
 @import '../styles/variables.less';
 .inline_summary{ text-indent: 3em; }
-.method_signature{ color: @base; font-family: monospace; font-weight: bold; }
+.method_signature{ color: blue; font-family: monospace; font-weight: bold; }
 .method_description{ }
 .method_table{ width: 100%; line-height: 1.5em; font-family: serif; }
 .method_table > thead { background-color: #CCCCFF; font-size: @font-size-normal; text-align: left; font-weight: bold; }

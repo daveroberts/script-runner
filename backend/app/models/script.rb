@@ -199,6 +199,29 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     @@traces[trace_id.to_i]
   end
 
+  def self.run_queue_item(queue_name=nil, code=nil, trace_id = nil, script_id=nil)
+    item = QueueItem.next
+    return false if !item
+    if code
+      puts "#{Time.now} Running transmitted script on item: #{item[:id]}"
+    else
+      script = Script.for_queue(item[:queue_name])
+      script_id = script[:id] if !script_id
+      raise "No script found for queue item: #{item[:id]}" if !script
+      puts "#{Time.now} Running script: #{script[:id]} : #{script[:name]} on item: #{item[:id]}"
+      code = script[:code]
+    end
+    script_run = Script.run_code(code, item[:item], trace_id, script_id, item[:id])
+    if script_run[:error]
+      result = QueueItem.error_processing(item[:id])
+      puts "#{Time.now} Finished with error. script: #{script_id} script_run_id #{script_run[:id]} item: #{item[:id]} running time (seconds): #{script_run[:milliseconds_running]}"
+    else
+      result = QueueItem.finish_processing(item[:id])
+      puts "#{Time.now} Finished successfully. script: #{script_id} script_run_id #{script_run[:id]} item: #{item[:id]} running time (seconds): #{script_run[:milliseconds_running]}"
+    end
+    return script_run
+  end
+
   def self.run_code(code, input = nil, trace_id = nil, script_id=nil, queue_item_id=nil)
     trace = []
     if trace_id
@@ -227,7 +250,7 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
     #rescue SimpleLanguage::NullPointer => e
     # catch all execptions like this for now
     rescue Exception => e
-      #raise e
+      raise e
       error = "#{e.class.to_s} #{e.to_s}"
       stack_trace = e.backtrace.join("\n")
     end

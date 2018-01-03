@@ -57,7 +57,13 @@ class App < Sinatra::Application
     payload = JSON.parse(request.body.read, symbolize_names: true)
     input = nil
     input = JSON.parse(payload[:input], symbolize_names: true) if !payload[:input].blank?
-    script_run = Script.run_code(payload[:code], input, payload[:trace_id], payload[:script_id])
+    script_run = nil
+    if payload[:queue]
+      script_run = Script.run_queue_item(payload[:queue], payload[:code], payload[:trace_id], payload[:script_id])
+      return [204, "No item to process"] if !script_run
+    else
+      script_run = Script.run_code(payload[:code], input, payload[:trace_id], payload[:script_id])
+    end
     return script_run.to_json
   end
 end

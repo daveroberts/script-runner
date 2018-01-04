@@ -23,7 +23,7 @@
         </tr>
       </tbody>
     </table>
-    <div style="margin: 2em 0;" v-for="(info, method) in class_info.methods">
+    <div :class="[ruby ? 'ruby' : '']" style="margin: 2em 0;" v-for="(info, method) in class_info.methods">
         <span class="method_signature large">
           {{method}}({{info.params.map(p=>p.name).join(', ')}})
         </span>
@@ -74,6 +74,6 @@ export default {
 .not_a_link{ text-decoration: none; }
 .ruby > thead { background-color: #FFCCCC; }
 .ruby > thead > tr > th > a { color: #700; }
-.ruby, .ruby th, .ruby td{ border: 3px solid #700; }
+.ruby.method_signature, .ruby th, .ruby td{ border: 3px solid #700; }
 .ruby .method_signature{ color: #700; }
 </style>

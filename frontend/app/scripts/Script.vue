@@ -59,10 +59,19 @@
                   </div>
                   <label class="fancy_checkbox_label" for="show_run_details_debug">Show low level debug messages?</label>
                 </div-->
-                <input type="checkbox" name="show_run_details_switch" id="show_run_details_switch" v-model="show_run_details_debug">
-                <label class="small" for="show_run_details_switch">Show low level debug details</label>
+                <input type="checkbox" name="show_run_details_switch" id="show_run_details_switch" v-model="show_run_details_debug" />
+                <label for="show_run_details_switch">Show low level debug details</label>
                 <div class="debug_output" v-if="msg.level != 'debug' || show_run_details_debug" v-for="msg in state.current.trace.data">
                   {{msg.summary}}
+                  <span v-if="msg.details">
+                    <a href="#" @click.prevent="msg.show_details = !msg.show_details">
+                      <span v-if="msg.show_details">&lt;&lt;</span>
+                      <span v-else>&gt;&gt;</span>
+                    </a>
+                  </span>
+                  <div v-if="msg.show_details">
+                    {{msg.details}}
+                  </div>
                   <span v-if="msg.tables">
                     <a href="#" @click.prevent="msg.show_tables = !msg.show_tables">
                       <span v-if="msg.show_tables">&lt;&lt;</span>
@@ -71,7 +80,7 @@
                   </span>
                   <div v-if="msg.show_tables">
                     <div v-for="table in msg.tables">
-                      <div>{{table.title}}</div>
+                      <div style="font-weight: bold;">{{table.title}}</div>
                       <table class="mini_table">
                         <thead>
                           <tr>

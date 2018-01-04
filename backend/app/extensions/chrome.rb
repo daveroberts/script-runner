@@ -121,8 +121,8 @@ module SimpleLanguage
 
     def go_to_url(url)
       begin
+        @trace.push({ summary: "Navigating to #{url}", level: :info, timestamp: Time.now })
         driver.get(url)
-        @trace.push({ summary: "Navigated to #{url}", level: :info, timestamp: Time.now })
         return true
       rescue # usually a bad URL
         @trace.push({ summary: "Could not navigate to #{url}", level: :warn, timestamp: Time.now })
@@ -141,7 +141,7 @@ module SimpleLanguage
 
     def click(element)
       if element
-        @trace.push({ summary: "Clicking #{element_to_s(element)}", level: :info, timestamp: Time.now })
+        @trace.push({ summary: "Clicking element", details: "Element #{element_to_s(element)}", show_details: false, level: :info, timestamp: Time.now })
         element.click()
         sleep 2
         wait_for_load()
@@ -165,7 +165,7 @@ module SimpleLanguage
     end
 
     def fill_in_textbox(element, data)
-      @trace.push({ summary: "Entering `#{data}` into #{element_to_s(element)}", level: :info, timestamp: Time.now })
+      @trace.push({ summary: "Typing `#{data}` into form", details: "Typed data `#{data}` into #{element_to_s(element)}", show_details: false, level: :info, timestamp: Time.now })
       element.send_keys(data)
     end
 
@@ -184,7 +184,7 @@ module SimpleLanguage
       data = File.read(filepath)
       File.delete(filepath)
       image_id = ImageItem.save(data, "picture")
-      @trace.push({ summary: "Took screenshot", level: :info, image_id: image_id, show_image: true, timestamp: Time.now })
+      @trace.push({ summary: "Taking screenshot", level: :info, image_id: image_id, show_image: true, timestamp: Time.now })
       return data
     end
 
@@ -228,7 +228,13 @@ module SimpleLanguage
 
     def element_to_s(element)
       return "(null)" if !element
-      "#{element.tag_name}##{element.attribute("id")||"(no_id)"} #{element.attribute("class")||"(no_class)".split.map{|c|".#{c}"}.join} [name=#{element.attribute("name")||"(no_name)"}]"
+      id = ""
+      id = "##{element.attribute("id")}" if element.attribute("id")
+      classname = ""
+      classname = element.attribute("class").split.map{|c|".#{c}"}.join("") if element.attribute("class") if element.attribute("class")
+      name = ""
+      name = "[name=#{element.attribute("name")}]" if element.attribute("name")
+      "#{element.tag_name}#{id}#{classname}#{name}".strip
     end
   end
 end

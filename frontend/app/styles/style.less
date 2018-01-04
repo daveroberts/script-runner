@@ -7,8 +7,9 @@ h1{ font-size: @font-size-xx-large; color: darken(@background, 10%) !important; 
 h2{ font-size: @font-size-x-large; color: darken(@background, 10%) !important; margin-top: 0.5em; margin-bottom: 0.5em;}
 h3{ font-size: @font-size-large; color: darken(@background, 10%) !important; margin-top: 0.5em; margin-bottom: 0.5em;}
 h1 > a:visited, h3 > a:visited, h2 > a:visited{ color: inherit;}
-input{ color: black; outline: 0; width: 20em; }
-input[type="text"]{ border: 1px solid #999; height: 1.7em; }
+input{ color: black; outline: 0; }
+input[type="text"]{ border: 1px solid #999; height: 1.7em; width: 20em; }
+input[type="checkbox"]{ margin: 0; }
 textarea{ border: 1px solid #999; height: 5em; color: black; }
 pre{ font-family: monospace; }
 
@@ -74,7 +75,6 @@ button::-moz-focus-inner { border-style: none; padding: 0 }
 .table td { padding: 0.7em 0 0.2em 0; font-size: @font-size-normal; }
 .table > tbody > tr { border-bottom: 0.10em solid #ccc; }
 .mini_table > thead > tr > th{ text-align: left; font-weight: bold; padding: 0.3em; }
-.mini_table > thead > tr > th:last-child, .mini_table > tbody > tr > th:last-child{ text-align: right; }
 .mini_table > thead > tr { border-bottom: 0.10em solid #bbb; }
 .mini_table > tbody > tr { border-bottom: 0.10em solid #eee; }
 .mini_table > thead > tr > td, .mini_table > tbody > tr > td { padding: 0.3em; }
@@ -113,9 +113,9 @@ label:hover > .fancy_checkbox > label::after { opacity: 0.4; }
 .json .string{ color: green; }
 .json .number{ color: red; }
 
-.progress-line, .progress-line:before { position: absolute; height: 2px; width: 100%; margin: 0; }
-.progress-line { background-color: white; display: -webkit-flex; display: flex; }
-.progress-line:before { background-color: @base; content: ''; -webkit-animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.progress-line, .progress-line:before { position: absolute; height: 1px; width: 100%; margin: 0; }
+.progress-line { background-color: @tangerine; display: -webkit-flex; display: flex; }
+.progress-line:before { background-color: @base; content: ''; -webkit-animation: running-progress 2s linear infinite; animation: running-progress 2s linear infinite; }
 @-webkit-keyframes running-progress {
   0% { margin-left: 0px; margin-right: 100%; }
   50% { margin-left: 25%; margin-right: 0%; }

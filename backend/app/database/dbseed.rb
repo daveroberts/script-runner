@@ -11,8 +11,7 @@ class DBSeed
       name: '01 - Simple Example',
       category: 'language_examples',
       code: <<-CODE,
-numbers = [2,4,6,8,10]
-map(numbers, (x)->{ x*x })
+x = 2+3*4
 CODE
      trigger_http: true,
       http_endpoint: "simple",
@@ -171,8 +170,8 @@ foreach link in links {
     image_id: image_id,
     scraped_at: now()
   }
-  storage.save(page, { tag: 'gd_pages_raw', summary: page[:url], image_id: image_id })
-  queue.add('gd_pages_raw', page, { tag: 'gd_pages_raw', summary: page[:url], image_id: image_id })
+  storage.save(page, { tag: 'pages_raw', summary: page[:url], image_id: image_id })
+  queue.add('pages_raw', page, { tag: 'pages_raw', summary: page[:url], image_id: image_id })
   set.add('gd_urls_scraped', link)
   pages_scraped = pages_scraped + 1
 }
@@ -189,21 +188,23 @@ doc = source_parser.document_from_html(raw_page[:html])
 title = source_parser.text_from_css(doc, '.pane-node-title > h1:nth-child(1)')
 date = source_parser.text_from_css(doc, '.view-mode-full > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)')
 body = source_parser.text_from_css(doc, '.field-name-body > div:nth-child(1) > div:nth-child(1)')
-scraped_date = raw_page[:scraped_at]
-url = raw_page[:url]
 page = {
-  url: url,
+  url: raw_page[:url],
   title: title,
   article_date: date,
-  scraped_date: scraped_date,
+  scraped_date: raw_page[:scraped_at],
   body: body,
-  image_id: image_id
+  image_id: raw_page[:image_id]
 }
-storage.save(page, { tag: 'gd_pages_processed', summary: page[:title], image_id: page[:image_id] })
-queue.add('gd_pages_processed', page, { summary: page[:title] })
+page_hash = md5(page[:url]+page[:title]+page[:body])
+if set.has('processed_page_hashes', page_hash) { return "Duplicate" }
+set.add('processed_page_hashes', page_hash)
+storage.save(page, { tag: 'pages_processed', summary: page[:title], image_id: page[:image_id] })
+queue.add('pages_processed', page, { summary: page[:title] })
+queue.add('forking_queue',   page, { summary: page[:title] })
 CODE
       trigger_queue: true,
-      queue_name: 'gd_pages_raw'
+      queue_name: 'pages_raw'
     },
     {
       id: '31ec019a-2f12-4639-a627-441f6906a591',
@@ -215,7 +216,7 @@ find_hot_topics = (article)->{
   article_hot_topics = []
   foreach topic in hot_topics {
     regex = join(['/.*', topic, '.*/im'])
-    if match(article, regex) != null {
+    if match(regex, article) != null {
       push(article_hot_topics, topic)
     }
   }
@@ -223,16 +224,13 @@ find_hot_topics = (article)->{
 }
 
 page = input()
-title = page[:title]
-body = page[:body]
-url = page[:url]
 
-hot_topics = find_hot_topics(body)
+hot_topics = find_hot_topics(page[:body])
 if len(hot_topics) == 0 { return null }
 
 report = {
-  url: url,
-  title: title
+  url: page[:url],
+  title: page[:title]
 }
 storage.save(report, { tags: hot_topics, image_id: page[:image_id] })
 email.send(
@@ -243,7 +241,7 @@ email.send(
 hot_topics
 CODE
       trigger_queue: true,
-      queue_name: "gd_pages_processed"
+      queue_name: "pages_processed"
     }
   ]
   @queue_items = [

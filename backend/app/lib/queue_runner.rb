@@ -5,7 +5,7 @@ class QueueRunner
       if !result
         puts "#{Time.now} No more queue items found for processing"
         puts "#{Time.now} Sleeping for 60 seconds"
-        sleep 1*60
+        sleep 1*3
         next
       end
     end

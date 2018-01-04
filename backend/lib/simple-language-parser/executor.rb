@@ -108,6 +108,7 @@ module SimpleLanguage
         else
           binding.pry # assign to what?
         end
+        return value
       elsif command[:type] == :add
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
@@ -373,11 +374,11 @@ module SimpleLanguage
         @trace.push({ summary: "Length of #{args[0]}} is #{args[0].length}", level: :debug, timestamp: Time.now })
         return args[0].length
       when "md5"
-        value = Digest::MD5.hexdigest(args[0])
+        value = Digest::MD5.hexdigest(args[0].to_s)
         @trace.push({ summary: "MD5 of #{args[0]} is #{value}", level: :debug, timestamp: Time.now })
         return value
       when "sha512"
-        value = Digest::SHA512.hexdigest(args[0])
+        value = Digest::SHA512.hexdigest(args[0].to_s)
         @trace.push({ summary: "SHA512 of #{args[0]} is #{value}", level: :debug, timestamp: Time.now })
         return value
       when "uuid"
@@ -436,13 +437,13 @@ module SimpleLanguage
           arr.push(item) if output
         end
         @trace.push({ summary: "Filtered #{arr.length} out of #{collection.length}", level: :info, tables: [{
-          title: "Matched",
+          title: "Matched Items",
           headers: [
             { name: "Item", type: "string" }
           ],
           rows: arr.map{|item| [{ value: item }] }
         },{
-          title: "All",
+          title: "All Items",
           headers: [
             { name: "Item", type: "string" }
           ],

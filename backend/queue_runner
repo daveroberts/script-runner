@@ -5,5 +5,5 @@ require_relative 'app/app.rb'
 puts "Starting queue runner"
 while true
   QueueRunner.run
-  sleep 10
+  sleep 3
 end

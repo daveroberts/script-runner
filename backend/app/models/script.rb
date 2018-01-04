@@ -206,8 +206,8 @@ WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
       puts "#{Time.now} Running transmitted script on item: #{item[:id]}"
     else
       script = Script.for_queue(item[:queue_name])
+      raise "No script found for queue item: #{item[:id]} queue name: #{item[:queue_name]}" if !script
       script_id = script[:id] if !script_id
-      raise "No script found for queue item: #{item[:id]}" if !script
       puts "#{Time.now} Running script: #{script[:id]} : #{script[:name]} on item: #{item[:id]}"
       code = script[:code]
     end

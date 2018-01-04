@@ -63,7 +63,7 @@ class QueueItem
 SELECT
   qi.id
 FROM queue_items qi
-  LEFT JOIN scripts s on s.trigger_queue=TRUE AND s.queue_name=qi.queue_name
+  INNER JOIN scripts s on s.trigger_queue=TRUE AND s.queue_name=qi.queue_name
 WHERE
   qi.state='NEW' #{queue_clause}
 ORDER BY qi.created_at ASC"

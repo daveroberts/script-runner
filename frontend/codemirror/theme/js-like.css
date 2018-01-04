@@ -1,10 +1,12 @@
-.cm-s-js-like.CodeMirror { color: #999; background-color: #fff; }
-.cm-s-js-like div.CodeMirror-selected { background: #cfc; }
-.cm-s-js-like .CodeMirror-line::selection, .cm-s-js-like .CodeMirror-line > span::selection, .cm-s-js-like .CodeMirror-line > span > span::selection { background: #cfc; }
-.cm-s-js-like .CodeMirror-line::-moz-selection, .cm-s-js-like .CodeMirror-line > span::-moz-selection, .cm-s-js-like .CodeMirror-line > span > span::-moz-selection { background: #cfc; }
+.cm-s-js-like.CodeMirror { color: #333; background-color: #fff; font-family: Courier New, monospace; }
+/* Windows 95: #000080 */
+/* Windows 10: #9ccfff */
+.cm-s-js-like div.CodeMirror-selected { background: #9ccfff; }
+.cm-s-js-like .CodeMirror-line::selection, .cm-s-js-like .CodeMirror-line > span::selection, .cm-s-js-like .CodeMirror-line > span > span::selection { background: #9ccfff; }
+.cm-s-js-like .CodeMirror-line::-moz-selection, .cm-s-js-like .CodeMirror-line > span::-moz-selection, .cm-s-js-like .CodeMirror-line > span > span::-moz-selection { background: #9ccfff; }
 
 .cm-s-js-like .CodeMirror-gutters { background: #f8f8f8; border-left: 6px solid rgba(0,83,159,0.65); color: #333; }
-.cm-s-js-like .CodeMirror-linenumber { color: #aaa; padding-left: 8px; }
+.cm-s-js-like .CodeMirror-linenumber { color: #555; padding-left: 8px; }
 .cm-s-js-like .CodeMirror-cursor { border-left: 2px solid #222; }
 
 .cm-s-js-like .cm-keyword { color: #6c00ff; }

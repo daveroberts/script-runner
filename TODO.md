@@ -1,5 +1,4 @@
-totals on all data explorer names
-add queue item id back to script runs to show errors on queue vue
+show errors on queue vue
 combo box on queue name inputs
 live update / refresh button on queue monitoring page
 refresh button on last run for saved scripts page

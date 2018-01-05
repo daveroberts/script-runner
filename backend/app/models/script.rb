@@ -114,7 +114,7 @@ WHERE s.id = ?
     sql = "SELECT
   #{Script.columns.map{|c|"s.`#{c}` as s_#{c}"}.join(",")}
 FROM scripts s
-WHERE s.active=true AND s.http_endpoint = ? AND s.http_method = ?"
+WHERE s.trigger_http=TRUE AND s.http_endpoint = ? AND s.http_method = ?"
     row = DataMapper.select(sql, {
       prefix: 's',
       has_many: [

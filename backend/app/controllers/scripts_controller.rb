@@ -34,10 +34,11 @@ class App < Sinatra::Application
   end
 
   get "/http/:endpoint/?" do
-    #todo update with trace ID and encoding options
+    #todo update with trace ID
     script = Script.find_by_http_endpoint(params[:endpoint], 'GET')
     return [404, "No script found for that trigger"] if !script
-    script_run = Script.run_code(script[:code], nil, script[:id], script[:triggers][0][:id])
+    script_run = Script.run_code(script[:code], nil, nil, script[:id])
+    content_type(script[:http_response_content_type], charset: 'utf-8') if script[:http_response_content_type]
     return script_run[:output].to_json
   end
 
@@ -49,7 +50,8 @@ class App < Sinatra::Application
     input = JSON.parse(body, symbolize_names: true) if !body.blank? && request.env["CONTENT_TYPE"] == 'application/json'
     script = Script.find_by_http_endpoint(params[:endpoint], 'POST')
     return [404, "No script found for that trigger"] if !script
-    script_run = Script.run_code(script[:code], input, script[:id], script[:triggers][0][:id])
+    script_run = Script.run_code(script[:code], input, nil, script[:id])
+    content_type(script[:http_response_content_type], charset: 'utf-8') if script[:http_response_content_type]
     return script_run[:output].to_json
   end
 

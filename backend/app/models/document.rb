@@ -68,27 +68,6 @@ metadata
   reference_collection: "languages"
   reference_key: "XYZ456"
 
-
-page = doc_manager.save({
-  collection: "gd/tps_reports",
-  key: "TPS Report",
-  summary: "This is a TPS report",
-  language: query.find("languages", "name", "English"),
-  population: 275000,
-  html: "some html here",
-  retrieved_at: now()
-})
-doc_manager.save({
-  collection: "gd/urls_scraped",
-  key: "https://www.gd.com/press-releases/testing.html"})
-query.find("gd/urls_scraped", url)
-country = query.find("countries", "code", "USA")
-country[:name]
-country[:capital] = "Washington DC"
-country.push(:languages, query.find("languages", "name", "Spanish")
-
-email_addresses = query.all("mailing_lists/admins", "email")
-
 page = data.save({
   collection: "gd/tps_reports",
   key: "TPS Report",
@@ -105,11 +84,10 @@ data.find("gd/urls_scraped", url)
 country = data.find("countries", "code", "USA")
 country[:name]
 country[:capital] = "Washington DC"
-country.push(:languages, data.find("languages", "name", "Spanish")
+country.push(:languages, data.find("languages", "name", "Spanish"))
 
-email_addresses = data.keys("mailing_lists/admins")
-data.save("mailing_lists/admins" "dave.a.roberts@gmail.com")
-data.save({ collection: "mailing_lists/admins", key: "dave.a.roberts@gmail.com" })
+people = data.find("people", { admin: true, active: true})
+emails = map(people, (person)->{person[:email]})
 
 mailing_list = data.find("mailing_lists/admins")
 emails = mailing_list[:emails]

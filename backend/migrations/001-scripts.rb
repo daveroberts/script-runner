@@ -151,18 +151,49 @@ module DBMigrations
         INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)
-       sql = "CREATE TABLE `document_values` (
+      sql = "CREATE TABLE `documents` (
+        `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `id` VARCHAR(255) NOT NULL,
+        `directory` VARCHAR(255) NOT NULL,
+        `name` VARCHAR(255),
+        `summary` VARCHAR(768) NOT NULL,
+        `image_id` VARCHAR(255),
+        `created_at` DATETIME NOT NULL,
+        INDEX `id_index` (`id`),
+        UNIQUE KEY `id` (`id`),
+        INDEX `directory_name_index` (`directory`,`name`),
+        UNIQUE KEY `directory_name` (`directory`,`name`),
+        INDEX `summary_index` (`summary`),
+        INDEX `image_id_index` (`image_id`),
+        INDEX `created_at_index` (`created_at`)
+      )"
+      db.query(sql)
+      sql = "CREATE TABLE `document_values` (
         `auto_id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `document_id` VARCHAR(255) NOT NULL,
         `key` VARCHAR(255) NOT NULL,
-        `value` LONGBLOB NOT NULL,
-        `summary` VARCHAR(2048) NOT NULL,
-        `image_id` VARCHAR(255),
+        `type` VARCHAR(255) NOT NULL,
+        `array` BOOLEAN NOT NULL,
+        `value` MEDIUMTEXT NOT NULL,
+        `linked_document_id` VARCHAR(255),
+        `linked_image_id` VARCHAR(255),
+        `linked_set_name` VARCHAR(255),
+        `linked_dictionary_name` VARCHAR(255),
+        `linked_dictionary_key` VARCHAR(255),
+        `linked_queue_name` VARCHAR(255),
+        `linked_tag` VARCHAR(255),
+        `novel` LONGBLOB NOT NULL,
+        `summary` VARCHAR(768) NOT NULL,
         `created_at` DATETIME NOT NULL,
         INDEX `document_id_index` (`document_id`),
         INDEX `doc_id_key_index` (`document_id`,`key`),
         INDEX `summary_index` (`summary`),
-        INDEX `image_id_index` (`image_id`),
+        INDEX `linked_document_id_index` (`linked_document_id`),
+        INDEX `linked_image_id_index` (`linked_image_id`),
+        INDEX `linked_set_name_index` (`linked_set_name`),
+        INDEX `linked_dictionary_index` (`linked_dictionary_name`,`linked_dictionary_key`),
+        INDEX `linked_queue_name_index` (`linked_queue_name`),
+        INDEX `linked_tag_index` (`linked_tag`),
         INDEX `created_at_index` (`created_at`)
       )"
       db.query(sql)

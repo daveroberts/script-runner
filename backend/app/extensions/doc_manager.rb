@@ -46,10 +46,12 @@ module SimpleLanguage
       @trace = trace
     end
 
-    def create()
+    def create(values = {})
+      Document.new({ id: nil, values: values })
     end
     
     def get(document_id)
+      Document.get(document_id)
     end
 
     def remove(document_id)

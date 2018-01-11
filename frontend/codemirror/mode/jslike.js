@@ -37,7 +37,7 @@ CodeMirror.defineMode("jslike", function(config, parserConfig) {
       "this": kw("this"), "class": kw("class"), "super": kw("atom"),
       "yield": C, "export": kw("export"), "import": kw("import"), "extends": C,
       "await": C, "foreach": A, "input": A, "push": A, "print": A, "join": A, "map": A, "filter": A, "match": A, "len": A, "md5": A, "sha512": A, "random": A, "uuid": A, "int": A, "now": A, "loop": A,
-      "chrome": atom, "dictionary": atom, "doc_manager": atom, "email": atom, "http": atom, "image": atom, "log": atom, "source_parser": atom, "queue": atom, "set": atom, "sftp": atom, "storage": atom
+      "chrome": atom, "dictionary": atom, "data": atom, "doc_manager": atom, "email": atom, "http": atom, "image": atom, "log": atom, "source_parser": atom, "queue": atom, "set": atom, "sftp": atom, "storage": atom
     };
 
     // Extend the 'normal' keywords with the TypeScript language extensions

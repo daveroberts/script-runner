@@ -214,7 +214,8 @@ module SimpleLanguage
       return nil, tokens if !to
       chains, rest = make_chains(rest)
       to[:chains] = chains
-      return nil, tokens if rest[0] && rest[0][:type] != :equals && rest[0][:type] != :double_less_than
+      return nil, tokens if !rest[0]
+      return nil, tokens if rest[0][:type] != :equals && rest[0][:type] != :double_less_than
       type = rest[0][:type]
       rest.shift
       from, rest = make_expression(rest.dup)

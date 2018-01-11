@@ -142,9 +142,9 @@ module SimpleLanguage
               chain = chains.first
               if chain[:type] == :index_of
                 index = exec_cmd(chain[:index], variables)
-                ref[index].push(value)
+                raise NullPointer, "Can't push to nil: #{Executor.cmd_to_s(command[:to])}" if !ref[index]
                 @trace.push({ summary: "Pushing #{value} to index #{index}", level: :debug, timestamp: Time.now })
-                return ref[index]
+                return ref[index].push(value)
               elsif chain[:type] == :member
                 binding.pry #todo
               else
@@ -220,6 +220,7 @@ module SimpleLanguage
         else
           raise NullPointer, "#{command[:value]} does not exist" if !variables.has_key? command[:value]
           ref = variables[command[:value]]
+          raise NullPointer, "#{command[:value]} is null, can't chain to #{chains.map{|chain|Executor.cmd_to_s(chain)}.join}" if chains.length > 0 && !ref
         end
         output = run_chains(ref, chains, variables)
         return output
@@ -543,6 +544,8 @@ module SimpleLanguage
         return "function"
       elsif cmd[:type] == :reference
         return cmd[:value]
+      elsif cmd[:type] == :symbol
+        return ":#{cmd[:value]}"
       elsif cmd[:type] == :int
         return cmd[:value]
       elsif cmd[:type] == :less_than_or_equals
@@ -567,7 +570,14 @@ module SimpleLanguage
         return cmd[:value]
       elsif cmd[:type] == :null
         return "null"
+      elsif cmd[:type] == :index_of
+        return "[#{cmd_to_s(cmd[:index])}]"
+      elsif cmd[:type] == :function_params
+        return "(#{cmd[:params].map{|p|cmd_to_s(p)}.join(", ")})"
+      elsif cmd[:type] == :member
+        return ".#{cmd[:member]}"
       else
+        puts cmd
         binding.pry
       end
     end

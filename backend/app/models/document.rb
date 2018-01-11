@@ -70,28 +70,51 @@ metadata
 
 page = data.save({
   collection: "gd/tps_reports",
-  key: "TPS Report",
   summary: "This is a TPS report",
   language: data.find("languages", "name", "English"),
   population: 275000,
   html: "some html here",
   retrieved_at: now()
 })
-data.save({
-  collection: "gd/urls_scraped",
-  key: "https://www.gd.com/press-releases/testing.html"})
-data.find("gd/urls_scraped", url)
-country = data.find("countries", "code", "USA")
-country[:name]
-country[:capital] = "Washington DC"
-country.push(:languages, data.find("languages", "name", "Spanish"))
+url = "https://www.gd.com/press-releases/testing.html"
 
+// check if URL has been scraped
+data.find("gd/urls_scraped", {url: url})
+
+// Add URL to collection
+data.save({ collection: "gd/urls_scraped", url: url})
+
+// Add a dictionary value
+data.save({
+  collection: "countries",
+  summary: "United States of America",
+  name: "United States of America",
+  code: "USA",
+  spoken_languages: [data.find("languages", {name: "English"})],
+  population: 323100000,
+})
+
+country = data.find("countries", { code: "USA" })
+print(country[:name])
+country[:capital] = "Washington DC"
+country[:spoken_languages] << data.find("languages", {name: "Spanish"})
+
+// Does the country speak language Spanish?
+spanish_language = country[:spoken_languages].detect((lang)->{lang[:name]=="Spanish"})
+
+// Be able to find all countries which speak Spanish
+data.find("countries", {spoken_languages: {name: "Spanish"}})
+
+// Find all active admins
 people = data.find("people", { admin: true, active: true})
+// Get their email addresses and put them into an array
 emails = map(people, (person)->{person[:email]})
 
-mailing_list = data.find("mailing_lists/admins")
+// Alternatively, store a single admin mailing list, with an array of emails
+mailing_list = data.find("mailing_lists" , { name: "administrators" })
 emails = mailing_list[:emails]
-mailing_list.push(:emails, "dave.a.roberts@gmail.com")
+// Add a name to this mailing list
+mailing_list[:emails] << "dave.a.roberts@gmail.com"
 
 =end
   

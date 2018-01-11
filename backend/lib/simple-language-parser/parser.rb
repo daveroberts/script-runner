@@ -214,11 +214,14 @@ module SimpleLanguage
       return nil, tokens if !to
       chains, rest = make_chains(rest)
       to[:chains] = chains
-      return nil, tokens if rest[0] && rest[0][:type] != :equals
+      return nil, tokens if rest[0] && rest[0][:type] != :equals && rest[0][:type] != :double_less_than
+      type = rest[0][:type]
       rest.shift
       from, rest = make_expression(rest.dup)
       return nil, tokens if !from
-      return {type: :assign, to: to, from: from}, rest
+      return {type: :assign, to: to, from: from}, rest if type == :equals
+      return {type: :push, to: to, from: from}, rest if type == :double_less_than
+      raise "assignment type not implemented"
     end
 
     def self.make_expression(tokens)

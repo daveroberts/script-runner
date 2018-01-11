@@ -109,6 +109,56 @@ module SimpleLanguage
           binding.pry # assign to what?
         end
         return value
+      elsif command[:type] == :push
+        value = exec_cmd(command[:from], variables)
+        to = nil
+        if command[:to][:type] == :reference
+          if command[:to][:chains].length == 0
+            variables[command[:to][:value]].push(value)
+            if value && value.class == Hash && value.has_key?(:type)
+              @trace.push({ summary: "Pushing #{Executor.cmd_to_s(value)} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+            else
+              if value.class != String || value.valid_encoding?
+                @trace.push({ summary: "Pushing #{value} to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              else
+                @trace.push({ summary: "Pushing binary data to #{command[:to][:value]}", level: :debug, timestamp: Time.now })
+              end
+            end
+            return variables[command[:to][:value]]
+          else
+            ref = variables[command[:to][:value]]
+            chains = command[:to][:chains].dup
+            while chains.length > 1
+              chain = chains.first
+              if chain[:type] == :index_of
+                index = exec_cmd(chain[:index], variables)
+                ref = ref[index]
+                chains.shift
+              else
+                binding.pry # chain on non-index_of
+              end
+            end
+            if chains.length > 0
+              chain = chains.first
+              if chain[:type] == :index_of
+                index = exec_cmd(chain[:index], variables)
+                ref[index].push(value)
+                @trace.push({ summary: "Pushing #{value} to index #{index}", level: :debug, timestamp: Time.now })
+                return ref[index]
+              elsif chain[:type] == :member
+                binding.pry #todo
+              else
+                binding.pry #what kind of chain is this?
+              end
+            else
+              ref.push(value)
+              return ref
+            end
+          end
+        else
+          binding.pry # assign to what?
+        end
+        raise "Push didn't return a value"
       elsif command[:type] == :add
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)

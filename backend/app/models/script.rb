@@ -250,7 +250,7 @@ WHERE s.trigger_http=TRUE AND s.http_endpoint = ? AND s.http_method = ?"
     #rescue SimpleLanguage::NullPointer => e
     # catch all execptions like this for now
     rescue Exception => e
-      raise e
+      #raise e
       error = "#{e.class.to_s} #{e.to_s}"
       stack_trace = e.backtrace.join("\n")
     end

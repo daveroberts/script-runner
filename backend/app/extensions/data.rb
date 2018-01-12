@@ -67,7 +67,7 @@ module SimpleLanguage
     end
 
     def save(collection, data)
-      DataContainer.create(collection, data)
+      DataContainer.save(collection, data)
     end
     
     def find(collection, criteria)

@@ -16,7 +16,15 @@ class DataContainer
     @values[key] = value
   end
 
-  def self.create(collection, data)
+  def save()
+    self
+  end
+
+  def to_json(opts = nil)
+    @values.to_json(opts)
+  end
+
+  def self.save(collection, data)
     dc = DataContainer.new(collection, data)
     $data[collection] = [] if !$data.has_key?(collection)
     $data[collection].push(dc)

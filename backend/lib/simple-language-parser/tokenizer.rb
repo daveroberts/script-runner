@@ -15,6 +15,7 @@ module SimpleLanguage
       { name: :number, regex: /\A[0-9]+/ },
       { name: :colon, regex: /\A:/ },
       { name: :question_mark, regex: /\A\?/ },
+      { name: :bang, regex: /\A\!/ },
       { name: :double_less_than, regex: /\A\<\</ },
       { name: :double_ampersand, regex: /\A&&/ },
       { name: :double_equals, regex: /\A==/ },

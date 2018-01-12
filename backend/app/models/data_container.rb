@@ -24,11 +24,23 @@ class DataContainer
   end
 
   def self.find(collection, criteria)
+    return nil if !$data.has_key?(collection)
     $data[collection].detect do |item|
       criteria.each do |k,v|
         return false if item[k] != v
       end
       true
     end
+  end
+
+  def self.find_all(collection, criteria)
+    return [] if !$data.has_key?(collection)
+    items = $data[collection].select do |item|
+      criteria.each do |k,v|
+        return false if item[k] != v
+      end
+      true
+    end
+    items
   end
 end

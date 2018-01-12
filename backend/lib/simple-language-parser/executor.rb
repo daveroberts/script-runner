@@ -314,6 +314,9 @@ module SimpleLanguage
         val = command[:value]
         output = run_chains(val, command[:chains]||[], variables)
         return output
+      elsif command[:type] == :bang
+        value = exec_cmd(command[:expression], variables)
+        return !value
       elsif command[:type] == :check_equality
         left = exec_cmd(command[:left], variables)
         right = exec_cmd(command[:right], variables)
@@ -440,7 +443,9 @@ module SimpleLanguage
         return Time.new
       when "map"
         collection = args[0]
+        raise NullPointer, "Can't map over nil collection" if !collection
         fun = args[1]
+        raise NullPointer, "Function passed to map is nil" if !fun
         locals = variables.dup
         arr = []
         collection.each do |item|
@@ -576,6 +581,8 @@ module SimpleLanguage
         return "(#{cmd[:params].map{|p|cmd_to_s(p)}.join(", ")})"
       elsif cmd[:type] == :member
         return ".#{cmd[:member]}"
+      elsif cmd[:type] == :bang
+        return "!#{cmd_to_s(cmd[:expression])}"
       else
         puts cmd
         binding.pry

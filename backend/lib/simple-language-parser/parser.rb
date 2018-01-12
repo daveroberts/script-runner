@@ -90,7 +90,7 @@ module SimpleLanguage
       rest = tokens.dup
       return nil, tokens if !rest[0] || rest[0][:type] != :identifier || rest[0][:value] != 'if'
       true_conditions = []
-      while rest[0] && rest[0][:type] == :identifier && rest[0][:value] == 'elsif' || rest[0][:value] == 'if'
+      while rest[0] && rest[0][:type] == :identifier && (rest[0][:value] == 'elsif' || rest[0][:value] == 'if')
         rest.shift # if/elsif
         condition, rest = make_expression(rest)
         raise Exception, "if/elsif requires condition" if !condition
@@ -330,6 +330,12 @@ module SimpleLanguage
       rest = tokens.dup
       fun, rest = make_function_literal(rest)
       return fun, rest if fun
+      if rest[0] && rest[0][:type] == :bang
+        rest.shift # bang
+        expr, rest = make_expression(rest)
+        raise Exception, "Invalid expression after !" if !expr
+        return {type: :bang, expression: expr}, rest
+      end
       if rest[0] && rest[0][:type] == :left_paren
         rest.shift # left_paren
         expr, rest = make_expression(rest)

@@ -75,6 +75,7 @@ module SimpleLanguage
     end
 
     def find_all(collection, criteria)
+      DataContainer.find_all(collection, criteria)
     end
   end
 end

@@ -58,7 +58,7 @@ SELECT `id`, `value` FROM data_values WHERE data_container_id=? AND `key`=?
           id: SecureRandom.uuid,
           data_container_id: @id,
           key: key.to_s,
-          type: :string,
+          type: "string",
           array: false,
           summary: value,
           value: value,
@@ -116,6 +116,8 @@ WHERE
       sql = "
 SELECT
   dc.id as dc_id,
+  dc.collection as dc_collection,
+  dc.collection_id as dc_collection_id,
   dc.name as dc_name,
   dc.image_id as dc_image_id,
   dc.created_at as dc_created_at,
@@ -134,7 +136,18 @@ WHERE
       data = DataMapper.select(sql, {prefix: 'dc', has_many: [
         { data_values: { prefix: 'dv' } }
       ] },[collection, criteria.to_a.flatten.map{|item|item.to_s}].flatten)
-      binding.pry
+      ret_value = []
+      data.each do |row|
+        obj = DataContainer.new({
+          id: row[:id],
+          name: row[:name],
+          image_id: row[:image_id],
+          collection: row[:collection],
+          collection_id: row[:collection_id],
+          values: {},
+          created_at: row[:created_at]
+        })
+      end
     end
   end
 

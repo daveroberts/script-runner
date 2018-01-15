@@ -48,7 +48,11 @@ class DataContainer
     end
     @values.each do |key, value|
       #TODO: Save to separate fields
-      # Get the existing value
+      next if key==:collection ||
+              key==:collection_id ||
+              key==:image_id ||
+              key==:created_at
+      # Get the existing value to compare, see if it needs to be saved
       sql = "
 SELECT `id`, `value` FROM data_values WHERE data_container_id=? AND `key`=?
 "
@@ -82,7 +86,15 @@ UPDATE data_values SET value = ? WHERE `key` = ? AND data_container_id = ?
   end
 
   def to_json(opts = nil)
-    @values.to_json(opts)
+    {
+      type: "DataContainer",
+      id: @id,
+      collection: @collection,
+      collection_id: @collection_id,
+      name: @name,
+      image_id: @image_id,
+      created_at: @created_at
+    }.to_json(opts)
   end
 
   def self.save(collection, values)
@@ -136,18 +148,19 @@ WHERE
       data = DataMapper.select(sql, {prefix: 'dc', has_many: [
         { data_values: { prefix: 'dv' } }
       ] },[collection, criteria.to_a.flatten.map{|item|item.to_s}].flatten)
-      ret_value = []
-      data.each do |row|
-        obj = DataContainer.new({
-          id: row[:id],
-          name: row[:name],
-          image_id: row[:image_id],
-          collection: row[:collection],
-          collection_id: row[:collection_id],
-          values: {},
-          created_at: row[:created_at]
-        })
-      end
+      return nil if data.length == 0
+      raise "Multiple values found for find query.  (If intended, use find_all instead)" if data.length > 1
+      data = data.first
+      ret_value = DataContainer.new({
+        id: data[:id],
+        name: data[:name],
+        image_id: data[:image_id],
+        collection: data[:collection],
+        collection_id: data[:collection_id],
+        values: {},
+        created_at: data[:created_at]
+      })
+      ret_value
     end
   end
 

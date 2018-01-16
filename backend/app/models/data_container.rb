@@ -26,13 +26,13 @@ class DataContainer
   end
 
   def [](key)
-    value = @values[key]
+    value = @values[key.to_s]
     value.extend Pusher
     value
   end
 
   def []=(key, value)
-    set(key, value)
+    set(key.to_s, value)
   end
 
   def save()
@@ -185,11 +185,19 @@ WHERE
   end
 
   def set(key, value)
-    @name = value if key.to_s.casecmp("label")==0 && !@name
-    @name = value if key.to_s.casecmp("name")==0 && !@name
-    @name = value if key.to_s.casecmp("title")==0 && !@name
-    @name = value if key.to_s.casecmp("subject")==0 && !@name
-    @name = value if key.to_s.casecmp("summary")==0 && !@name
+    if (key.to_s.casecmp("label")==0 ||
+        key.to_s.casecmp("label")==0 ||
+        key.to_s.casecmp("label")==0 ||
+        key.to_s.casecmp("label")==0 ||
+        key.to_s.casecmp("label")==0)
+      @name = value 
+    end
+    @name = value if key.to_s.casecmp("name")==0
+    @name = value if key.to_s.casecmp("title")==0
+    @name = value if key.to_s.casecmp("subject")==0
+    @name = value if key.to_s.casecmp("summary")==0
+    @image_id = value if key.to_s.casecmp("image_id")==0
+    @collection = value if key.to_s.casecmp("image_id")==0
     @values[key] = value
   end
 

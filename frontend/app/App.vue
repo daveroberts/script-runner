@@ -2,8 +2,8 @@
   <div>
     <div class="nav-bar">
       <router-link class="nav-item" to="/scripts" exact><i class="fa fa-th-large" aria-hidden="true"></i> Scripts</router-link><router-link class="nav-item" to="/data-explorer" exact><i class="fa fa-search" aria-hidden="true"></i> Data Explorer</router-link><router-link class="nav-item" to="/extensions" exact><i class="fa fa-cogs" aria-hidden="true"></i> Extensions</router-link>
-    <div v-if="loading" class="progress-line"></div>
     </div>
+    <div v-if="loading" class="loader"></div>
     <div style="padding: 1em;">
       <div id="alerts">
         <div v-for="alert in alerts">
